@@ -1,6 +1,8 @@
 # Abbreviations
 
-## Types
+`EX` Extended
+
+Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
 
 `D` "double" types
 
@@ -10,25 +12,47 @@ Examples `DWORD` (double of `WORD`), `DWORDLONG`, `DWORD_PTR`.
 
 Examples: `HWND` (window), `HINSTANCE` (instance/module), `HICON` (icon), `HDC` (device context), `HDWP` (deferred window position).
 
-## Struct members
+`CONV` Conversation
 
-`cb` Count of bytes
+Examples: `HCONV`, `HCONVLIST` (conversation list).
+
+`DC` Device context
+
+Examples: `HDC`.
+
+`DDE` Dynamic data exchange
+
+Examples: `HDDEDATA`.
+
+`DESK` Desktop
+
+Examples: `HDESK`.
+
+`DWP` Deferred window position
+
+Examples: `HDWP`.
 
 Examples: `cbSize` (size of struct), `cbClsExtra` (WNDCLASS), `cbWndExtra` (WNDCLASS).
 
-## Messages and notifications
+`hbr` Handle to a brush resource
+
+Examples: `hbrBackground` (WNDCLASS).
 
 `WS` Window style
 
 Examples: `WS_OVERLAPPEDWINDOW`, `WS_CHILD`, `WS_EX_ACCEPTFILES`.
 
-`EX` Extended
-
-Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
-
 `CW` Create window
 
 Examples: `CW_USEDEFAULT`.
+
+`IDC` ID of a cursor resource
+
+Examples: `IDC_ARROW`, `IDC_HELP`, `IDC_WAIT`.
+
+`IDI` ID of an icon resource
+
+Examples: `IDI_APPLICATION`, `IDI_ERROR`, `IDI_INFORMATION`.
 
 `ACM` Animation control message
 
@@ -40,7 +64,7 @@ Examples: `ACN_START`, `ACN_STOP`.
 
 `BM` or `BCM` Button control message
 
-Examples: `BM_CLICK`, `BM_GETIMAGE`, `BCM_SETSHIELD`. 
+Examples: `BM_CLICK`, `BM_GETIMAGE`, `BCM_SETSHIELD`.
 
 `BN` or `BCN` Button control notification
 
@@ -144,7 +168,7 @@ Examples: `MCN_GETDAYSTATE`, `MCN_SELCHANGE`, `MCN_SELECT`.
 
 `PBM` Progress bar message
 
-Examples: `PBM_SETBKCOLOR`, `PBM_SETMARQUEE`, `PBM_SETPOS`. 
+Examples: `PBM_SETBKCOLOR`, `PBM_SETMARQUEE`, `PBM_SETPOS`.
 
 `PGM` Pager control message
 
@@ -166,7 +190,7 @@ Examples: `PSN_APPLY`, `PSN_GETOBJECT`, `PSN_HELP`.
 
 Examples: `RB_GETPALETTE`, `RB_GETRECT`, `RB_GETROWCOUNT`.
 
-`RBN` Rebar control notification 
+`RBN` Rebar control notification
 
 Examples: `RBN_AUTOBREAK`, `RBN_AUTOSIZE`, `RBN_BEGINDRAG`
 
@@ -238,7 +262,7 @@ Examples: `TVM_EXPAND`, `TVM_GETBKCOLOR`, `TVM_GETCOUNT`.
 
 Examples: `TVN_DELETEITEM`, `TVN_ENDLABELEDIT`, `TVN_GETDISPINFO`.
 
-`UDM` Up-down control message 
+`UDM` Up-down control message
 
 Examples: `UDM_GETBUDDY`, `UDM_GETPOS`, `UDM_GETPOS32`.
 
@@ -249,15 +273,3 @@ Examples: `UDN_DELTAPOS`.
 `WM` Window message
 
 Examples: `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
-
-## Resources
-
-`IDC` ID of a cursor resource
-
-Examples: `IDC_ARROW`, `IDC_HELP`, `IDC_WAIT`.
-
-`IDI` ID of an icon resource
-
-Examples: `IDI_APPLICATION`, `IDI_ERROR`, `IDI_INFORMATION`.
-
-
