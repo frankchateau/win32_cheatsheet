@@ -11,3 +11,10 @@ For each type of opaque handle there is a creation function (e.g. `CreateWindow`
 The base type for handles is `HANDLE`. Every other handle type is an alias to the base type and starts with the letter `H`.
 
 Examples: `HWND` (window), `HINSTANCE` (instance/module), `HICON` (icon), `HDC` (device context), `HDWP` (deferred window position).
+
+## Count of bytes
+
+Function parameters and struct members that start with the prefix `cb`
+are used to specify a size in bytes.
+
+Examples: `cbSize` (size of struct), `cbClsExtra` (WNDCLASS), `cbWndExtra` (WNDCLASS).
