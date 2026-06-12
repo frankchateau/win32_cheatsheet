@@ -4,9 +4,50 @@
 
 Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
 
-`D` "double" types
+`D` Double something type
 
 Examples `DWORD` (double of `WORD`), `DWORDLONG`, `DWORD_PTR`.
+
+`L` Long something type
+
+Examples `LPARAM` (long parameter).
+
+`LP` Long pointer to something type
+
+Examples: `LPBOOL` (long pointer to BOOL), `LPBYTE`, `LPCOLORREF`.
+
+`T` Generic text type
+
+Examples: `LPCTSTR` (resolves to `LPCWSTR` for Unicode and `LPCSTR` for ANSI),
+`TCHAR` (`WCHAR` for Unicode, `CHAR` for ANSI).
+
+`C` Constant something type
+
+Examples: `LPCSTR` (constant string), `LPCVOID` (constant any). 
+
+`W` Wide char string (Unicode)
+
+Examples: `LPCWSTR`, `LPWSTR`, 
+
+`P` Pointer
+
+Examples: `PBOOL`, `PBYTE`, `PCTSTR`.
+
+`U` Unsigned
+
+Examples: `UCHAR`, `UHALF_PTR`, `UINT`.
+
+`PTR` Pointer
+
+Examples: `INT_PTR` (used to type something that can hold either an int or a pointer), `LONG_PTR`.
+
+`LC` Locale
+
+Examples `LCID`, `LCTYPE`.
+
+`LGRP` Language group
+
+Examples: `LGRPID`.
 
 `H` opaque handle
 
@@ -31,6 +72,44 @@ Examples: `HDESK`.
 `DWP` Deferred window position
 
 Examples: `HDWP`.
+
+`ENH` Enhanced
+
+Examples: `HENHMETAFILE`.
+
+`GDI` Graphics device interface
+
+Examples: `HGDIOBJ`.
+
+`KL` Keyboard layout
+
+Examples: `HKL`.
+
+`RGN` Region
+
+Examples: `HRGN`.
+
+`RSRC` Resource
+
+Examples `HRSRC`.
+
+`SZ` String, zero terminated
+
+Examples: `HSZ`.
+
+`WINSTA` Window station
+
+Examples: `HWINSTA`.
+
+`WND` Window
+
+Examples: `HWND`, `CreateHwndRenderTarget`.
+
+`USN` Update sequence number
+
+Examples: `USN`.
+
+`cb` Count of bytes
 
 Examples: `cbSize` (size of struct), `cbClsExtra` (WNDCLASS), `cbWndExtra` (WNDCLASS).
 
