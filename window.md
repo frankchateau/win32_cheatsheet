@@ -5,7 +5,7 @@ A window is a fundamental unit of the Windows GUI. It represents a rectangular r
 Windows are not just top level application windows with a titlebar and borders, but can be any type of UI
 control (e.g. buttons, lists...etc).
 
-The type of a window is `HWND` which is an opaque handle to the window which is managed by Windows OS.
+The type of a window is `HWND` which is an [opaque handle](https://github.com/frankchateau/win32_cheatsheet/blob/main/terminology.md#opaque-handle) to the window which is managed by Windows OS.
 It is not meant to be modified directly, but rather passed to various win32 functions. (e.g. `MoveWindow(hwnd, 100, 100, 800, 600, TRUE);`)
 
 Each window is created from a class that defines default / shared behavior for all windows created from it. 
