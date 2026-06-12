@@ -20,9 +20,51 @@ Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
 
 Examples: `CW_USEDEFAULT`.
 
+### `ACM` Animation control message
+
+Examples: `ACM_OPEN`, `ACM_PLAY`, `ACM_STOP`.
+
+### `ACN` Animation control notification
+
+Examples: `ACN_START`, `ACN_STOP`.
+
+### `BM` or `BCM` Button control message
+
+Examples: `BM_CLICK`, `BM_GETIMAGE`, `BCM_SETSHIELD`. 
+
+### `BN` or `BCN` Button control notification
+
+Examples: `BCN_DROPDOWN`, `BCN_HOTITEMCHANGE`, `BN_CLICKED`.
+
+### `CB` Combobox control message
+
+Examples: `CB_ADDSTRING`, `CB_DELETESTRING`, `CB_DIR`.
+
+### `CBN` Combobox control notification
+
+Examples: `CBN_CLOSEUP`, `CBN_DBLCLK`, `CBN_DROPDOWN`.
+
+### `CBM` ComboboxEx messages
+
+Examples: `CBEM_DELETEITEM`, `CBEM_GETCOMBOCONTROL`, `CBEM_GETEDITCONTROL`.
+
+### `CBN` ComboboxEx notifications
+
+Examples: `CBEN_BEGINEDIT`, `CBEN_DELETEITEM`, `CBEN_DRAGBEGIN`.
+
+### `CCM` Control messages
+
+Examples: `CCM_DPISCALE`, `CCM_GETUNICODEFORMAT`, `CCM_GETVERSION`.
+
+### 
+
 ### `WM` Window message
 
-Examples `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`.
+Examples: `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`.
+
+### `PBM` Progress bar message
+
+Examples: `PBM_SETBKCOLOR`, `PBM_SETMARQUEE`, `PBM_SETPOS`. 
 
 ### `IDC` ID of a cursor resource
 
