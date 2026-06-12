@@ -2,14 +2,21 @@
 
 A window is a fundamental unit of the Windows GUI. It represents a rectangular region on the screen. 
 
-The window type is `HWND` which is an opaque handle to the window which is managed by Windows OS.
-It is not meant to be modified directly, but rather passed to various Windows functions. (e.g. `MoveWindow(hwnd, 100, 100, 800, 600, TRUE);`)
+Windows are not just top level application windows with a titlebar and borders, but can be any type of UI
+control (e.g. buttons, lists...etc).
+
+The type of a window is `HWND` which is an opaque handle to the window which is managed by Windows OS.
+It is not meant to be modified directly, but rather passed to various win32 functions. (e.g. `MoveWindow(hwnd, 100, 100, 800, 600, TRUE);`)
 
 Each window is created from a class that defines default / shared behavior for all windows created from it. 
 There are predefined built-in classes ([standard](#standard-controls) and [common](#common-controls) controls), 
 but you can create custom ones using [RegisterClass](#registerclass).
 
-For an application window, you'd typically register your own custom class.
+For the main application window, you'd typically register your own custom class.
+
+There are 3 general categories of windows in terms of [hierarchy](#hierarchy): top level, top level with parent, and child window.
+
+Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
 ## RegisterClass
 
@@ -33,7 +40,7 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 
 `WNDCLASS` members:
 - [style](#styles) - bitmask for setting additional window behavior(s).
-- [lpfnWndProc](#procedure) - pointer to the window event handler callback.
+- [lpfnWndProc](#window-procedure) - pointer to the window event handler callback.
 - hInstance - handle to the executable module, usually the hInstance argument you get in WinMain (wWinMain)
 - [hIcon](#icons) - handle to an icon resource used as the window icon.
 - [hCursor](#cursors) - handle to a cursor resource use as the window cursor icon.
@@ -56,11 +63,15 @@ If this is NULL, hIcon will be used, if it was defined.
 
 // TODO
 
+## Hierarchy
+
+// TODO
+
 ## Styles
 
 // TODO
 
-## Procedure
+## Window procedure
 
 // TODO
 
