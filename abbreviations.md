@@ -133,6 +133,10 @@ Examples: `IDC_ARROW`, `IDC_HELP`, `IDC_WAIT`.
 
 Examples: `IDI_APPLICATION`, `IDI_ERROR`, `IDI_INFORMATION`.
 
+`WM` Window message
+
+Examples: `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
+
 `ACM` Animation control message
 
 Examples: `ACM_OPEN`, `ACM_PLAY`, `ACM_STOP`.
@@ -348,7 +352,3 @@ Examples: `UDM_GETBUDDY`, `UDM_GETPOS`, `UDM_GETPOS32`.
 `UDN` Up-down control notification
 
 Examples: `UDN_DELTAPOS`.
-
-`WM` Window message
-
-Examples: `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
