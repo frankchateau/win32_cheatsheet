@@ -8,7 +8,9 @@ control (e.g. buttons, lists...etc).
 The type of a window is `HWND` which is an [opaque handle](https://github.com/frankchateau/win32_cheatsheet/blob/main/terminology.md#opaque-handle) to the window which is managed by Windows OS.
 It is not meant to be modified directly, but rather passed to various win32 functions. (e.g. `MoveWindow(hwnd, 100, 100, 800, 600, TRUE);`)
 
-Each window is created from a class that defines default / shared behavior for all windows created from it. 
+Each window is created from a window class that defines default / shared behavior for all windows created from it. 
+The window classes in question are not C++ classes, but rather configuration templates for windows specific to win32.
+
 There are predefined built-in classes ([standard](#standard-controls) and [common](#common-controls) controls), 
 but you can create custom ones using [RegisterClass](#registerclass).
 
@@ -93,6 +95,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 // TODO
 
 ## Styles
+
+// TODO
+
+## Message loop
 
 // TODO
 
