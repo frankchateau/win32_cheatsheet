@@ -51,9 +51,32 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 - cbWndExtra - number of extra bytes to allocate for per-window custom app data.
 
 `WNDCLASSEX` only members:
-- cbSize - the size of the structure in bytes.
+- cbSize - the size of the structure in bytes. Usually `sizeof(WNDCLASSEX)`.
 - [hIconSm](#icons) - a handle to an icon resource used as the small window icon.
 If this is NULL, hIcon will be used, if it was defined.
+
+Example:
+```cpp
+LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); // implemented elsewhere
+
+// the main entry function
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+  WNDCLASSEX wc = {0};
+  wc.cbSize = sizeof(WNDCLASSEX);
+  wc.lpfnWndProc = windowProc; // callback defined elsewhere
+  wc.hInstance = hInstance;
+  wc.lpszClassName = L"MyWindowClass"; 
+
+  ATOM classAtom = RegisterClassEx(&wc);
+
+  if (classAtom == 0) {
+    return EXIT_FAILURE;
+  }
+
+  // Proceed with creating windows...etc.
+}
+
+```
 
 ## Standard controls
 
