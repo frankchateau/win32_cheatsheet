@@ -12,7 +12,7 @@ Examples `DWORD` (double of `WORD`), `DWORDLONG`, `DWORD_PTR`.
 
 Examples `LPARAM` (long parameter).
 
-`LP` Long pointer to something type
+`LP` Long pointer
 
 Examples: `LPBOOL` (long pointer to BOOL), `LPBYTE`, `LPCOLORREF`.
 
