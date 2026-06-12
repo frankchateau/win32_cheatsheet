@@ -1,4 +1,4 @@
-# Acronyms
+# Abbreviations
 
 ### `H` opaque handle
 
