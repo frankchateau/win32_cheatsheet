@@ -16,7 +16,7 @@ but you can create custom ones using [RegisterClass](#registerclass).
 
 For the main application window, you'd typically register your own custom class.
 
-There are 3 general categories of windows in terms of [hierarchy](#hierarchy): top level, top level with parent, and child window.
+There are 3 general categories of windows in terms of [ownership](#ownership): top level, top level with parent, and child window.
 
 Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
@@ -90,7 +90,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 // TODO
 
-## Hierarchy
+## Ownership
 
 // TODO
 
