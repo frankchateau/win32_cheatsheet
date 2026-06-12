@@ -18,6 +18,8 @@ There are 3 general categories of windows in terms of [hierarchy](#hierarchy): t
 
 Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
+![Window parts](./window.png "Window parts")
+
 ## RegisterClass
 
 Before creating a custom window, a custom window class must be registered. 
