@@ -104,7 +104,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 This flag alone gives you the "standard" window with a titlebar, minimize, maximize, close buttons,
 resizable borders and paints the client area white by default.
 
+It is a combination of other flags: `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX`.
 
+![Window with WS_OVERLAPPEDWINDOW](./ws_overlappedwindow.png)
 
 `WS_POPUP` 
 
