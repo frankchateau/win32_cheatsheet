@@ -108,6 +108,10 @@ It is a combination of other flags: `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | W
 
 ![Window with WS_OVERLAPPEDWINDOW](./ws_overlappedwindow.png)
 
+`WS_OVERLAPPED`
+
+
+
 `WS_POPUP` 
 
 Used for frameless windows. Cannot be used together with `WS_CHILD`.
