@@ -57,7 +57,6 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 `WNDCLASSEX` only members:
 - cbSize - the size of the structure in bytes. Usually `sizeof(WNDCLASSEX)`.
 - [hIconSm](#icons) - a handle to an icon resource used as the small window icon.
-If this is NULL, hIcon will be used, if it was defined.
 
 Example:
 ```cpp
@@ -82,6 +81,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 ```
 
+## CreateWindow
+
+// TODO
+
 ## Standard controls
 
 // TODO
@@ -96,7 +99,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 ## Styles
 
-// TODO
+`WS_OVERLAPPEDWINDOW`
+
+This flag alone gives you the "standard" window with a titlebar, minimize, maximize, close buttons,
+resizable borders and paints the client area white by default.
+
+
+
+`WS_POPUP` 
+
+Used for frameless windows. Cannot be used together with `WS_CHILD`.
+
+
 
 ## Message loop
 
