@@ -165,18 +165,13 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 
 `WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
 
-<div style="display:flex;">
-<figure>
-  <img src="./ws_overlappedwindow.png" alt="Window with WS_OVERLAPPEDWINDOW style">
-  <figcaption>WS_OVERLAPPEDWINDOW with the system menu open</figcaption>
-</figure>
+ 
 
-<figure>
-  <img src="./ws_popup.png" alt="Window with WS_POPUP style">
-  <figcaption>WS_POPUP only window</figcaption>
-</figure>
-</div>
+| ![Window with WS_OVERLAPPEDWINDOW style](./ws_overlappedwindow.png) | ![Window with WS_POPUP style](./ws_popup.png) |
+|:--:|:--:| 
+|WS_OVERLAPPEDWINDOW with the system menu open|WS_POPUP only window|
 
+ 
 ### Behavior styles
 
 `WS_VISIBLE` The window is visible initially.
