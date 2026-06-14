@@ -52,6 +52,10 @@ Examples: `CDM_GETFILEPATH`, `CDM_GETFOLDERIDLIST`, `CDM_GETFOLDERPATH`.
 
 Examples: `HCONV`, `HCONVLIST` (conversation list).
 
+`CS` Class style
+
+Examples: `CS_DBLCLKS`, `CS_PARENTDC`, `CS_VREDRAW`.
+
 `CW` Create window
 
 Examples: `CW_USEDEFAULT`.
@@ -59,6 +63,10 @@ Examples: `CW_USEDEFAULT`.
 `D` Double something type
 
 Examples `DWORD` (double of `WORD`), `DWORDLONG`, `DWORD_PTR`.
+
+`DBLCLK` Double click
+
+Examples: `WM_LBUTTONDBLCLK`, `WM_RBUTTONDBLCLK`, `WM_XBUTTONDBLCLK`.
 
 `DC` Device context
 
@@ -76,6 +84,10 @@ Examples: `HDESK`.
 
 Examples: `DL_BEGINDRAG`, `DL_CANCELDRAG`, `DL_DRAGGING`.
 
+`DLG` Dialog
+
+Examples: `DLGITEMTEMPLATE`, `GetNextDlgGroupItem`, `DLGPROC`.
+
 `DM` Dialog box message
 
 Examples: `DM_GETDEFID`, `DM_REPOSITION`, `DM_SETDEFID`.
@@ -87,6 +99,10 @@ Examples: `DTM_CLOSEMONTHCAL`, `DTM_GETDATETIMEPICKERINFO`, `DTM_GETIDEALSIZE`.
 `DTN` Date and time picker notification
 
 Examples: `DTN_CLOSEUP`, `DTN_DATETIMECHANGE`, `DTN_DROPDOWN`.
+
+`DWP` Desktop window manager
+
+Examples: `WM_DWMCOLORIZATIONCOLORCHANGED`, `DwmGetWindowAttribute`.
 
 `DWP` Deferred window position
 
@@ -112,9 +128,9 @@ Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
 
 Examples: `HGDIOBJ`.
 
-`H` opaque handle
+`H` (opaque) Handle
 
-Examples: `HWND` (window), `HINSTANCE` (instance/module), `HICON` (icon), `HDC` (device context), `HDWP` (deferred window position).
+Examples: `HWND`, `HINSTANCE`, `HICON`, `HDC`, `HDWP`.
 
 `hbr` Handle to a brush resource
 
@@ -159,6 +175,10 @@ Examples: `HKL`.
 `L` Long something type
 
 Examples `LPARAM` (long parameter).
+
+`L` Left
+
+Examples `WM_LBUTTONDBLCLK`.
 
 `LB` List box message
 
@@ -263,6 +283,10 @@ Examples: `SBN_SIMPLEMODECHANGE`.
 `SBM` Scroll bar message
 
 Examples: `SBM_ENABLE_ARROWS`, `SBM_GETPOS`, `SBM_GETRANGE`.
+
+`SPI` System parameters info
+
+Examples: `SPI_GETSTICKYKEYS`, `SPI_GETDESKWALLPAPER`, `SPI_GETBEEP`.
 
 `STM` Static control message
 

@@ -20,7 +20,17 @@ There are 3 general categories of windows in terms of [ownership](#ownership): t
 
 Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
-![Window parts](./window.png "Window parts")
+The main parts of a window are: 
+- titlebar with icon, caption, window buttons and system menu
+- frame or border that can be used for resizing
+- client area for rendering the window's content
+
+Titlebar and frame are called non-client area.
+
+<figure>
+  <img src="./window_parts.png" alt="Anatomy of a window">
+  <figcaption>Anatomy of a window</figcaption>
+</figure>
 
 ## RegisterClass
 
@@ -46,9 +56,9 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 
 `WNDCLASS` members:
 
-- [style](#styles) - bitmask for setting additional window behavior(s).
-- [lpfnWndProc](#window-procedure) - pointer to the window event handler callback.
-- hInstance - handle to the executable module, usually the hInstance argument you get in WinMain (wWinMain)
+- [style](#class-styles) - bitmask for setting additional window behavior(s). **Required**.
+- [lpfnWndProc](#window-procedure) - pointer to the window event handler callback. **Required**.
+- hInstance - handle to the executable module, usually the hInstance argument you get in WinMain (wWinMain). **Required**.
 - [hIcon](#icons) - handle to an icon resource used as the window icon.
 - [hCursor](#cursors) - handle to a cursor resource use as the window cursor icon.
 - hbrBackground - handle to a brush used to paint the window client area background using GDI.
@@ -59,7 +69,7 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 
 `WNDCLASSEX` only members:
 
-- cbSize - the size of the structure in bytes. Usually `sizeof(WNDCLASSEX)`.
+- cbSize - the size of the structure in bytes. Usually `sizeof(WNDCLASSEX)`. **Required**.
 - [hIconSm](#icons) - a handle to an icon resource used as the small window icon.
 
 Example:
@@ -90,19 +100,41 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 // TODO
 
-## Standard controls
-
-// TODO
-
-## Common controls
-
-// TODO
-
 ## Ownership
 
 // TODO
 
-## Styles
+## Class styles
+
+`CS_DBLCLKS` - Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).
+
+`CS_NOCLOSE` - Disables the close button on the window.
+
+`CS_DROPSHADOW` - Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.
+
+`CS_HREDRAW` - Invalidates client area when width changes. Used with GDI.
+
+`CS_VREDRAW` - Invalidates client area when height changes. Used with GDI.
+
+`CS_CLASSDC` - All class windows share the same DC. Mainly used with GDI.
+
+`CS_OWNDC` - Each class window gets its own DC. Mainly used with GDI and OpenGL.
+
+`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with GDI.
+
+`CS_GLOBALCLASS` - Makes the class globally available to all other modules in the process. Rarely used today.
+
+`CS_SAVEBITS` - Saves a bitmap of the part of screen obscured by this window so when this window is removed,
+the pixels that were underneath are restored from the bitmap instead doing a full repaint.
+Legacy feature, made obsolete by DWM.
+
+`CS_BYTEALIGNWINDOW` - Forces the window rectangle to start on a byte boundary in memory. Legacy feature.
+
+`CS_BYTEALIGNCLIENT` - Forces the client area rectangle to start on a byte boundary in memory. Legacy feature.
+
+## Window styles
+
+### Visual styles
 
 There are three base window styles that you can use as a starting point:
 
@@ -110,72 +142,40 @@ There are three base window styles that you can use as a starting point:
 - `WS_POPUP` - special top level windows like dialogs, menus, splash screens...etc.
 - `WS_CHILD` - child windows that are visually constrained / clipped in a parent window.
 
-### WS_OVERLAPPED
+`WS_OVERLAPPED` produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.
 
-`WS_OVERLAPPED` flag gives you the small titlebar with the caption and
-the client area painted white by default. There are no resizable borders.
-
-![Window with WS_OVERLAPPEDWINDOW](./ws_overlapped.png)
-
-`WS_OVERLAPPED | WS_THICKFRAME` gives overlapped style + a resizable border and a taller titlebar.
-
-![Window with WS_OVERLAPPED and WS_THICKFRAME](./ws_overlapped_thickframe.png)
-
-`WS_OVERLAPPED | WS_SYSMENU` gives overlapped style + icon and the close button. No resizable border.
-Right clicking on the titlebar opens the system menu. Minimize and maximize are available as options in the system menu, but are disabled and there are now titlebar buttons for them. You can add them with `WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` flags.
-
-![Window with WS_OVERLAPPED and WS_SYSMENU](./ws_overlapped_sysmenu.png)
-
-`WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` require the `WS_SYSMENU` flag.
-
-`WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX` gives overlapped style + system menu with the minimize option now available
-and the minimize button. Maximize button is shown, but disabled.
-
-![Window with WS_OVERLAPPED, WS_SYSMENU, and WS_MINIMIZEBOX](./ws_overlapped_sysmenu_minimizebox.png)
-
-`WS_OVERLAPPEDWINDOW` is a flag that encompasses everything from before (titlebar, resizable borders, system menu...etc).
-
-It is defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX`
-
-![Window with WS_OVERLAPPEDWINDOW](./ws_overlappedwindow.png)
-
-`WS_HSCROLL` and `WS_VSCROLL` can be used to add scrollbars.
-
-`WS_OVERLAPPED | WS_HSCROLL | WS_VSCROLL`
-
-![Window with WS_OVERLAPPED and WS_HSCROLL and WS_VSCROLL](./ws_overlapped_hscroll_vscroll.png)
-
-### WS_POPUP
-
-`WS_POPUP` gives the frameless style - no title bar, no border whatsoever (no rounding).
-
-Could be used if you want control over the entire surface of the window.
-
-The client area will not be painted by default, but the easiest way to do it is to set `hbrBackground` on `WNDCLASS`:
+`WS_POPUP` produces a frameless window with just the client area and no borders at all (no rounding).
+Client area needs to be painted for the window to be visible. Easiest way to do it:
 
 ```cpp
 wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // default, white background
 ```
 
-You could also handle the `WM_ERASEBKGND` or `WM_PAINT` message to paint the background yourself and/or have your own render loop.
+`WS_THICKFRAME` adds a resizable border and makes the titlebar taller. Its alias is `WS_SIZEBOX`.
 
-![Window with WS_POPUP](./ws_popup.png)
+`WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINMIZEBOX` and `WS_MAXIMIZEBOX` are used
+alongside it to add the minimize and maximize buttons.
 
-You can add other styles to `WS_POPUP` like the styles we used with `WS_OVERLAPPED`.
+`WS_OVERLAPPEDWINDOW` is the full, standard overlapped window.
+Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX`.
 
-`WS_POPUP | WS_THICKFRAME` gives a frameless window with rounded corners and a resizable border.
+`WS_HSCROLL` and `WS_VSCROLL` are used to add horizontal and vertical scrollbars.
 
-![Window with WS_POPUP and WS_THICKFRAME](./ws_popup_thickframe.png)
+`WS_BORDER` The window has a thin line border.
 
-`WS_POPUP | WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX` gives visually the same window as with `WS_OVERLAPPEDWINDOW`.
+`WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
 
-![Window with WS_POPUP and WS_CAPTION and WS_THICKFRAME and WS_SYSMENU and WS_MINIMZEBOX and WS_MAXIMIZEBOX](./ws_popup_caption_thickframe_sysmenu_min_max.png)
+<div style="display:flex;">
+<figure>
+  <img src="./ws_overlappedwindow.png" alt="Window with WS_OVERLAPPEDWINDOW style">
+  <figcaption>WS_OVERLAPPEDWINDOW with the system menu open</figcaption>
+</figure>
 
-Scrollbar flags work with `WS_POPUP` as well.
-
-`WS_POPUP | WS_VSCROLL`:
-
-![Window with WS_VSCROLL](./ws_popup_vscroll.png)
+<figure>
+  <img src="./ws_popup.png" alt="Window with WS_POPUP style">
+  <figcaption>WS_POPUP only window</figcaption>
+</figure>
+</div>
 
 ### Behavior styles
 
@@ -185,17 +185,20 @@ You can call `ShowWindow` or `SetWindowPos` to show/hide the window.
 `WS_DISABLED` The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.
 You can change this by calling `EnableWindow`.
 
-`WS_MINIMIZE` The window is minimized initially. `WS_ICONIC` is an alias for `WS_MINIMIZE`.
+`WS_MINIMIZE` The window is minimized initially. Its alias is `WS_ICONIC`.
 
 `WS_MAXIMIZE` The window is maximized initially.
 
+`WS_CLIPCHILDREN` Child windows are excluded from the window's painting operations. Prevents parent from
+overwriting child windows and flicker. Mainly used with GDI.
+
+`WS_CLIPSIBLINGS` Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with,
+but only paint its own visible area. Mainly used with GDI.
+
 `WS_GROUP` Used for grouping of child windows for keyboard navigation, focus and radio button grouping.
+First created child window with `WS_GROUP` style marks the beginning of a group.
 
-### Other styles
-
-`WS_BORDER` The window has a thin line border.
-
-`WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
+`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with GDI.
 
 ## Message loop
 
@@ -214,5 +217,13 @@ You can change this by calling `EnableWindow`.
 // TODO
 
 ## Custom data
+
+// TODO
+
+## Standard controls
+
+// TODO
+
+## Common controls
 
 // TODO
