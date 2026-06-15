@@ -20,17 +20,17 @@ There are 3 general categories of windows in terms of [ownership](#ownership): t
 
 Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
-The main parts of a window are: 
+The main parts of a window are:
+
 - titlebar with icon, caption, window buttons and system menu
 - frame or border that can be used for resizing
 - client area for rendering the window's content
 
 Titlebar and frame are called non-client area.
 
-<figure>
-  <img src="./window_parts.png" alt="Anatomy of a window">
-  <figcaption>Anatomy of a window</figcaption>
-</figure>
+| ![Window parts](./window_parts.png) |
+| :---------------------------------: |
+|            Window parts             |
 
 ## RegisterClass
 
@@ -165,13 +165,10 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 
 `WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
 
- 
-
 | ![Window with WS_OVERLAPPEDWINDOW style](./ws_overlappedwindow.png) | ![Window with WS_POPUP style](./ws_popup.png) |
-|:--:|:--:| 
-|WS_OVERLAPPEDWINDOW with the system menu open|WS_POPUP only window|
+| :-----------------------------------------------------------------: | :-------------------------------------------: |
+|            WS_OVERLAPPEDWINDOW with the system menu open            |             WS_POPUP only window              |
 
- 
 ### Behavior styles
 
 `WS_VISIBLE` The window is visible initially.
