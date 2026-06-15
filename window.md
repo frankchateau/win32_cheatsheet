@@ -2,7 +2,7 @@
 
 A window is a fundamental unit of the Windows GUI. It represents a rectangular region on the screen.
 
-Windows are not just top level application windows with a titlebar and borders, but can be any type of UI
+Windows are not just top-level application windows with a titlebar and borders, but can be any type of UI
 control (e.g. buttons, lists...etc).
 
 The type of a window is `HWND` which is an opaque handle to the window which is managed by Windows OS.
@@ -16,7 +16,7 @@ but you can create custom ones using [RegisterClass](#registerclass).
 
 For the main application window, you'd typically register your own custom class.
 
-There are 3 general categories of windows in terms of [ownership](#ownership): top level, top level with parent, and child window.
+There are 3 general categories of windows in terms of [ownership](#ownership): top-level, owned top-level, and child window.
 
 Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
@@ -47,6 +47,8 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 - RegisterClassExA
 - RegisterClassExW - modern, preferred
 
+You can use a macro like `RegisterClass` or `RegisterClassEx` that resolves based on the unicode settings.
+
 `WNDCLASS` structs:
 
 - WNDCLASSA
@@ -54,23 +56,28 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 - WNDCLASSEXA
 - WNDCLASSEXW - modern, preferred
 
+You can use an alias like `WNDCLASS` or `WNDCLASSEX` that resolves based on the unicode settings.
+
 `WNDCLASS` members:
 
-- [style](#class-styles) - bitmask for setting additional window behavior(s). **Required**.
-- [lpfnWndProc](#window-procedure) - pointer to the window event handler callback. **Required**.
-- hInstance - handle to the executable module, usually the hInstance argument you get in WinMain (wWinMain). **Required**.
-- [hIcon](#icons) - handle to an icon resource used as the window icon.
-- [hCursor](#cursors) - handle to a cursor resource use as the window cursor icon.
-- hbrBackground - handle to a brush used to paint the window client area background using GDI.
-- lpszMenuName - string that specifies the resource name of a menu as it appears in your .rc file.
-- lpszClassName - string that identifies this class. Could also be an ATOM returned by a previous call to RegisterClass.
-- cbClsExtra - number of extra bytes to allocate for per-class custom app data. Rarely used today.
-- cbWndExtra - number of extra bytes to allocate for per-window custom app data.
+Required:
 
-`WNDCLASSEX` only members:
+- `style` - bitmask for setting [class styles](#class-styles).
+- `lpfnWndProc` - pointer to the [window procedure](#window-procedure) callback.
+- `hInstance` - handle to the executable module, like the hInstance parameter of WinMain or acquired with GetModuleHandle.
+- `lpszClassName` - string that identifies this class.
+- `cbSize` - the size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows
+  which version of `WNDCLASS` you're using. Extended only.
 
-- cbSize - the size of the structure in bytes. Usually `sizeof(WNDCLASSEX)`. **Required**.
-- [hIconSm](#icons) - a handle to an icon resource used as the small window icon.
+Optional:
+
+- `hIcon` - handle to an icon resource used as the [window icon](#icons).
+- `hIconSm` - a handle to an icon resource used as the small [window icon](#icons). Extended only.
+- `hCursor` - handle to a cursor resource use as the [window cursor](#cursors) icon.
+- `hbrBackground` - handle to a brush used to paint the window client area background using GDI.
+- `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
+- `cbClsExtra` - number of extra bytes to allocate for per-class custom app data. Rarely used today.
+- `cbWndExtra` - number of extra bytes to allocate for per-window custom app data.
 
 Example:
 
@@ -81,9 +88,9 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
   WNDCLASSEX wc = {0};
   wc.cbSize = sizeof(WNDCLASSEX);
-  wc.lpfnWndProc = windowProc; // callback defined elsewhere
+  wc.lpfnWndProc = windowProc; // callback declared above
   wc.hInstance = hInstance;
-  wc.lpszClassName = L"MyWindowClass";
+  wc.lpszClassName = L"MyWindowClass"; // L to treat it as WCHAR (Unicode)
 
   ATOM classAtom = RegisterClassEx(&wc);
 
@@ -91,14 +98,74 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     return EXIT_FAILURE;
   }
 
-  // Proceed with creating windows...etc.
+  // Proceed with creating window...etc.
 }
 
 ```
 
 ## CreateWindow
 
-// TODO
+To create a window, we call one of the `CreateWindow` functions:
+
+- CreateWindowA
+- CreateWindowW
+- CreateWindowExA
+- CreateWindowExW - modern, preferred
+
+You can use a macro like `CreateWindow` or `CreateWindowEx` that resolves based on the unicode settings.
+
+and pass in these parameters:
+
+Required:
+
+- `lpClassName` - string that identifies a registered class or an ATOM returned by a previous call to RegisterClass wrapped with MAKEINTATOM.
+- `X` - horizontal upper-left corner position of the window. For top-level windows, it's relative to the screen,
+  and for child windows it's relative to the upper-left corner of the parent's client area.
+- `Y` - vertical upper-left corner position of the window. For top-level windows, it's relative to the screen,
+  and for child windows it's relative to the upper-left corner of the parent's client area.
+- `nWidth` - width of the window in device units.
+- `nHeight` - height of the window in device units.
+
+Optional:
+
+- `dwExStyle` - bitmask for setting [extended window styles](#extended-window-styles).
+- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for standard Button control...etc.
+- `dwStyle` - bitmask for setting [window styles](#window-styles).
+- `hWndParent` - handle to the parent or owner window. Required for child windows, optional for top-level windows.
+- `hMenu` - handle to a menu or child window identifier.
+- `hInstance` - handle to executable module. Only required in rare cases.
+- `lpParam` - arbitrary pointer that will be available as `CREATESTRUCT.lpCreateParams` in `WM_CREATE` `lParam`.
+  You can use it to pass custom data to [window procedure](#window-procedure). Required for MDI.
+
+Example:
+
+```cpp
+const wchar_t className[] = L"MyWindowClass";
+
+// WNDCLASS struct creation
+
+ATOM classAtom = RegisterClass(&wc);
+
+HWND hwnd = CreateWindowEx(
+  0,
+  className, // or MAKEINTATOM(classAtom)
+  WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+  100, // x
+  100, // y
+  1024, // width
+  768, // height
+  nullptr, // parent
+  nullptr, // menu
+  hInstance, // could be null in most cases
+  nullptr, // lParam
+)
+
+if (!hwnd) {
+  return EXIT_FAILURE;
+}
+
+// Proceed with the message loop, rendering...etc.
+```
 
 ## Ownership
 
@@ -138,8 +205,8 @@ Legacy feature, made obsolete by DWM.
 
 There are three base window styles that you can use as a starting point:
 
-- `WS_OVERLAPPED` - top level windows
-- `WS_POPUP` - special top level windows like dialogs, menus, splash screens...etc.
+- `WS_OVERLAPPED` - top-level windows
+- `WS_POPUP` - special top-level windows like dialogs, menus, splash screens...etc.
 - `WS_CHILD` - child windows that are visually constrained / clipped in a parent window.
 
 `WS_OVERLAPPED` produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.
@@ -151,9 +218,9 @@ Client area needs to be painted for the window to be visible. Easiest way to do 
 wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // default, white background
 ```
 
-`WS_THICKFRAME` adds a resizable border and makes the titlebar taller. Its alias is `WS_SIZEBOX`.
+`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if there is a titlebar). Also adds a rounded border when used with `WS_POPUP`. Its alias is `WS_SIZEBOX`.
 
-`WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINMIZEBOX` and `WS_MAXIMIZEBOX` are used
+`WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used
 alongside it to add the minimize and maximize buttons.
 
 `WS_OVERLAPPEDWINDOW` is the full, standard overlapped window.
@@ -191,6 +258,10 @@ but only paint its own visible area. Mainly used with GDI.
 First created child window with `WS_GROUP` style marks the beginning of a group.
 
 `WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with GDI.
+
+## Extended window styles
+
+// TODO
 
 ## Message loop
 

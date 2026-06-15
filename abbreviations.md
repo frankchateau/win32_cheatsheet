@@ -220,6 +220,10 @@ Examples: `MCM_SETRANGE`, `MCM_GETCOLOR`, `MCM_GETRANGE`.
 
 Examples: `MCN_GETDAYSTATE`, `MCN_SELCHANGE`, `MCN_SELECT`.
 
+`MDI` Multiple document interface
+
+Examples: `MDICLIENT`, `DefMDIChildProcW`, `CreateMDIWindowW`.
+
 `NC` Non-client
 
 Examples: `WM_NCHITTEST`, `WM_NCCALCSIZE`, `WM_NCACTIVATE`.
@@ -298,7 +302,7 @@ Examples: `STN_CLICKED`, `STN_DBLCLK`, `STN_DISABLE`.
 
 `SZ` String, zero terminated
 
-Examples: `HSZ`.
+Examples: `HSZ`, `lpszClassName`.
 
 `T` Generic text type
 
