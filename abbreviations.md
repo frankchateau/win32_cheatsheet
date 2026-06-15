@@ -28,6 +28,10 @@ Examples: `cbSize` (size of struct), `cbClsExtra` (WNDCLASS), `cbWndExtra` (WNDC
 
 Examples: `CB_ADDSTRING`, `CB_DELETESTRING`, `CB_DIR`.
 
+`CB` Clipboard
+
+Examples: `WM_ASKCBFORMATNAME`, `WM_CHANGECBCHAIN`.
+
 `CBN` Combobox control notification
 
 Examples: `CBN_CLOSEUP`, `CBN_DBLCLK`, `CBN_DROPDOWN`.
@@ -47,6 +51,10 @@ Examples: `CCM_DPISCALE`, `CCM_GETUNICODEFORMAT`, `CCM_GETVERSION`.
 `CDM` Common dialog box message
 
 Examples: `CDM_GETFILEPATH`, `CDM_GETFOLDERIDLIST`, `CDM_GETFOLDERPATH`.
+
+`CF` Clipboard format
+
+Examples: `CF_TEXT`, `CF_BITMAP`.
 
 `CONV` Conversation
 
@@ -227,6 +235,10 @@ Examples: `MDICLIENT`, `DefMDIChildProcW`, `CreateMDIWindowW`.
 `NC` Non-client
 
 Examples: `WM_NCHITTEST`, `WM_NCCALCSIZE`, `WM_NCACTIVATE`.
+
+`OLE` Object linking and embedding
+
+Examples: `OleSetClipboard`, `OLERENDER`, `OleIsRunning`.
 
 `P` Pointer
 

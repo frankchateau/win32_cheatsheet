@@ -6,7 +6,11 @@ Windows are not just top-level application windows with a titlebar and borders, 
 control (e.g. buttons, lists...etc).
 
 The type of a window is `HWND` which is an opaque handle to the window which is managed by Windows OS.
-It is not meant to be modified directly, but rather passed to various win32 functions. (e.g. `MoveWindow(hwnd, 100, 100, 800, 600, TRUE);`)
+It is not meant to be modified directly, but rather passed to various win32 functions like:
+
+```cpp
+MoveWindow(hwnd, 100, 100, 800, 600, TRUE);
+```
 
 Each window is created from a window class that defines default / shared behavior for all windows created from it.
 The window classes in question are not C++ classes, but rather configuration templates for windows specific to win32.
@@ -125,6 +129,7 @@ Required:
   and for child windows it's relative to the upper-left corner of the parent's client area.
 - `nWidth` - width of the window in device units.
 - `nHeight` - height of the window in device units.
+- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for standard controls.
 
 Optional:
 
@@ -132,12 +137,11 @@ Optional:
 - `lpWindowName` - string that appears as the caption for windows with titlebars, button text for standard Button control...etc.
 - `dwStyle` - bitmask for setting [window styles](#window-styles).
 - `hWndParent` - handle to the parent or owner window. Required for child windows, optional for top-level windows.
-- `hMenu` - handle to a menu or child window identifier.
-- `hInstance` - handle to executable module. Only required in rare cases.
+- `hMenu` - for top-level windows this should be a handle to a menu or null, for child windows the identifier used to distinguish child controls.
 - `lpParam` - arbitrary pointer that will be available as `CREATESTRUCT.lpCreateParams` in `WM_CREATE` `lParam`.
   You can use it to pass custom data to [window procedure](#window-procedure). Required for MDI.
 
-Example:
+Example creating a top-level window:
 
 ```cpp
 const wchar_t className[] = L"MyWindowClass";
@@ -146,8 +150,8 @@ const wchar_t className[] = L"MyWindowClass";
 
 ATOM classAtom = RegisterClass(&wc);
 
-HWND hwnd = CreateWindowEx(
-  0,
+HWND myWindow = CreateWindowEx(
+  WS_EX_ACCEPTFILES, // dwExStyle
   className, // or MAKEINTATOM(classAtom)
   WS_OVERLAPPEDWINDOW | WS_VISIBLE,
   100, // x
@@ -156,15 +160,36 @@ HWND hwnd = CreateWindowEx(
   768, // height
   nullptr, // parent
   nullptr, // menu
-  hInstance, // could be null in most cases
+  hInstance, // maybe we could pass null since we already registered the class with it (?)
   nullptr, // lParam
 )
 
-if (!hwnd) {
+if (!myWindow) {
   return EXIT_FAILURE;
 }
 
 // Proceed with the message loop, rendering...etc.
+```
+
+Example creating a standard Button control/window:
+
+```cpp
+// we don't need to register the class for a standard control
+
+HWND myButton = CreateWindowEx(
+  0, // no extended styles
+  L"BUTTON", // predefined standard class
+  L"Click Me", // button text
+  WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, // child window, visible initially, tabbable, push button (classic button)
+  10, // x
+  10, // y
+  100, // width
+  30, // height
+  myWindow, // parent window
+  (HMENU)1, // control ID
+  hInstance, // probably could pass null for a standard control (?)
+  nullptr, // lpParam not used for standard controls
+);
 ```
 
 ## Ownership
@@ -183,9 +208,9 @@ if (!hwnd) {
 
 `CS_VREDRAW` - Invalidates client area when height changes. Used with GDI.
 
-`CS_CLASSDC` - All class windows share the same DC. Mainly used with GDI.
+`CS_CLASSDC` - All windows within class share the same DC. Mainly used with GDI.
 
-`CS_OWNDC` - Each class window gets its own DC. Mainly used with GDI and OpenGL.
+`CS_OWNDC` - Each window within class gets its own DC. Mainly used with GDI and OpenGL.
 
 `CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with GDI.
 
@@ -238,11 +263,10 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 
 ### Behavior styles
 
-`WS_VISIBLE` The window is visible initially.
-You can call `ShowWindow` or `SetWindowPos` to show/hide the window.
+`WS_VISIBLE` The window is visible initially. Can be modified with `ShowWindow` or `SetWindowPos`.
 
 `WS_DISABLED` The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.
-You can change this by calling `EnableWindow`.
+Can be modified with `EnableWindow`.
 
 `WS_MINIMIZE` The window is minimized initially. Its alias is `WS_ICONIC`.
 
@@ -254,14 +278,35 @@ overwriting child windows and flicker. Mainly used with GDI.
 `WS_CLIPSIBLINGS` Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with,
 but only paint its own visible area. Mainly used with GDI.
 
-`WS_GROUP` Used for grouping of child windows for keyboard navigation, focus and radio button grouping.
-First created child window with `WS_GROUP` style marks the beginning of a group.
+`WS_GROUP` Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard controls.
 
-`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with GDI.
+`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with standard controls.
 
 ## Extended window styles
 
-// TODO
+`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the shell api and `WM_DROPFILES`.
+Can be modified with `DragAcceptFiles`. Mostly legacy and replaced with OLE.
+
+`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with `SetWindowPos`.
+
+`WS_EX_APPWINDOW` Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under
+their parent window.
+
+`WS_EX_TOOLWINDOW` A tool window doesn't have a taskbar icon, has a smaller titlebar with only a close button and no app icon.
+
+`WS_EX_WINDOWEDGE` The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.
+
+`WS_EX_CLIENTEDGE` The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.
+
+`WS_EX_STATICEDGE` The window has a three-dimensional border style. Doesn't seem to have an effect on post-XP Windows.
+
+`WS_EX_DLGMODALFRAME` The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.
+
+`WS_EX_COMPOSITED` The window uses double buffering to paint. Legacy, made obsolete by DWM.
+
+| ![A tool window](./ws_ex_toolwindow.png) | ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./ws_popup_dlgframe_exclientedge.png) |
+| :--------------------------------------: | :----------------------------------------------------------------------------------------------: |
+| WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW |                           WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                           |
 
 ## Message loop
 
