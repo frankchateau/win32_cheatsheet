@@ -5,7 +5,7 @@ A window is a fundamental unit of the Windows GUI. It represents a rectangular r
 Windows are not just top-level application windows with a titlebar and borders, but can be any type of UI
 control (e.g. buttons, lists...etc).
 
-The type of a window is `HWND` which is an opaque handle to the window which is managed by Windows OS.
+The type of a window is `HWND` which is an opaque handle to the window which is managed by win32.
 It is not meant to be modified directly, but rather passed to various win32 functions like:
 
 ```cpp
@@ -68,8 +68,8 @@ Required:
 
 - `style` - bitmask for setting [class styles](#class-styles).
 - `lpfnWndProc` - pointer to the [window procedure](#window-procedure) callback.
-- `hInstance` - handle to the executable module, like the hInstance parameter of WinMain or acquired with GetModuleHandle.
-- `lpszClassName` - string that identifies this class.
+- `hInstance` - handle to the executable module, like the hInstance parameter of `WinMain` or acquired with `GetModuleHandle`.
+- `lpszClassName` - string that identifies this class. The class name is scoped to the module i.e two different modules can register a class with the same name.
 - `cbSize` - the size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows
   which version of `WNDCLASS` you're using. Extended only.
 
@@ -77,11 +77,11 @@ Optional:
 
 - `hIcon` - handle to an icon resource used as the [window icon](#icons).
 - `hIconSm` - a handle to an icon resource used as the small [window icon](#icons). Extended only.
-- `hCursor` - handle to a cursor resource use as the [window cursor](#cursors) icon.
+- `hCursor` - handle to a cursor resource used as the [window cursor](#cursors) icon by default.
 - `hbrBackground` - handle to a brush used to paint the window client area background using GDI.
 - `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
-- `cbClsExtra` - number of extra bytes to allocate for per-class custom app data. Rarely used today.
-- `cbWndExtra` - number of extra bytes to allocate for per-window custom app data.
+- `cbClsExtra` - number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.
+- `cbWndExtra` - number of extra bytes to allocate for per-window [custom app data](#custom-data).
 
 Example:
 
@@ -92,6 +92,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
   WNDCLASSEX wc = {0};
   wc.cbSize = sizeof(WNDCLASSEX);
+  ws.style = CS_HREDRAW | CS_VREDRAW;
   wc.lpfnWndProc = windowProc; // callback declared above
   wc.hInstance = hInstance;
   wc.lpszClassName = L"MyWindowClass"; // L to treat it as WCHAR (Unicode)
@@ -198,6 +199,8 @@ HWND myButton = CreateWindowEx(
 
 ## Class styles
 
+These styles are used when [registering a class](#registerclass).
+
 `CS_DBLCLKS` - Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).
 
 `CS_NOCLOSE` - Disables the close button on the window.
@@ -226,6 +229,8 @@ Legacy feature, made obsolete by DWM.
 
 ## Window styles
 
+These styles are used when [creating a window](#createwindow).
+
 ### Visual styles
 
 There are three base window styles that you can use as a starting point:
@@ -243,7 +248,7 @@ Client area needs to be painted for the window to be visible. Easiest way to do 
 wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // default, white background
 ```
 
-`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if there is a titlebar). Also adds a rounded border when used with `WS_POPUP`. Its alias is `WS_SIZEBOX`.
+`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if present). Also adds a rounded border when used with `WS_POPUP`. Its alias is `WS_SIZEBOX`.
 
 `WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used
 alongside it to add the minimize and maximize buttons.
@@ -284,15 +289,44 @@ but only paint its own visible area. Mainly used with GDI.
 
 ## Extended window styles
 
-`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the shell api and `WM_DROPFILES`.
-Can be modified with `DragAcceptFiles`. Mostly legacy and replaced with OLE.
+These styles are used when [creating a window](#createwindow).
 
-`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with `SetWindowPos`.
+### Taskbar / titlebar / visual styles
 
 `WS_EX_APPWINDOW` Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under
 their parent window.
 
 `WS_EX_TOOLWINDOW` A tool window doesn't have a taskbar icon, has a smaller titlebar with only a close button and no app icon.
+
+`WS_EX_OVERLAPPEDWINDOW` Defined as `WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE`.
+
+`WS_EX_PALETTEWINDOW` Defined as `WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST`.
+
+| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./ws_ex_toolwindow.png) |
+| :-----------------------------------------------------------------------------: |
+|                    WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW                     |
+
+### Graphics / transparency
+
+`WS_EX_NOREDIRECTIONBITMAP` Tells DWM to not create a GDI backing surface for the window meaning the client area will not be rendered by default. To present the client area, you need to use the DirectComposition API or similar.
+
+`WS_EX_LAYERED` Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.
+Can be used to create non-rectangular shaped windows (e.g. Winamp skins). Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).
+More on [layered windows](#layered-window).
+
+`WS_EX_COMPOSITED` The window uses double buffering to paint to reduce flicker. Legacy, made obsolete by DWM.
+
+| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./ws_overlappedwindow_exnoredirectionbitmap.png) |
+| :---------------------------------------------------------------------------------------------------------------: |
+|                                 WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP                                 |
+
+### Z-order / activation
+
+`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with `SetWindowPos`.
+
+`WS_EX_NOACTIVATE` The window is not activated (brought to the foreground) when clicked on. It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it. Can be modified with `SetActiveWindow` and `SetForegroundWindow`.
+
+### Frame / border
 
 `WS_EX_WINDOWEDGE` The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.
 
@@ -302,11 +336,42 @@ their parent window.
 
 `WS_EX_DLGMODALFRAME` The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.
 
-`WS_EX_COMPOSITED` The window uses double buffering to paint. Legacy, made obsolete by DWM.
+| ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./ws_popup_dlgframe_exclientedge.png) |
+| :----------------------------------------------------------------------------------------------: |
+|                           WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                           |
 
-| ![A tool window](./ws_ex_toolwindow.png) | ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./ws_popup_dlgframe_exclientedge.png) |
-| :--------------------------------------: | :----------------------------------------------------------------------------------------------: |
-| WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW |                           WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                           |
+### Reading order (LTR/RTL) / layout
+
+`WS_EX_LEFTSCROLLBAR` The vertical scrollbar (if present) is to the left of the client area.
+
+`WS_EX_RIGHTSCROLLBAR` The vertical scrollbar (if present) is to the right of the client area. This is the default for `WS_VSCROLL`.
+
+`WS_EX_LAYOUTRTL` Flips the horizontal origin of the window client area. Increasing horizontal values advance to the left.
+
+`WS_EX_LTRREADING` Text is drawn left-to-right. This is the default.
+
+`WS_EX_RTLREADING` Text is drawn right-to-left.
+
+`WS_EX_NOINHERITLAYOUT` The layout is not inherited from parent to child windows.
+
+`WS_EX_LEFT` The window has generic left-aligned properties (?). This is the default.
+
+`WS_EX_RIGHT` The window has generic right-aligned properties (?).
+
+### Other
+
+`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the shell api and `WM_DROPFILES`.
+Can be modified with `DragAcceptFiles`. Mostly legacy and replaced with OLE.
+
+`WS_EX_CONTROLPARENT` The children of this window become included in focus navigation via Tab and Arrow keys instead
+of treating the whole window as one focusable item.
+
+`WS_EX_NOPARENTNOTIFY` The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.
+
+`WS_EX_MDICHILD` The window is an MDI child.
+
+`WS_EX_CONTEXTHELP` The window titlebar shows a help icon which when clicked, changes the cursor to a help cursor that can be used
+to click around the window to open help popups via `WM_HELP` and `WinHelp`. Doesn't seem to have an effect post Windows 95.
 
 ## Message loop
 
@@ -324,14 +389,18 @@ their parent window.
 
 // TODO
 
-## Custom data
-
-// TODO
-
 ## Standard controls
 
 // TODO
 
 ## Common controls
+
+// TODO
+
+## Layered window
+
+// TODO
+
+## Custom data
 
 // TODO
