@@ -5,7 +5,7 @@ A window is a fundamental unit of the Windows GUI. It represents a rectangular r
 Windows are not just top-level application windows with a titlebar and borders, but can be any type of UI
 control (e.g. buttons, lists...etc).
 
-The type of a window is `HWND` which is an opaque handle to the window which is managed by win32.
+The type of a window is [`HWND`](./types.md#hwnd) which is an opaque handle to the window which is managed by win32.
 It is not meant to be modified directly, but rather passed to various win32 functions like:
 
 ```cpp
@@ -15,7 +15,7 @@ MoveWindow(hwnd, 100, 100, 800, 600, TRUE);
 Each window is created from a window class that defines default / shared behavior for all windows created from it.
 The window classes in question are not C++ classes, but rather configuration templates for windows specific to win32.
 
-There are predefined built-in classes ([standard](#standard-controls) and [common](#common-controls) controls),
+There are predefined built-in classes in the [control library](./controls.md),
 but you can create custom ones using [RegisterClass](#registerclass).
 
 For the main application window, you'd typically register your own custom class.
@@ -36,6 +36,23 @@ Titlebar and frame are called non-client area.
 | :---------------------------------: |
 |            Window parts             |
 
+## Ownership
+
+There are 3 types of windows in terms of ownership:
+
+- Top-level
+- Owned top-level
+- Child
+
+Top-level windows are independent windows positioned in screen coordinates such as a main application window.
+
+Owned top-level windows are still positioned in screen coordinates and can visually leave their parent's bounds, but are dependent on their parent window in certain ways. They are always in front of their parent. They are minimized and restored with the parent except in some special cases (e.g. modal dialogs).
+They are destroyed when the parent is destroyed.
+
+| ![Window ownership](./window_ownership.png) |
+| :-----------------------------------------: |
+|              Window ownership               |
+
 ## RegisterClass
 
 Before creating a custom window, a custom window class must be registered.
@@ -51,7 +68,7 @@ To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCL
 - RegisterClassExA
 - RegisterClassExW - modern, preferred
 
-You can use a macro like `RegisterClass` or `RegisterClassEx` that resolves based on the unicode settings.
+You can use a macro like `RegisterClass` or `RegisterClassEx` that resolves based on the [unicode settings](./unicode_ansi.md).
 
 `WNDCLASS` structs:
 
@@ -60,7 +77,7 @@ You can use a macro like `RegisterClass` or `RegisterClassEx` that resolves base
 - WNDCLASSEXA
 - WNDCLASSEXW - modern, preferred
 
-You can use an alias like `WNDCLASS` or `WNDCLASSEX` that resolves based on the unicode settings.
+You can use an alias like `WNDCLASS` or `WNDCLASSEX` that resolves based on the [unicode settings](./unicode_ansi.md).
 
 `WNDCLASS` members:
 
@@ -77,8 +94,8 @@ Optional:
 
 - `hIcon` - handle to an icon resource used as the [window icon](#icons).
 - `hIconSm` - a handle to an icon resource used as the small [window icon](#icons). Extended only.
-- `hCursor` - handle to a cursor resource used as the [window cursor](#cursors) icon by default.
-- `hbrBackground` - handle to a brush used to paint the window client area background using GDI.
+- `hCursor` - handle to a cursor resource used as the [window cursor](#cursor) icon by default.
+- `hbrBackground` - handle to a brush used to paint the window client area background using [GDI](./gdi.md).
 - `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
 - `cbClsExtra` - number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.
 - `cbWndExtra` - number of extra bytes to allocate for per-window [custom app data](#custom-data).
@@ -117,25 +134,25 @@ To create a window, we call one of the `CreateWindow` functions:
 - CreateWindowExA
 - CreateWindowExW - modern, preferred
 
-You can use a macro like `CreateWindow` or `CreateWindowEx` that resolves based on the unicode settings.
+You can use a macro like `CreateWindow` or `CreateWindowEx` that resolves based on the [unicode settings](./unicode_ansi.md).
 
 and pass in these parameters:
 
 Required:
 
-- `lpClassName` - string that identifies a registered class or an ATOM returned by a previous call to RegisterClass wrapped with MAKEINTATOM.
+- `lpClassName` - string that identifies a registered class or an [`ATOM`](./types.md#atom) returned by a previous call to [`RegisterClass`](#registerclass) wrapped with MAKEINTATOM.
 - `X` - horizontal upper-left corner position of the window. For top-level windows, it's relative to the screen,
   and for child windows it's relative to the upper-left corner of the parent's client area.
 - `Y` - vertical upper-left corner position of the window. For top-level windows, it's relative to the screen,
   and for child windows it's relative to the upper-left corner of the parent's client area.
 - `nWidth` - width of the window in device units.
 - `nHeight` - height of the window in device units.
-- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for standard controls.
+- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for [standard controls](./controls.md).
 
 Optional:
 
 - `dwExStyle` - bitmask for setting [extended window styles](#extended-window-styles).
-- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for standard Button control...etc.
+- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for [standard Button control](./controls.md#button)...etc.
 - `dwStyle` - bitmask for setting [window styles](#window-styles).
 - `hWndParent` - handle to the parent or owner window. Required for child windows, optional for top-level windows.
 - `hMenu` - for top-level windows this should be a handle to a menu or null, for child windows the identifier used to distinguish child controls.
@@ -172,7 +189,7 @@ if (!myWindow) {
 // Proceed with the message loop, rendering...etc.
 ```
 
-Example creating a standard Button control/window:
+Example creating a child window ([standard Button control](./controls.md#button)):
 
 ```cpp
 // we don't need to register the class for a standard control
@@ -193,10 +210,6 @@ HWND myButton = CreateWindowEx(
 );
 ```
 
-## Ownership
-
-// TODO
-
 ## Class styles
 
 These styles are used when [registering a class](#registerclass).
@@ -207,21 +220,21 @@ These styles are used when [registering a class](#registerclass).
 
 `CS_DROPSHADOW` - Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.
 
-`CS_HREDRAW` - Invalidates client area when width changes. Used with GDI.
+`CS_HREDRAW` - Invalidates client area when width changes. Used with [GDI](./gdi.md).
 
-`CS_VREDRAW` - Invalidates client area when height changes. Used with GDI.
+`CS_VREDRAW` - Invalidates client area when height changes. Used with [GDI](./gdi.md).
 
-`CS_CLASSDC` - All windows within class share the same DC. Mainly used with GDI.
+`CS_CLASSDC` - All windows within class share the same DC. Mainly used with [GDI](./gdi.md).
 
-`CS_OWNDC` - Each window within class gets its own DC. Mainly used with GDI and OpenGL.
+`CS_OWNDC` - Each window within class gets its own DC. Mainly used with [GDI](./gdi.md) and OpenGL.
 
-`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with GDI.
+`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with [GDI](./gdi.md).
 
 `CS_GLOBALCLASS` - Makes the class globally available to all other modules in the process. Rarely used today.
 
 `CS_SAVEBITS` - Saves a bitmap of the part of screen obscured by this window so when this window is removed,
 the pixels that were underneath are restored from the bitmap instead doing a full repaint.
-Legacy feature, made obsolete by DWM.
+Legacy feature, made obsolete by [DWM](./dwm.md).
 
 `CS_BYTEALIGNWINDOW` - Forces the window rectangle to start on a byte boundary in memory. Legacy feature.
 
@@ -268,7 +281,7 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 
 ### Behavior styles
 
-`WS_VISIBLE` The window is visible initially. Can be modified with `ShowWindow` or `SetWindowPos`.
+`WS_VISIBLE` The window is visible initially. Can be modified with [`ShowWindow`](#showwindow) or [`SetWindowPos`](#setwindowpos).
 
 `WS_DISABLED` The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.
 Can be modified with `EnableWindow`.
@@ -278,14 +291,14 @@ Can be modified with `EnableWindow`.
 `WS_MAXIMIZE` The window is maximized initially.
 
 `WS_CLIPCHILDREN` Child windows are excluded from the window's painting operations. Prevents parent from
-overwriting child windows and flicker. Mainly used with GDI.
+overwriting child windows and flicker. Mainly used with [GDI](./gdi.md).
 
 `WS_CLIPSIBLINGS` Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with,
-but only paint its own visible area. Mainly used with GDI.
+but only paint its own visible area. Mainly used with [GDI](./gdi.md).
 
 `WS_GROUP` Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard controls.
 
-`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with standard controls.
+`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with [standard controls](./controls.md).
 
 ## Extended window styles
 
@@ -308,13 +321,16 @@ their parent window.
 
 ### Graphics / transparency
 
-`WS_EX_NOREDIRECTIONBITMAP` Tells DWM to not create a GDI backing surface for the window meaning the client area will not be rendered by default. To present the client area, you need to use the DirectComposition API or similar.
+`WS_EX_NOREDIRECTIONBITMAP` Tells [DWM](./dwm.md) to not create a [GDI](./gdi.md) backing surface for the window meaning the client area will not be rendered by default. To present the client area, you need to use the DirectComposition API or similar.
 
 `WS_EX_LAYERED` Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.
 Can be used to create non-rectangular shaped windows (e.g. Winamp skins). Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).
 More on [layered windows](#layered-window).
 
-`WS_EX_COMPOSITED` The window uses double buffering to paint to reduce flicker. Legacy, made obsolete by DWM.
+`WS_EX_COMPOSITED` The window uses double buffering to paint to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).
+
+`WS_EX_TRANSPARENT` The child window is not painted until siblings underneath it have been painted. This allows for the top window to be blended with
+windows underneath. This only affects the paint order (which is top-down by default), not the actual transparent rendering.
 
 | ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./ws_overlappedwindow_exnoredirectionbitmap.png) |
 | :---------------------------------------------------------------------------------------------------------------: |
@@ -322,9 +338,9 @@ More on [layered windows](#layered-window).
 
 ### Z-order / activation
 
-`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with `SetWindowPos`.
+`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with [`SetWindowPos`](#setwindowpos).
 
-`WS_EX_NOACTIVATE` The window is not activated (brought to the foreground) when clicked on. It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it. Can be modified with `SetActiveWindow` and `SetForegroundWindow`.
+`WS_EX_NOACTIVATE` The window is not activated (brought to the foreground) when clicked on. It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it. Can be modified with [`SetActiveWindow`](#setactivewindow) and [`SetForegroundWindow`](#setforegroundwindow).
 
 ### Frame / border
 
@@ -360,8 +376,8 @@ More on [layered windows](#layered-window).
 
 ### Other
 
-`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the shell api and `WM_DROPFILES`.
-Can be modified with `DragAcceptFiles`. Mostly legacy and replaced with OLE.
+`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.
+Can be modified with [`DragAcceptFiles`](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.
 
 `WS_EX_CONTROLPARENT` The children of this window become included in focus navigation via Tab and Arrow keys instead
 of treating the whole window as one focusable item.
@@ -385,15 +401,7 @@ to click around the window to open help popups via `WM_HELP` and `WinHelp`. Does
 
 // TODO
 
-## Cursors
-
-// TODO
-
-## Standard controls
-
-// TODO
-
-## Common controls
+## Cursor
 
 // TODO
 
@@ -402,5 +410,21 @@ to click around the window to open help popups via `WM_HELP` and `WinHelp`. Does
 // TODO
 
 ## Custom data
+
+// TODO
+
+## ShowWindow
+
+// TODO
+
+## SetWindowPos
+
+// TODO
+
+## SetActiveWindow
+
+// TODO
+
+## SetForegroundWindow
 
 // TODO

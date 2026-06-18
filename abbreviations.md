@@ -236,6 +236,10 @@ Examples: `MDICLIENT`, `DefMDIChildProcW`, `CreateMDIWindowW`.
 
 Examples: `WM_NCHITTEST`, `WM_NCCALCSIZE`, `WM_NCACTIVATE`.
 
+`NL` National language
+
+Examples: `WinNls.h`
+
 `OLE` Object linking and embedding
 
 Examples: `OleSetClipboard`, `OLERENDER`, `OleIsRunning`.
@@ -268,6 +272,10 @@ Examples: `PSN_APPLY`, `PSN_GETOBJECT`, `PSN_HELP`.
 
 Examples: `INT_PTR` (used to type something that can hold either an int or a pointer), `LONG_PTR`.
 
+`Q` Quad
+
+Examples `QWORD` (4xWORD=64).
+
 `RB` Rebar control message
 
 Examples: `RB_GETPALETTE`, `RB_GETRECT`, `RB_GETROWCOUNT`.
@@ -299,6 +307,10 @@ Examples: `SBN_SIMPLEMODECHANGE`.
 `SBM` Scroll bar message
 
 Examples: `SBM_ENABLE_ARROWS`, `SBM_GETPOS`, `SBM_GETRANGE`.
+
+`SC` Service control
+
+Examples: [`SC_HANDLE`](./types.md#sc_handle), `OpenSCManagerW`, [`SC_LOCK`](./types.md#sc_lock).
 
 `SPI` System parameters info
 
