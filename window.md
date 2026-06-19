@@ -32,9 +32,9 @@ The main parts of a window are:
 
 Titlebar and frame are called non-client area.
 
-| ![Window parts](./window_parts.png) |
-| :---------------------------------: |
-|            Window parts             |
+| ![Window parts](./images/window_parts.png) |
+| :----------------------------------------: |
+|                Window parts                |
 
 ## Ownership
 
@@ -49,9 +49,9 @@ Top-level windows are independent windows positioned in screen coordinates such 
 Owned top-level windows are still positioned in screen coordinates and can visually leave their parent's bounds, but are dependent on their parent window in certain ways. They are always in front of their parent. They are minimized and restored with the parent except in some special cases (e.g. modal dialogs).
 They are destroyed when the parent is destroyed.
 
-| ![Window ownership](./window_ownership.png) |
-| :-----------------------------------------: |
-|              Window ownership               |
+| ![Window ownership](./images/window_ownership.png) |
+| :------------------------------------------------: |
+|                  Window ownership                  |
 
 ## RegisterClass
 
@@ -251,9 +251,9 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 
 `WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
 
-| ![Window with WS_OVERLAPPEDWINDOW style](./ws_overlappedwindow.png) | ![Window with WS_POPUP style](./ws_popup.png) |
-| :-----------------------------------------------------------------: | :-------------------------------------------: |
-|            WS_OVERLAPPEDWINDOW with the system menu open            |             WS_POPUP only window              |
+| ![Window with WS_OVERLAPPEDWINDOW style](./images/ws_overlappedwindow.png) | ![Window with WS_POPUP style](./images/ws_popup.png) |
+| :------------------------------------------------------------------------: | :--------------------------------------------------: |
+|               WS_OVERLAPPEDWINDOW with the system menu open                |                 WS_POPUP only window                 |
 
 ### Behavior styles
 
@@ -291,9 +291,9 @@ their parent window.
 
 `WS_EX_PALETTEWINDOW` Defined as `WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST`.
 
-| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./ws_ex_toolwindow.png) |
-| :-----------------------------------------------------------------------------: |
-|                    WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW                     |
+| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./images/ws_ex_toolwindow.png) |
+| :------------------------------------------------------------------------------------: |
+|                        WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW                        |
 
 ### Graphics / transparency
 
@@ -308,9 +308,9 @@ More on [layered windows](#layered-window).
 `WS_EX_TRANSPARENT` The child window is not painted until siblings underneath it have been painted. This allows for the top window to be blended with
 windows underneath. This only affects the paint order (which is top-down by default), not the actual transparent rendering.
 
-| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./ws_overlappedwindow_exnoredirectionbitmap.png) |
-| :---------------------------------------------------------------------------------------------------------------: |
-|                                 WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP                                 |
+| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./images/ws_overlappedwindow_exnoredirectionbitmap.png) |
+| :----------------------------------------------------------------------------------------------------------------------: |
+|                                    WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP                                     |
 
 ### Z-order / activation
 
@@ -328,7 +328,7 @@ windows underneath. This only affects the paint order (which is top-down by defa
 
 `WS_EX_DLGMODALFRAME` The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.
 
-| ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./ws_popup_dlgframe_exclientedge.png) |
+| ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./images/ws_popup_dlgframe_exclientedge.png) |
 | :----------------------------------------------------------------------------------------------: |
 |                           WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                           |
 
