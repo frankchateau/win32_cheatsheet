@@ -1,418 +1,637 @@
 # Abbreviations
 
-`ACM` Animation control message
+## ACM
 
-Examples: `ACM_OPEN`, `ACM_PLAY`, `ACM_STOP`.
+Animation control message
 
-`ACN` Animation control notification
+`ACM_OPEN`, `ACM_PLAY`, `ACM_STOP`
 
-Examples: `ACN_START`, `ACN_STOP`.
+## ACN
 
-`BM` or `BCM` Button control message
+Animation control notification
 
-Examples: `BM_CLICK`, `BM_GETIMAGE`, `BCM_SETSHIELD`.
+`ACN_START`, `ACN_STOP`
 
-`BN` or `BCN` Button control notification
+## BM or BCM
 
-Examples: `BCN_DROPDOWN`, `BCN_HOTITEMCHANGE`, `BN_CLICKED`.
+Button control message
 
-`C` Constant type
+`BM_CLICK`, `BM_GETIMAGE`, `BCM_SETSHIELD`
 
-Examples: `LPCSTR` (constant string), `LPCVOID` (constant any).
+## BN or BCN
 
-`cb` Count of bytes
+Button control notification
 
-Examples: `cbSize` (size of struct), `cbClsExtra` (WNDCLASS), `cbWndExtra` (WNDCLASS).
+`BCN_DROPDOWN`, `BCN_HOTITEMCHANGE`, `BN_CLICKED`
 
-`CB` Combobox control message
+## C
 
-Examples: `CB_ADDSTRING`, `CB_DELETESTRING`, `CB_DIR`.
+Constant type
 
-`CB` Clipboard
+[LPCSTR](./types.md#lpcstr), [LPCVOID](./types.md#lpcvoid)
 
-Examples: `WM_ASKCBFORMATNAME`, `WM_CHANGECBCHAIN`.
+## cb
 
-`CBN` Combobox control notification
+Count of bytes
 
-Examples: `CBN_CLOSEUP`, `CBN_DBLCLK`, `CBN_DROPDOWN`.
+`cbSize` (size of struct), `cbClsExtra`, `cbWndExtra`
 
-`CBM` ComboboxEx messages
+## CB
 
-Examples: `CBEM_DELETEITEM`, `CBEM_GETCOMBOCONTROL`, `CBEM_GETEDITCONTROL`.
+Clipboard
 
-`CBN` ComboboxEx notification
+`WM_ASKCBFORMATNAME`, `WM_CHANGECBCHAIN`
 
-Examples: `CBEN_BEGINEDIT`, `CBEN_DELETEITEM`, `CBEN_DRAGBEGIN`.
+Combobox control message
 
-`CCM` Control message
+`CB_ADDSTRING`, `CB_DELETESTRING`, `CB_DIR`
 
-Examples: `CCM_DPISCALE`, `CCM_GETUNICODEFORMAT`, `CCM_GETVERSION`.
+## CBN
 
-`CDM` Common dialog box message
+Combobox control notification
 
-Examples: `CDM_GETFILEPATH`, `CDM_GETFOLDERIDLIST`, `CDM_GETFOLDERPATH`.
+`CBN_CLOSEUP`, `CBN_DBLCLK`, `CBN_DROPDOWN`
 
-`CF` Clipboard format
+## CBM
 
-Examples: `CF_TEXT`, `CF_BITMAP`.
+ComboboxEx messages
 
-`CONV` Conversation
+`CBEM_DELETEITEM`, `CBEM_GETCOMBOCONTROL`, `CBEM_GETEDITCONTROL`
 
-Examples: `HCONV`, `HCONVLIST` (conversation list).
+## CBEN
 
-`CS` Class style
+ComboboxEx notification
 
-Examples: `CS_DBLCLKS`, `CS_PARENTDC`, `CS_VREDRAW`.
+`CBEN_BEGINEDIT`, `CBEN_DELETEITEM`, `CBEN_DRAGBEGIN`
 
-`CW` Create window
+## CCM
 
-Examples: `CW_USEDEFAULT`.
+Control message
 
-`D` Double something type
+`CCM_DPISCALE`, `CCM_GETUNICODEFORMAT`, `CCM_GETVERSION`
 
-Examples `DWORD` (double of `WORD`), `DWORDLONG`, `DWORD_PTR`.
+## CDM
 
-`DBLCLK` Double click
+Common dialog box message
 
-Examples: `WM_LBUTTONDBLCLK`, `WM_RBUTTONDBLCLK`, `WM_XBUTTONDBLCLK`.
+`CDM_GETFILEPATH`, `CDM_GETFOLDERIDLIST`, `CDM_GETFOLDERPATH`
 
-`DC` Device context
+## CF
 
-Examples: `HDC`.
+Clipboard format
 
-`DDE` Dynamic data exchange
+`CF_TEXT`, `CF_BITMAP`
 
-Examples: `HDDEDATA`.
+## CONV
 
-`DESK` Desktop
+Conversation
 
-Examples: `HDESK`.
+`HCONV`, `HCONVLIST` (conversation list).
 
-`DL` Drag list box notification
+## CS
 
-Examples: `DL_BEGINDRAG`, `DL_CANCELDRAG`, `DL_DRAGGING`.
+Class style
 
-`DLG` Dialog
+[CS_DBLCLKS](./window.md#class-styles), [CS_PARENTDC](./window.md#class-styles), [CS_VREDRAW](./window.md#class-styles)
 
-Examples: `DLGITEMTEMPLATE`, `GetNextDlgGroupItem`, `DLGPROC`.
+## CW
 
-`DM` Dialog box message
+Create window
 
-Examples: `DM_GETDEFID`, `DM_REPOSITION`, `DM_SETDEFID`.
+[CW_USEDEFAULT](./window.md#createwindow)
 
-`DTM` Date and time picker message
+## D
 
-Examples: `DTM_CLOSEMONTHCAL`, `DTM_GETDATETIMEPICKERINFO`, `DTM_GETIDEALSIZE`.
+Double something
 
-`DTN` Date and time picker notification
+[DWORD](./types.md#dword), [DWORDLONG](./types.md#dwordlong), [DWORD_PTR](./types.md#dword_ptr)
 
-Examples: `DTN_CLOSEUP`, `DTN_DATETIMECHANGE`, `DTN_DROPDOWN`.
+## DBLCLK
 
-`DWP` Desktop window manager
+Double click
 
-Examples: `WM_DWMCOLORIZATIONCOLORCHANGED`, `DwmGetWindowAttribute`.
+`WM_LBUTTONDBLCLK`, `WM_RBUTTONDBLCLK`, `WM_XBUTTONDBLCLK`
 
-`DWP` Deferred window position
+## DC
 
-Examples: `HDWP`.
+Device context
 
-`EM` Edit control message (and rich edit)
+[HDC](./types.md#hdc)
 
-Examples: `EM_CANUNDO`, `EM_CHARFROMPOS`, `EM_EMPTYUNDOBUFFER`.
+## DDE
 
-`EN` Edit control notification (and rich edit)
+Dynamic data exchange
 
-Examples: `EN_HSCROLL`, `EN_KILLFOCUS`, `EN_MAXTEXT`.
+[HDDEDATA](./types.md#hddedata)
 
-`ENH` Enhanced
+## DESK
 
-Examples: `HENHMETAFILE`.
+Desktop
 
-`EX` Extended
+[HDESK](./types.md#hdesk)
 
-Examples: `WS_EX_ACCEPTFILES`, `CreateWindowEx`, `TITLEBARINFOEX`.
+## DL
 
-`GDI` Graphics device interface
+Drag list box notification
 
-Examples: `HGDIOBJ`.
+`DL_BEGINDRAG`, `DL_CANCELDRAG`, `DL_DRAGGING`
 
-`H` (opaque) Handle
+## DLG
 
-Examples: `HWND`, `HINSTANCE`, `HICON`, `HDC`, `HDWP`.
+Dialog
 
-`hbr` Handle to a brush resource
+`DLGITEMTEMPLATE`, `GetNextDlgGroupItem`, `DLGPROC`
 
-Examples: `hbrBackground` (WNDCLASS).
+## DM
 
-`HDM` Header control message
+Dialog box message
 
-Examples: `HDM_HITTEST`, `HDM_INSERTITEM`, `HDM_LAYOUT`.
+`DM_GETDEFID`, `DM_REPOSITION`, `DM_SETDEFID`
 
-`HDN` Header control notification
+## DTM
 
-Examples: `HDN_BEGINDRAG`, `HDN_BEGINFILTEREDIT`, `HDN_BEGINTRACK`.
+Date and time picker message
 
-`HKM` Hot key control message
+`DTM_CLOSEMONTHCAL`, `DTM_GETDATETIMEPICKERINFO`, `DTM_GETIDEALSIZE`
 
-Examples: `HKM_GETHOTKEY`, `HKM_SETHOTKEY`, `HKM_SETRULES`.
+## DTN
 
-`HT` Hit test
+Date and time picker notification
 
-Examples: `HTLEFT`, `HTCLIENT`, `HTMINBUTTON`.
+`DTN_CLOSEUP`, `DTN_DATETIMECHANGE`, `DTN_DROPDOWN`
 
-`IDC` ID of a cursor resource
+## DWP
 
-Examples: `IDC_ARROW`, `IDC_HELP`, `IDC_WAIT`.
+Desktop window manager
 
-`IDI` ID of an icon resource
+`WM_DWMCOLORIZATIONCOLORCHANGED`, `DwmGetWindowAttribute`
 
-Examples: `IDI_APPLICATION`, `IDI_ERROR`, `IDI_INFORMATION`.
+## DWP
 
-`IPM` IP address message
+Deferred window position
 
-Examples: `IPM_SETADDRESS`, `IPM_SETFOCUS`, `IPM_SETRANGE`.
+[HDWP](./types.md#hdwp)
 
-`IPN` IP address notification
+## EM
 
-Examples: `IPN_FIELDCHANGED`.
+Edit control message (and rich edit)
 
-`KL` Keyboard layout
+`EM_CANUNDO`, `EM_CHARFROMPOS`, `EM_EMPTYUNDOBUFFER`
 
-Examples: `HKL`.
+## EN
 
-`L` Long something type
+Edit control notification (and rich edit)
 
-Examples `LPARAM` (long parameter).
+`EN_HSCROLL`, `EN_KILLFOCUS`, `EN_MAXTEXT`
 
-`L` Left
+## ENH
 
-Examples `WM_LBUTTONDBLCLK`.
+Enhanced
 
-`LB` List box message
+[HENHMETAFILE](./types.md#henhmetafile).
 
-Examples: `LB_GETTEXT`, `LB_GETTEXTLEN`, `LB_GETTOPINDEX`.
+## EX
 
-`LBN` List box notification
+Extended
 
-Examples: `LBN_DBLCLK`, `LBN_ERRSPACE`, `LBN_KILLFOCUS`.
+[WS_EX_ACCEPTFILES](./window.md#extended-window-styles), [CreateWindowEx](./window.md#createwindow), `TITLEBARINFOEX`
 
-`LC` Locale
+## GDI
 
-Examples `LCID`, `LCTYPE`.
+Graphics device interface
 
-`LGRP` Language group
+`HGDIOBJ`.
 
-Examples: `LGRPID`.
+## H
 
-`LM` SysLink control message
+(opaque) Handle
 
-Examples: `LM_GETITEM`, `LM_HITTEST`, `LM_SETITEM`.
+[HWND](./types.md#hwnd), [HINSTANCE](./types.md#hinstance), [HICON](./types.md#hicon)
 
-`LP` Long pointer
+## hbr
 
-Examples: `LPBOOL` (long pointer to BOOL), `LPBYTE`, `LPCOLORREF`.
+Handle to a brush resource
 
-`LVM` List view message
+[hbrBackground](./window.md#wndclass)
 
-Examples: `LVM_DELETEITEM`, `LVM_EDITLABEL`, `LVM_ENABLEGROUPVIEW`.
+## HDM
 
-`LVN` List view notification
+Header control message
 
-Examples: `LVN_BEGINSCROLL`, `LVN_COLUMNCLICK`, `LVN_KEYDOWN`.
+`HDM_HITTEST`, `HDM_INSERTITEM`, `HDM_LAYOUT`
 
-`MCM` Month calendar message
+## HDN
 
-Examples: `MCM_SETRANGE`, `MCM_GETCOLOR`, `MCM_GETRANGE`.
+Header control notification
 
-`MCN` Month calendar notification
+`HDN_BEGINDRAG`, `HDN_BEGINFILTEREDIT`, `HDN_BEGINTRACK`
 
-Examples: `MCN_GETDAYSTATE`, `MCN_SELCHANGE`, `MCN_SELECT`.
+## HKM
 
-`MDI` Multiple document interface
+Hot key control message
 
-Examples: `MDICLIENT`, `DefMDIChildProcW`, `CreateMDIWindowW`.
+`HKM_GETHOTKEY`, `HKM_SETHOTKEY`, `HKM_SETRULES`
 
-`NC` Non-client
+## HT
 
-Examples: `WM_NCHITTEST`, `WM_NCCALCSIZE`, `WM_NCACTIVATE`.
+Hit test
 
-`NL` National language
+`HTLEFT`, `HTCLIENT`, `HTMINBUTTON`
 
-Examples: `WinNls.h`
+## IDC
 
-`OLE` Object linking and embedding
+ID of a cursor resource
 
-Examples: `OleSetClipboard`, `OLERENDER`, `OleIsRunning`.
+`IDC_ARROW`, `IDC_HELP`, `IDC_WAIT`
 
-`P` Pointer
+## IDI
 
-Examples: `PBOOL`, `PBYTE`, `PCTSTR`.
+ID of an icon resource
 
-`PBM` Progress bar message
+`IDI_APPLICATION`, `IDI_ERROR`, `IDI_INFORMATION`
 
-Examples: `PBM_SETBKCOLOR`, `PBM_SETMARQUEE`, `PBM_SETPOS`.
+## IPM
 
-`PGM` Pager control message
+IP address message
 
-Examples: `PGM_GETPOS`, `PGM_RECALCSIZE`, `PGM_SETBKCOLOR`.
+`IPM_SETADDRESS`, `IPM_SETFOCUS`, `IPM_SETRANGE`
 
-`PGN` Pager control notification
+## IPN
 
-Examples: `PGN_CALCSIZE`, `PGN_HOTITEMCHANGE`, `PGN_SCROLL`.
+IP address notification
 
-`PSM` Property sheet message
+`IPN_FIELDCHANGED`.
 
-Examples: `PSM_ADDPAGE`, `PSM_APPLY`, `PSM_GETRESULT`.
+## KL
 
-`PSN` Property sheet notification
+Keyboard layout
 
-Examples: `PSN_APPLY`, `PSN_GETOBJECT`, `PSN_HELP`.
+`HKL`.
 
-`PTR` Pointer
+## L
 
-Examples: `INT_PTR` (used to type something that can hold either an int or a pointer), `LONG_PTR`.
+Long something
 
-`Q` Quad
+[LPARAM](./types.md#lparam) (long parameter).
 
-Examples `QWORD` (4xWORD=64).
+Left
 
-`RB` Rebar control message
+`WM_LBUTTONDBLCLK`.
 
-Examples: `RB_GETPALETTE`, `RB_GETRECT`, `RB_GETROWCOUNT`.
+## LB
 
-`RBN` Rebar control notification
+List box message
 
-Examples: `RBN_AUTOBREAK`, `RBN_AUTOSIZE`, `RBN_BEGINDRAG`
+`LB_GETTEXT`, `LB_GETTEXTLEN`, `LB_GETTOPINDEX`.
 
-`rc` Rect
+## LBN
 
-Examples: `rcPaint` (PAINTSTRUCT).
+List box notification
 
-`RGN` Region
+`LBN_DBLCLK`, `LBN_ERRSPACE`, `LBN_KILLFOCUS`.
 
-Examples: `HRGN`.
+## LC
 
-`RSRC` Resource
+Locale
 
-Examples `HRSRC`.
+[LCID](./types.md#lcid), [LCTYPE](./types.md#lctype).
 
-`SB` Status bar messsage
+## LGRP
 
-Examples: `SB_GETICON`, `SB_GETPARTS`, `SB_GETRECT`.
+Language group
 
-`SBN` Status bar notification
+[LGRPID](./types.md#lgrpid)
 
-Examples: `SBN_SIMPLEMODECHANGE`.
+## LM
 
-`SBM` Scroll bar message
+SysLink control message
 
-Examples: `SBM_ENABLE_ARROWS`, `SBM_GETPOS`, `SBM_GETRANGE`.
+`LM_GETITEM`, `LM_HITTEST`, `LM_SETITEM`.
 
-`SC` Service control
+## LP
 
-Examples: [`SC_HANDLE`](./types.md#sc_handle), `OpenSCManagerW`, [`SC_LOCK`](./types.md#sc_lock).
+Long pointer
 
-`SPI` System parameters info
+[LPBOOL](./types.md#lpbool), [lpszMenuName](./window.md#wndclass), [LPBYTE](./types.md#lpbyte)
 
-Examples: `SPI_GETSTICKYKEYS`, `SPI_GETDESKWALLPAPER`, `SPI_GETBEEP`.
+## LVM
 
-`STM` Static control message
+List view message
 
-Examples: `STM_GETICON`, `STM_GETIMAGE`, `STM_SETICON`.
+`LVM_DELETEITEM`, `LVM_EDITLABEL`, `LVM_ENABLEGROUPVIEW`.
 
-`STN` Static control notification
+## LVN
 
-Examples: `STN_CLICKED`, `STN_DBLCLK`, `STN_DISABLE`.
+List view notification
 
-`SZ` String, zero terminated
+`LVN_BEGINSCROLL`, `LVN_COLUMNCLICK`, `LVN_KEYDOWN`.
 
-Examples: `HSZ`, `lpszClassName`.
+## MCM
 
-`T` Generic text type
+Month calendar message
 
-Examples: `LPCTSTR` (resolves to `LPCWSTR` for Unicode and `LPCSTR` for ANSI),
-`TCHAR` (`WCHAR` for Unicode, `CHAR` for ANSI).
+`MCM_SETRANGE`, `MCM_GETCOLOR`, `MCM_GETRANGE`.
 
-`TB` Toolbar control message
+## MCN
 
-Examples: `TB_SETSTYLE`, `TB_GETRECT`, `TB_AUTOSIZE`.
+Month calendar notification
 
-`TBN` Toolbar control notification
+`MCN_GETDAYSTATE`, `MCN_SELCHANGE`, `MCN_SELECT`.
 
-Examples: `TBN_GETBUTTONINFO`, `TBN_GETDISPINFO`, `TBN_GETINFOTIP`.
+## MDI
 
-`TBM` Trackbar control message
+Multiple document interface
 
-Examples: `TBM_SETRANGE`, `TBM_CLEARSEL`, `TBM_SETBUDDY`.
+`MDICLIENT`, `DefMDIChildProcW`, `CreateMDIWindowW`.
 
-`TRBN` Trackbar control notification
+## NC
 
-Examples: `TRBN_THUMBPOSCHANGING`.
+Non-client
 
-`TCM` Tab control message
+`WM_NCHITTEST`, `WM_NCCALCSIZE`, `WM_NCACTIVATE`.
 
-Examples: `TCM_DELETEITEM`, `TCM_GETITEM`, `TCM_SETITEM`.
+## NL
 
-`TCN`Tab control notification
+National language
 
-Examples: `TCN_FOCUSCHANGE`, `TCN_GETOBJECT`, `TCN_KEYDOWN`.
+`WinNls.h`
 
-`TDM` Task dialog message
+## OLE
 
-Examples: `TDM_CLICK_BUTTON`, `TDM_UPDATE_ICON`, `TDM_NAVIGATE_PAGE`.
+Object linking and embedding
 
-`TDN` Task dialog notification
+`OleSetClipboard`, `OLERENDER`, `OleIsRunning`.
 
-Examoles: `TDN_BUTTON_CLICKED`, `TDN_CREATED`, `TDN_DESTROYED`.
+## P
 
-`TTM` Tooltip control message
+Pointer
 
-Examples: `TTM_GETTOOLINFO`, `TTM_HITTEST`, `TTM_NEWTOOLRECT`.
+[PBOOL](./types.md#pbool), [PBYTE](./types.md#pbyte), [PCTSTR](./types.md#pctstr).
 
-`TTN` Tooltip control notification
+## PBM
 
-Examples: `TTN_LINKCLICK`, `TTN_NEEDTEXT`, `TTN_POP`.
+Progress bar message
 
-`TVM` Treeview control message
+`PBM_SETBKCOLOR`, `PBM_SETMARQUEE`, `PBM_SETPOS`.
 
-Examples: `TVM_EXPAND`, `TVM_GETBKCOLOR`, `TVM_GETCOUNT`.
+## PGM
 
-`TVN` Treeview control notification
+Pager control message
 
-Examples: `TVN_DELETEITEM`, `TVN_ENDLABELEDIT`, `TVN_GETDISPINFO`.
+`PGM_GETPOS`, `PGM_RECALCSIZE`, `PGM_SETBKCOLOR`.
 
-`U` Unsigned
+## PGN
 
-Examples: `UCHAR`, `UHALF_PTR`, `UINT`.
+Pager control notification
 
-`UDM` Up-down control message
+`PGN_CALCSIZE`, `PGN_HOTITEMCHANGE`, `PGN_SCROLL`.
 
-Examples: `UDM_GETBUDDY`, `UDM_GETPOS`, `UDM_GETPOS32`.
+## PSM
 
-`UDN` Up-down control notification
+Property sheet message
 
-Examples: `UDN_DELTAPOS`.
+`PSM_ADDPAGE`, `PSM_APPLY`, `PSM_GETRESULT`.
 
-`USN` Update sequence number
+## PSN
 
-Examples: `USN`.
+Property sheet notification
 
-`W` Wide char string (Unicode)
+`PSN_APPLY`, `PSN_GETOBJECT`, `PSN_HELP`.
 
-Examples: `LPCWSTR`, `LPWSTR`,
+## PTR
 
-`WINSTA` Window station
+Pointer
 
-Examples: `HWINSTA`.
+[INT_PTR](./types.md#int_ptr), [LONG_PTR](./types.md#long_ptr).
 
-`WM` Window message
+## Q
 
-Examples: `WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
+Quad
 
-`WND` Window
+[QWORD](./types.md#qword)
 
-Examples: `HWND`, `CreateHwndRenderTarget`.
+## RB
 
-`WS` Window style
+Rebar control message
 
-Examples: `WS_OVERLAPPEDWINDOW`, `WS_CHILD`, `WS_EX_ACCEPTFILES`.
+`RB_GETPALETTE`, `RB_GETRECT`, `RB_GETROWCOUNT`
+
+## RBN
+
+Rebar control notification
+
+`RBN_AUTOBREAK`, `RBN_AUTOSIZE`, `RBN_BEGINDRAG`
+
+## rc
+
+Rect
+
+`rcPaint`
+
+## RGN
+
+Region
+
+[HRGN](./types.md#hrgn)
+
+## RSRC
+
+Resource
+
+[HRSRC](./types.md#hrsrc)
+
+## SB
+
+Status bar messsage
+
+`SB_GETICON`, `SB_GETPARTS`, `SB_GETRECT`
+
+## SBN
+
+Status bar notification
+
+`SBN_SIMPLEMODECHANGE`.
+
+## SBM
+
+Scroll bar message
+
+`SBM_ENABLE_ARROWS`, `SBM_GETPOS`, `SBM_GETRANGE`
+
+## SC
+
+Service control
+
+[SC_HANDLE](./types.md#sc_handle), `OpenSCManagerW`, [SC_LOCK](./types.md#sc_lock).
+
+## SPI
+
+System parameters info
+
+`SPI_GETSTICKYKEYS`, `SPI_GETDESKWALLPAPER`, `SPI_GETBEEP`
+
+## STM
+
+Static control message
+
+`STM_GETICON`, `STM_GETIMAGE`, `STM_SETICON`
+
+## STN
+
+Static control notification
+
+`STN_CLICKED`, `STN_DBLCLK`, `STN_DISABLE`
+
+## SW
+
+Show window ([ShowWindow](./window.md#showwindow))
+
+[SW_SHOW](./window.md#showwindow-codes), [SW_RESTORE](./window.md#showwindow-codes)
+
+## SWP
+
+Set window position ([SetWindowPos](./window.md#setwindowpos))
+
+[SWP_NOSIZE](./window.md#setwindowpos), [SWP_NOMOVE](./window.md#setwindowpos)
+
+## SZ
+
+String, zero terminated
+
+[HSZ](./types.md#hsz), [lpszClassName](./window.md#wndclass)
+
+## T
+
+Generic text type
+
+[LPCTSTR](./types.md#lpctstr), [TCHAR](./types.md#tchar).
+
+## TB
+
+Toolbar control message
+
+`TB_SETSTYLE`, `TB_GETRECT`, `TB_AUTOSIZE`
+
+## TBN
+
+Toolbar control notification
+
+`TBN_GETBUTTONINFO`, `TBN_GETDISPINFO`, `TBN_GETINFOTIP`
+
+## TBM
+
+Trackbar control message
+
+`TBM_SETRANGE`, `TBM_CLEARSEL`, `TBM_SETBUDDY`
+
+## TRBN
+
+Trackbar control notification
+
+`TRBN_THUMBPOSCHANGING`.
+
+## TCM
+
+Tab control message
+
+`TCM_DELETEITEM`, `TCM_GETITEM`, `TCM_SETITEM`.
+
+## TCN
+
+Tab control notification
+
+`TCN_FOCUSCHANGE`, `TCN_GETOBJECT`, `TCN_KEYDOWN`.
+
+## TDM
+
+Task dialog message
+
+`TDM_CLICK_BUTTON`, `TDM_UPDATE_ICON`, `TDM_NAVIGATE_PAGE`.
+
+## TDN
+
+Task dialog notification
+
+`TDN_BUTTON_CLICKED`, `TDN_CREATED`, `TDN_DESTROYED`.
+
+## TTM
+
+Tooltip control message
+
+`TTM_GETTOOLINFO`, `TTM_HITTEST`, `TTM_NEWTOOLRECT`.
+
+## TTN
+
+Tooltip control notification
+
+`TTN_LINKCLICK`, `TTN_NEEDTEXT`, `TTN_POP`.
+
+## TVM
+
+Treeview control message
+
+`TVM_EXPAND`, `TVM_GETBKCOLOR`, `TVM_GETCOUNT`.
+
+## TVN
+
+Treeview control notification
+
+`TVN_DELETEITEM`, `TVN_ENDLABELEDIT`, `TVN_GETDISPINFO`.
+
+## U
+
+Unsigned
+
+[UCHAR](./types.md#uchar), [UHALF_PTR](./types.md#uhalf_ptr), [UINT](./types.md#uint)
+
+## UDM
+
+Up-down control message
+
+`UDM_GETBUDDY`, `UDM_GETPOS`, `UDM_GETPOS32`.
+
+## UDN
+
+Up-down control notification
+
+`UDN_DELTAPOS`.
+
+## USN
+
+Update sequence number
+
+`USN`.
+
+## W
+
+Wide char string (Unicode)
+
+[LPCWSTR](./types.md#lpcwstr), [LPWSTR](./types.md#lpwstr),
+
+Word something
+
+[WPARAM](./types.md#wparam) (Word parameter)
+
+## WINSTA
+
+Window station
+
+[HWINSTA](./types.md#hwinsta)
+
+## WM
+
+Window message
+
+`WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
+
+## WND
+
+Window
+
+[HWND](./types.md#hwnd), `CreateHwndRenderTarget`, [HWND_BOTTOM](./window.md#setwindowpos)
+
+## WS
+
+Window style
+
+[WS_OVERLAPPEDWINDOW](./window.md#window-styles), [WS_CHILD](./window.md#window-styles), [WS_EX_ACCEPTFILES](./window.md#extended-window-styles)

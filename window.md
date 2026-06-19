@@ -55,50 +55,11 @@ They are destroyed when the parent is destroyed.
 
 ## RegisterClass
 
-Before creating a custom window, a custom window class must be registered.
+Registers a custom window class and defines default behavior for use in subsequent [CreateWindow](#createwindow) calls.
 
-Registering a class is required to create a custom window, but also used for setting certain default behavior for windows created from the class.
+This function has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
 
-To do that, we call a `RegisterClass` function and pass it a pointer to a `WNDCLASS` struct.
-
-`RegisterClass` functions:
-
-- RegisterClassA
-- RegisterClassW
-- RegisterClassExA
-- RegisterClassExW - modern, preferred
-
-You can use a macro like `RegisterClass` or `RegisterClassEx` that resolves based on the [unicode settings](./unicode_ansi.md).
-
-`WNDCLASS` structs:
-
-- WNDCLASSA
-- WNDCLASSW
-- WNDCLASSEXA
-- WNDCLASSEXW - modern, preferred
-
-You can use an alias like `WNDCLASS` or `WNDCLASSEX` that resolves based on the [unicode settings](./unicode_ansi.md).
-
-`WNDCLASS` members:
-
-Required:
-
-- `style` - bitmask for setting [class styles](#class-styles).
-- `lpfnWndProc` - pointer to the [window procedure](#window-procedure) callback.
-- `hInstance` - handle to the executable module, like the hInstance parameter of `WinMain` or acquired with `GetModuleHandle`.
-- `lpszClassName` - string that identifies this class. The class name is scoped to the module i.e two different modules can register a class with the same name.
-- `cbSize` - the size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows
-  which version of `WNDCLASS` you're using. Extended only.
-
-Optional:
-
-- `hIcon` - handle to an icon resource used as the [window icon](#icons).
-- `hIconSm` - a handle to an icon resource used as the small [window icon](#icons). Extended only.
-- `hCursor` - handle to a cursor resource used as the [window cursor](#cursor) icon by default.
-- `hbrBackground` - handle to a brush used to paint the window client area background using [GDI](./gdi.md).
-- `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
-- `cbClsExtra` - number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.
-- `cbWndExtra` - number of extra bytes to allocate for per-window [custom app data](#custom-data).
+Accepts a [WNDCLASS](#wndclass) struct pointer and returns the class [ATOM](./types.md#atom) on success or 0 on failure. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
 
 Example:
 
@@ -125,39 +86,83 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 ```
 
+## WNDCLASS
+
+This struct is used with [RegisterClass](#registerclass).
+
+This struct has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
+
+### Members:
+
+- `style` - bitmask for setting [class styles](#class-styles).
+- `lpfnWndProc` - pointer to the [window procedure](#window-procedure) callback.
+- `hInstance` - handle to the executable module, like the hInstance parameter of `WinMain` or acquired with `GetModuleHandle`.
+- `lpszClassName` - string that identifies this class. The class name is scoped to the module i.e two different modules can register a class with the same name.
+- `cbSize` - the size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows
+  which version of `WNDCLASS` you're using. Extended only.
+- `hIcon` - [handle](./types.md#hicon) to an icon resource used as the [window icon](#icons).
+- `hIconSm` - a [handle](./types.md#hicon) to an icon resource used as the small [window icon](#icons). Extended only.
+- `hCursor` - [handle](./types.md#hcursor) to a cursor resource used as the [window cursor](#cursor) icon by default.
+- `hbrBackground` - [handle](./types.md#hbrush) to a brush used to paint the window client area background using [GDI](./gdi.md).
+- `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
+- `cbClsExtra` - number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.
+- `cbWndExtra` - number of extra bytes to allocate for per-window [custom app data](#custom-data).
+
+## Class styles
+
+These styles are set on [WNDCLASS](#wndclass).
+
+`CS_DBLCLKS` - Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).
+
+`CS_NOCLOSE` - Disables the close button on the window.
+
+`CS_DROPSHADOW` - Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.
+
+`CS_HREDRAW` - Invalidates client area when width changes. Used with [GDI](./gdi.md).
+
+`CS_VREDRAW` - Invalidates client area when height changes. Used with [GDI](./gdi.md).
+
+`CS_CLASSDC` - All windows within class share the same DC. Mainly used with [GDI](./gdi.md).
+
+`CS_OWNDC` - Each window within class gets its own DC. Mainly used with [GDI](./gdi.md) and OpenGL.
+
+`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with [GDI](./gdi.md).
+
+`CS_GLOBALCLASS` - Makes the class globally available to all other modules in the process. Rarely used today.
+
+`CS_SAVEBITS` - Saves a bitmap of the part of screen obscured by this window so when this window is removed,
+the pixels that were underneath are restored from the bitmap instead doing a full repaint.
+Legacy feature, made obsolete by [DWM](./dwm.md).
+
+`CS_BYTEALIGNWINDOW` - Forces the window rectangle to start on a byte boundary in memory. Legacy feature.
+
+`CS_BYTEALIGNCLIENT` - Forces the client area rectangle to start on a byte boundary in memory. Legacy feature.
+
 ## CreateWindow
 
-To create a window, we call one of the `CreateWindow` functions:
+This function has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
 
-- CreateWindowA
-- CreateWindowW
-- CreateWindowExA
-- CreateWindowExW - modern, preferred
+**Parameters**
 
-You can use a macro like `CreateWindow` or `CreateWindowEx` that resolves based on the [unicode settings](./unicode_ansi.md).
-
-and pass in these parameters:
-
-Required:
-
-- `lpClassName` - string that identifies a registered class or an [`ATOM`](./types.md#atom) returned by a previous call to [`RegisterClass`](#registerclass) wrapped with MAKEINTATOM.
+- `dwExStyle` - bitmask for setting [extended window styles](#extended-window-styles).
+- `lpClassName` - string that identifies a registered class or an [ATOM](./types.md#atom) returned by a previous call to [RegisterClass](#registerclass) wrapped with `MAKEINTATOM`.
+- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for [standard Button control](./controls.md#button)...etc.
+- `dwStyle` - bitmask for setting [window styles](#window-styles).
 - `X` - horizontal upper-left corner position of the window. For top-level windows, it's relative to the screen,
   and for child windows it's relative to the upper-left corner of the parent's client area.
 - `Y` - vertical upper-left corner position of the window. For top-level windows, it's relative to the screen,
   and for child windows it's relative to the upper-left corner of the parent's client area.
 - `nWidth` - width of the window in device units.
 - `nHeight` - height of the window in device units.
-- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for [standard controls](./controls.md).
-
-Optional:
-
-- `dwExStyle` - bitmask for setting [extended window styles](#extended-window-styles).
-- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for [standard Button control](./controls.md#button)...etc.
-- `dwStyle` - bitmask for setting [window styles](#window-styles).
 - `hWndParent` - handle to the parent or owner window. Required for child windows, optional for top-level windows.
 - `hMenu` - for top-level windows this should be a handle to a menu or null, for child windows the identifier used to distinguish child controls.
+- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for [standard controls](./controls.md).
 - `lpParam` - arbitrary pointer that will be available as `CREATESTRUCT.lpCreateParams` in `WM_CREATE` `lParam`.
   You can use it to pass custom data to [window procedure](#window-procedure). Required for MDI.
+
+**Return value**
+
+The new window's [handle](./types.md#hwnd) or `NULL` if it fails. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
 
 Example creating a top-level window:
 
@@ -171,6 +176,7 @@ ATOM classAtom = RegisterClass(&wc);
 HWND myWindow = CreateWindowEx(
   WS_EX_ACCEPTFILES, // dwExStyle
   className, // or MAKEINTATOM(classAtom)
+  L"Hello World", // lpWindowName
   WS_OVERLAPPEDWINDOW | WS_VISIBLE,
   100, // x
   100, // y
@@ -210,36 +216,6 @@ HWND myButton = CreateWindowEx(
 );
 ```
 
-## Class styles
-
-These styles are used when [registering a class](#registerclass).
-
-`CS_DBLCLKS` - Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).
-
-`CS_NOCLOSE` - Disables the close button on the window.
-
-`CS_DROPSHADOW` - Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.
-
-`CS_HREDRAW` - Invalidates client area when width changes. Used with [GDI](./gdi.md).
-
-`CS_VREDRAW` - Invalidates client area when height changes. Used with [GDI](./gdi.md).
-
-`CS_CLASSDC` - All windows within class share the same DC. Mainly used with [GDI](./gdi.md).
-
-`CS_OWNDC` - Each window within class gets its own DC. Mainly used with [GDI](./gdi.md) and OpenGL.
-
-`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with [GDI](./gdi.md).
-
-`CS_GLOBALCLASS` - Makes the class globally available to all other modules in the process. Rarely used today.
-
-`CS_SAVEBITS` - Saves a bitmap of the part of screen obscured by this window so when this window is removed,
-the pixels that were underneath are restored from the bitmap instead doing a full repaint.
-Legacy feature, made obsolete by [DWM](./dwm.md).
-
-`CS_BYTEALIGNWINDOW` - Forces the window rectangle to start on a byte boundary in memory. Legacy feature.
-
-`CS_BYTEALIGNCLIENT` - Forces the client area rectangle to start on a byte boundary in memory. Legacy feature.
-
 ## Window styles
 
 These styles are used when [creating a window](#createwindow).
@@ -261,7 +237,7 @@ Client area needs to be painted for the window to be visible. Easiest way to do 
 wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // default, white background
 ```
 
-`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if present). Also adds a rounded border when used with `WS_POPUP`. Its alias is `WS_SIZEBOX`.
+`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if present). Also adds a rounded border when used with `WS_POPUP`. Alias is `WS_SIZEBOX`.
 
 `WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used
 alongside it to add the minimize and maximize buttons.
@@ -286,7 +262,7 @@ Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZ
 `WS_DISABLED` The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.
 Can be modified with `EnableWindow`.
 
-`WS_MINIMIZE` The window is minimized initially. Its alias is `WS_ICONIC`.
+`WS_MINIMIZE` The window is minimized initially. Alias is `WS_ICONIC`.
 
 `WS_MAXIMIZE` The window is maximized initially.
 
@@ -395,7 +371,55 @@ to click around the window to open help popups via `WM_HELP` and `WinHelp`. Does
 
 ## Window procedure
 
-// TODO
+Window procedure is a callback function of type `WNDPROC` that processes messages sent to a window.
+
+It is defined for a window class on [WNDCLASS](#wndclass) when [registering a class](#registerclass).
+
+**Parameters**
+
+- hwnd [window handle](./types.md#hwnd)
+- uMsg the message code
+- wParam additional message information. The contents depend on the message code.
+- lParam additional message information. The contents depend on the message code.
+
+**wParam vs lParam**
+
+`wParam` is typed as [WPARAM](./types.md#wparam) which is a [UINT_PTR](./types.md#uint_ptr) (unsigned) and `lParam` is typed as [LPARAM](./types.md#lparam) which is a [LONG_PTR](./types.md#long_ptr) (signed).
+
+`wParam` is typically used for small values, flags, or identifiers (like control IDs, key codes, or notification codes), while `lParam` is typically used for larger values or pointers (like passing a struct pointer, coordinates, or handles).
+
+`wParam` means "Word parameter" because on 16‑bit Windows it was typed as a 16-bit [WORD](./types.md#word). `lParam` means "Long parameter" because on 16-bit Windows it was typed as a 32-bit [LONG](./types.md#long).
+
+**Return value**
+
+It should return an [LRESULT](./types.md#lresult) code that depends on the message that was handled.
+
+Minimal example:
+
+```c
+LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+  switch(uMsg) {
+    case WM_CREATE:
+    {
+      BOOL initSuccess = initialize(); // initialize is some example function
+
+      if(!initSuccess) {
+        return -1; // destroy window
+      }
+      else {
+        return 0; // proceed with creation
+      }
+    }
+    case WM_DESTROY:
+    {
+      PostQuitMessage(EXIT_SUCCESS);
+      return 0; // we handled it
+    }
+  }
+
+  return DefWindowProc(hwnd, uMsg, wParam, lParam); // default handler for messages we don't handle
+}
+```
 
 ## Icons
 
@@ -413,18 +437,127 @@ to click around the window to open help popups via `WM_HELP` and `WinHelp`. Does
 
 // TODO
 
-## ShowWindow
-
-// TODO
-
 ## SetWindowPos
 
-// TODO
+Changes the position, size, and Z order of a window.
+
+**Parameters**
+
+- hwnd [window handle](./types.md#hwnd)
+- hWndInsertAfter [window handle](./types.md#hwnd) of the window that should be beneath or one of the [codes](#z-order-codes).
+- X The new position of the left side of the window, in client coordinates.
+- Y The new position of the top of the window, in client coordinates.
+- cx The new width of the window, in pixels.
+- cy The new height of the window, in pixels.
+- uFlags The window sizing and positioning [flags](#flags).
+
+**Return value**
+
+[BOOL](./types.md#bool) that's `TRUE` if the function succeeds. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
+
+```c
+BOOL didSucceed = SetWindowPos(hwnd, HWND_TOP, 10, 10, 500, 500, SWP_SHOWWINDOW | SWP_NOREDRAW);
+```
+
+### Z order codes
+
+`HWND_BOTTOM` Bottom of the z order.
+
+`HWND_NOTOPMOST` Above all non-topmost windows.
+
+`HWND_TOP` Top of the window's z order "layer" - if window is topmost, goes to the top of the z order, otherwise goes to the top of non-topmost windows.
+
+`HWND_TOPMOST` Top of the z order.
+
+### Flags
+
+`SWP_ASYNCWINDOWPOS` If the calling thread and the thread that owns the window are attached to different input queues, the system posts the request to the thread that owns the window. This prevents the calling thread from blocking its execution while other threads process the request.
+
+`SWP_DEFERERASE` Prevents generation of the `WM_SYNCPAINT` message.
+
+`SWP_DRAWFRAME` Draws a frame (defined in the window's class description) around the window.
+
+`SWP_FRAMECHANGED` Applies new frame styles set using the `SetWindowLong` function. Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed. If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.
+
+`SWP_HIDEWINDOW` Hides the window.
+
+`SWP_NOACTIVATE` Does not activate the window. If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the hWndInsertAfter parameter).
+
+`SWP_NOCOPYBITS` Discards the entire contents of the client area. If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.
+
+`SWP_NOMOVE` Retains the current position (ignores X and Y parameters).
+
+`SWP_NOOWNERZORDER` Does not change the owner window's position in the Z order. Alias is `SWP_NOREPOSITION`.
+
+`SWP_NOREDRAW` Does not redraw changes. If this flag is set, no repainting of any kind occurs. This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved. When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing.
+
+`SWP_NOSENDCHANGING` Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.
+
+`SWP_NOSIZE` Retains the current size (ignores the cx and cy parameters).
+
+`SWP_NOZORDER` Retains the current Z order (ignores the hWndInsertAfter parameter).
+
+`SWP_SHOWWINDOW` Displays the window.
+
+## ShowWindow
+
+Sets the specified window's show state.
+
+Accepts a [window handle](./types.md#hwnd) and a [code](#showwindow-codes) and returns [BOOL](./types.md#bool) that's `TRUE` if the window was visible before.
+
+The first time the application calls this, second argument is ignored if `STARTUPINFO` was provided,
+otherwise the first time this is called the second argument should be the `nCmdShow` parameter of `WinMain`.
+
+In subsequent calls, any [code](#showwindow-codes) can be provided.
+
+```c
+BOOL wasVisible = ShowWindow(hwnd, SW_HIDE); // hides the window
+```
+
+## ShowWindow codes
+
+These codes are used with [ShowWindow](#showwindow).
+
+`SW_HIDE` Hides the window and activates another window.
+
+`SW_SHOWNORMAL` and `SW_NORMAL` Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
+
+`SW_SHOWMINIMIZED` Activates the window and displays it as a minimized window.
+
+`SW_SHOWMAXIMIZED` and `SW_MAXIMIZE` Activates the window and displays it as a maximized window.
+
+`SW_SHOWNOACTIVATE` Displays a window in its most recent size and position. This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.
+
+`SW_SHOW` Activates the window and displays it in its current size and position.
+
+`SW_MINIMIZE` Minimizes the specified window and activates the next top-level window in the Z order.
+
+`SW_SHOWMINNOACTIVE` Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.
+
+`SW_SHOWNA` Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.
+
+`SW_RESTORE` Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
+
+`SW_SHOWDEFAULT` Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.
+
+`SW_FORCEMINIMIZE` Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.
 
 ## SetActiveWindow
 
-// TODO
+Activates a window. The window must be attached to the calling thread's message queue.
+
+Accepts a [window handle](./types.md#hwnd) and returns the previously active [window handle](./types.md#hwnd) or `NULL` in case of failure. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
+
+Only works if application is already in the foreground.
+
+```c
+HWND prevActiveWindowOrNull = SetActiveWindow(hwnd);
+```
 
 ## SetForegroundWindow
 
-// TODO
+Accepts a [window handle](./types.md#hwnd) and brings the window to foreground and activates it.
+
+```c
+BOOL windowWasBroughtToForeground = SetForegroundWindow(hwnd);
+```

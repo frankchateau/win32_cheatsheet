@@ -1493,7 +1493,7 @@ typedef WCHAR *PWSTR;
 
 ## QWORD
 
-A 64-bit unsigned integer.
+A 64-bit unsigned integer (Quad word, 4x [WORD](#word)).
 
 [ULONGLONG](#ulonglong) is preferred today.
 
