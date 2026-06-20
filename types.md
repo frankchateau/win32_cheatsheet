@@ -1805,6 +1805,16 @@ Most functions in the Windows API are declared using WINAPI.
 #define WINAPI __stdcall
 ```
 
+## WNDPROC
+
+A callback function, which you define in your application, that processes messages sent to a window.
+
+```c
+// winuser.h
+
+typedef LRESULT (CALLBACK *WNDPROC)(HWND,UINT,WPARAM,LPARAM);
+```
+
 ## WORD
 
 A 16-bit unsigned integer. The range is 0 through 65535 decimal.

@@ -628,7 +628,7 @@ Window message
 
 Window
 
-[HWND](./types.md#hwnd), `CreateHwndRenderTarget`, [HWND_BOTTOM](./window.md#setwindowpos)
+[HWND](./types.md#hwnd), `CreateHwndRenderTarget`, [WNDPROC](./types.md#wndproc)
 
 ## WS
 

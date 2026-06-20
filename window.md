@@ -22,7 +22,7 @@ For the main application window, you'd typically register your own custom class.
 
 There are 3 general categories of windows in terms of [ownership](#ownership): top-level, owned top-level, and child window.
 
-Event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
+Window event handling is done via a [message loop](#message-loop) and the [window procedure](#window-procedure) callback.
 
 The main parts of a window are:
 
@@ -30,7 +30,7 @@ The main parts of a window are:
 - frame or border that can be used for resizing
 - client area for rendering the window's content
 
-Titlebar and frame are called non-client area.
+Titlebar and frame are called non-client area (NC).
 
 | ![Window parts](./images/window_parts.png) |
 | :----------------------------------------: |
@@ -40,14 +40,33 @@ Titlebar and frame are called non-client area.
 
 There are 3 types of windows in terms of ownership:
 
-- Top-level
-- Owned top-level
-- Child
+- [Top-level](#top-level-window)
+- [Owned top-level](#owned-top-level-window)
+- [Child](#child-window)
+
+### Top-level window
 
 Top-level windows are independent windows positioned in screen coordinates such as a main application window.
 
-Owned top-level windows are still positioned in screen coordinates and can visually leave their parent's bounds, but are dependent on their parent window in certain ways. They are always in front of their parent. They are minimized and restored with the parent except in some special cases (e.g. modal dialogs).
-They are destroyed when the parent is destroyed.
+### Owned top-level window
+
+Owned top-level windows are positioned in screen coordinates and can visually leave their parent's bounds, but are dependent on their parent window both in terms of appearance and lifecycle.
+
+They are always in front of their parent.
+
+They are minimized and restored with the parent except in some special cases (e.g. modal dialogs).
+
+They are destroyed when their parent is destroyed.
+
+Examples: [dialogs](./dialogs.md), [menus](./menus.md), [tooltips](./tooltips.md).
+
+### Child window
+
+Child windows are positioned relative to the upper-left corner of the parent's client area.
+
+They are visually clipped so that no part of the child window can appear outside of its parent's client area.
+
+Examples: many [standard controls](./controls.md).
 
 | ![Window ownership](./images/window_ownership.png) |
 | :------------------------------------------------: |
@@ -59,7 +78,13 @@ Registers a custom window class and defines default behavior for use in subseque
 
 This function has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
 
-Accepts a [WNDCLASS](#wndclass) struct pointer and returns the class [ATOM](./types.md#atom) on success or 0 on failure. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
+| Name     | Type        | Description                      |
+| -------- | ----------- | -------------------------------- |
+| wndClass | `WNDCLASS*` | Pointer to [WNDCLASS](#wndclass) |
+
+| Success                              | Error                                                 |
+| ------------------------------------ | ----------------------------------------------------- |
+| [ATOM](./types.md#atom) of new class | 0, [GetLastError](./errors.md#getlasterror) available |
 
 Example:
 
@@ -92,77 +117,62 @@ This struct is used with [RegisterClass](#registerclass).
 
 This struct has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
 
-### Members:
-
-- `style` - bitmask for setting [class styles](#class-styles).
-- `lpfnWndProc` - pointer to the [window procedure](#window-procedure) callback.
-- `hInstance` - handle to the executable module, like the hInstance parameter of `WinMain` or acquired with `GetModuleHandle`.
-- `lpszClassName` - string that identifies this class. The class name is scoped to the module i.e two different modules can register a class with the same name.
-- `cbSize` - the size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows
-  which version of `WNDCLASS` you're using. Extended only.
-- `hIcon` - [handle](./types.md#hicon) to an icon resource used as the [window icon](#icons).
-- `hIconSm` - a [handle](./types.md#hicon) to an icon resource used as the small [window icon](#icons). Extended only.
-- `hCursor` - [handle](./types.md#hcursor) to a cursor resource used as the [window cursor](#cursor) icon by default.
-- `hbrBackground` - [handle](./types.md#hbrush) to a brush used to paint the window client area background using [GDI](./gdi.md).
-- `lpszMenuName` - string that specifies the resource name of a menu as it appears in your .rc file.
-- `cbClsExtra` - number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.
-- `cbWndExtra` - number of extra bytes to allocate for per-window [custom app data](#custom-data).
+| Name          | Type                              | Description                                                                                                                                           |
+| ------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cbSize        | [UINT](./types.md#uint)           | The size of the structure in bytes. Set it to `sizeof(WNDCLASSEX)`. Used so that win32 knows which version of `WNDCLASS` you're using. Extended only. |
+| style         | [UINT](./types.md#uint)           | Bitmask for setting [class styles](#class-styles).                                                                                                    |
+| lpfnWndProc   | [WNDPROC](./types.md#wndproc)     | Pointer to the [window procedure](#window-procedure) callback.                                                                                        |
+| cbClsExtra    | `int`                             | Number of extra bytes to allocate for per-class [custom app data](#custom-data). Rarely used today.                                                   |
+| cbWndExtra    | `int`                             | Number of extra bytes to allocate for per-window [custom app data](#custom-data).                                                                     |
+| hInstance     | [HINSTANCE](./types.md#hinstance) | Handle to the executable module, like the hInstance parameter of `WinMain` or acquired with `GetModuleHandle`.                                        |
+| hIcon         | [HICON](./types.md#hicon)         | Handle to an icon resource used as the [window icon](#icons).                                                                                         |
+| hCursor       | [HCURSOR](./types.md#hcursor)     | Handle to a cursor resource used as the [window cursor](#cursor) icon by default.                                                                     |
+| hbrBackground | [HBRUSH](./types.md#hbrush)       | Handle to a brush used to paint the window client area background using [GDI](./gdi.md).                                                              |
+| lpszMenuName  | [LPCWSTR](./types.md#lpcwstr)     | String that specifies the resource name of a menu as it appears in your .rc file.                                                                     |
+| lpszClassName | [LPCWSTR](./types.md#lpcwstr)     | String that identifies this class. The class name is scoped to the module i.e two different modules can register a class with the same name.          |
+| hIconSm       | [HICON](./types.md#hicon)         | Handle to an icon resource used as the small [window icon](#icons). Extended only.                                                                    |
 
 ## Class styles
 
 These styles are set on [WNDCLASS](#wndclass).
 
-`CS_DBLCLKS` - Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).
-
-`CS_NOCLOSE` - Disables the close button on the window.
-
-`CS_DROPSHADOW` - Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.
-
-`CS_HREDRAW` - Invalidates client area when width changes. Used with [GDI](./gdi.md).
-
-`CS_VREDRAW` - Invalidates client area when height changes. Used with [GDI](./gdi.md).
-
-`CS_CLASSDC` - All windows within class share the same DC. Mainly used with [GDI](./gdi.md).
-
-`CS_OWNDC` - Each window within class gets its own DC. Mainly used with [GDI](./gdi.md) and OpenGL.
-
-`CS_PARENTDC` - Child windows use the parent's DC as an optimization. Mainly used with [GDI](./gdi.md).
-
-`CS_GLOBALCLASS` - Makes the class globally available to all other modules in the process. Rarely used today.
-
-`CS_SAVEBITS` - Saves a bitmap of the part of screen obscured by this window so when this window is removed,
-the pixels that were underneath are restored from the bitmap instead doing a full repaint.
-Legacy feature, made obsolete by [DWM](./dwm.md).
-
-`CS_BYTEALIGNWINDOW` - Forces the window rectangle to start on a byte boundary in memory. Legacy feature.
-
-`CS_BYTEALIGNCLIENT` - Forces the client area rectangle to start on a byte boundary in memory. Legacy feature.
+| Name               | Description                                                                                                                                                                                                                                     |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CS_DBLCLKS         | Enables the windows to receive double click messages (e.g `WM_LBUTTONDBLCLK`).                                                                                                                                                                  |
+| CS_NOCLOSE         | Disables the close button on the window.                                                                                                                                                                                                        |
+| CS_DROPSHADOW      | Adds a drop-shadow effect on top-level windows (e.g. menus). Cannot be used with child windows.                                                                                                                                                 |
+| CS_HREDRAW         | Invalidates client area when width changes. Used with [GDI](./gdi.md).                                                                                                                                                                          |
+| CS_VREDRAW         | Invalidates client area when height changes. Used with [GDI](./gdi.md).                                                                                                                                                                         |
+| CS_CLASSDC         | All windows within class share the same DC. Mainly used with [GDI](./gdi.md).                                                                                                                                                                   |
+| CS_OWNDC           | Each window within class gets its own DC. Mainly used with [GDI](./gdi.md) and OpenGL.                                                                                                                                                          |
+| CS_PARENTDC        | Child windows use the parent's DC as an optimization. Mainly used with [GDI](./gdi.md).                                                                                                                                                         |
+| CS_GLOBALCLASS     | Makes the class globally available to all other modules in the process. Rarely used today.                                                                                                                                                      |
+| CS_SAVEBITS        | Saves a bitmap of the part of screen obscured by this window so when this window is removed,<br>the pixels that were underneath are restored from the bitmap instead doing a full repaint.<br>Legacy feature, made obsolete by [DWM](./dwm.md). |
+| CS_BYTEALIGNWINDOW | Forces the window rectangle to start on a byte boundary in memory. Legacy feature.                                                                                                                                                              |
+| CS_BYTEALIGNCLIENT | Forces the client area rectangle to start on a byte boundary in memory. Legacy feature.                                                                                                                                                         |
 
 ## CreateWindow
 
 This function has [extended](./extended.md) and [unicode](./unicode_ansi.md) variants.
 
-**Parameters**
+| Name         | Type                              | Description                                                                                                                                                                                                                                               |
+| ------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dwExStyle    | [DWORD](./types.md#dword)         | Bitmask for setting [extended window styles](#extended-window-styles).                                                                                                                                                                                    |
+| lpClassName  | [LPCWSTR](./types.md#lpcwstr)     | String that identifies a registered class or an [ATOM](./types.md#atom) returned by a previous call to [RegisterClass](#registerclass) wrapped with `MAKEINTATOM`.                                                                                        |
+| lpWindowName | [LPCWSTR](./types.md#lpcwstr)     | A general title string that appears as the caption for windows with titlebars, button text for [standard Button control](./controls.md#button)...etc.                                                                                                     |
+| dwStyle      | [DWORD](./types.md#dword)         | Bitmask for setting [window styles](#window-styles).                                                                                                                                                                                                      |
+| X            | `int`                             | Horizontal [upper-left corner](#ownership) position of the window.                                                                                                                                                                                        |
+| Y            | `int`                             | Vertical [upper-left corner](#ownership) position of the window.                                                                                                                                                                                          |
+| nWidth       | `int`                             | Width of the window in device units.                                                                                                                                                                                                                      |
+| nHeight      | `int`                             | Height of the window in device units.                                                                                                                                                                                                                     |
+| hWndParent   | [HWND](./types.md#hwnd)           | [Handle](./types.md#hwnd) to the parent or owner window. Required for [child windows](#child-window), optional for [top-level windows](#top-level-window).                                                                                                |
+| hMenu        | [HMENU](./types.md#hmenu)         | For [top-level windows](#top-level-window) this should be a handle to a menu or null, for [child windows](#child-window) the identifier used to distinguish child controls.                                                                               |
+| hInstance    | [HINSTANCE](./types.md#hinstance) | [Handle](./types.md#hinstance) to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for [standard controls](./controls.md).                                                                   |
+| lpParam      | [LPVOID](./types.md#lpvoid)       | Arbitrary pointer that will be available in [CREATESTRUCT](#createstruct) as `lParam` of [WM_CREATE](#wm_create) and [WM_NCCREATE](#wm_nccreate) messages. You can use it to pass custom data to [window procedure](#window-procedure). Required for MDI. |
 
-- `dwExStyle` - bitmask for setting [extended window styles](#extended-window-styles).
-- `lpClassName` - string that identifies a registered class or an [ATOM](./types.md#atom) returned by a previous call to [RegisterClass](#registerclass) wrapped with `MAKEINTATOM`.
-- `lpWindowName` - string that appears as the caption for windows with titlebars, button text for [standard Button control](./controls.md#button)...etc.
-- `dwStyle` - bitmask for setting [window styles](#window-styles).
-- `X` - horizontal upper-left corner position of the window. For top-level windows, it's relative to the screen,
-  and for child windows it's relative to the upper-left corner of the parent's client area.
-- `Y` - vertical upper-left corner position of the window. For top-level windows, it's relative to the screen,
-  and for child windows it's relative to the upper-left corner of the parent's client area.
-- `nWidth` - width of the window in device units.
-- `nHeight` - height of the window in device units.
-- `hWndParent` - handle to the parent or owner window. Required for child windows, optional for top-level windows.
-- `hMenu` - for top-level windows this should be a handle to a menu or null, for child windows the identifier used to distinguish child controls.
-- `hInstance` - handle to executable module. Might not always be required here, but it's safer and there's no harm in passing it - even for [standard controls](./controls.md).
-- `lpParam` - arbitrary pointer that will be available as `CREATESTRUCT.lpCreateParams` in `WM_CREATE` `lParam`.
-  You can use it to pass custom data to [window procedure](#window-procedure). Required for MDI.
-
-**Return value**
-
-The new window's [handle](./types.md#hwnd) or `NULL` if it fails. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
+| Success                                     | Error                                                      |
+| ------------------------------------------- | ---------------------------------------------------------- |
+| [HWND](./types.md#hwnd) New window's handle | `NULL`, [GetLastError](./errors.md#getlasterror) available |
 
 Example creating a top-level window:
 
@@ -177,7 +187,7 @@ HWND myWindow = CreateWindowEx(
   WS_EX_ACCEPTFILES, // dwExStyle
   className, // or MAKEINTATOM(classAtom)
   L"Hello World", // lpWindowName
-  WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+  WS_OVERLAPPEDWINDOW | WS_VISIBLE, // standard window, visible initially (no need to call ShowWindow)
   100, // x
   100, // y
   1024, // width
@@ -218,152 +228,81 @@ HWND myButton = CreateWindowEx(
 
 ## Window styles
 
-These styles are used when [creating a window](#createwindow).
-
-### Visual styles
+These styles are used with [CreateWindow](#createwindow).
 
 There are three base window styles that you can use as a starting point:
 
 - `WS_OVERLAPPED` - top-level windows
 - `WS_POPUP` - special top-level windows like dialogs, menus, splash screens...etc.
-- `WS_CHILD` - child windows that are visually constrained / clipped in a parent window.
+- `WS_CHILD` - child windows.
 
-`WS_OVERLAPPED` produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.
-
-`WS_POPUP` produces a frameless window with just the client area and no borders at all (no rounding).
-Client area needs to be painted for the window to be visible. Easiest way to do it:
-
-```cpp
-wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // default, white background
-```
-
-`WS_THICKFRAME` adds a resizable border and makes the titlebar taller (if present). Also adds a rounded border when used with `WS_POPUP`. Alias is `WS_SIZEBOX`.
-
-`WS_SYSMENU` adds the window icon, system menu and window buttons. `WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used
-alongside it to add the minimize and maximize buttons.
-
-`WS_OVERLAPPEDWINDOW` is the full, standard overlapped window.
-Defined as `WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX`.
-
-`WS_HSCROLL` and `WS_VSCROLL` are used to add horizontal and vertical scrollbars.
-
-`WS_BORDER` The window has a thin line border.
-
-`WS_DLGFRAME` The window has a dialog-box like border. A window with this style cannot have a title bar.
+| Name                | Description                                                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WS_OVERLAPPED       | Produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.                                                                                |
+| WS_POPUP            | Produces a frameless window with just the client area and no borders at all (no rounding).<br>Client area needs to be painted by the application for the window to be visible.     |
+| WS_THICKFRAME       | Adds a resizable border and makes the titlebar taller (if present).<br>Also adds a rounded border when used with `WS_POPUP`. Alias is `WS_SIZEBOX`.                                |
+| WS_SYSMENU          | Adds the window icon, system menu and window buttons.<br>`WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used alongside it to add the minimize and maximize buttons.                     |
+| WS_MINIMIZEBOX      | Adds the minimize window button, requires the `WS_SYSMENU` style                                                                                                                   |
+| WS_MAXIMIZEBOX      | Adds the maximize window button, requires the `WS_SYSMENU` style                                                                                                                   |
+| WS_OVERLAPPEDWINDOW | The full, standard overlapped window.<br>Defined as `WS_OVERLAPPED \| WS_CAPTION \| WS_SYSMENU \| WS_THICKFRAME \| WS_MINIMIZEBOX \| WS_MAXIMIZEBOX`.                              |
+| WS_HSCROLL          | Adds the horizontal scrollbar to the client area.                                                                                                                                  |
+| WS_VSCROLL          | Adds the vertical scrollbar to the client area.                                                                                                                                    |
+| WS_BORDER           | The window has a thin line border.                                                                                                                                                 |
+| WS_DLGFRAME         | The window has a dialog-box like border. A window with this style cannot have a title bar.                                                                                         |
+| WS_VISIBLE          | The window is visible initially. Can be modified with [`ShowWindow`](#showwindow) or [`SetWindowPos`](#setwindowpos).                                                              |
+| WS_DISABLED         | The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.<br>Can be modified with [EnableWindow](#enablewindow).               |
+| WS_MINIMIZE         | The window is minimized initially. Alias is `WS_ICONIC`.                                                                                                                           |
+| WS_MAXIMIZE         | The window is maximized initially.                                                                                                                                                 |
+| WS_CLIPCHILDREN     | Child windows are excluded from the window's painting operations.<br>Prevents parent from overwriting child windows and flicker.<br>Mainly used with [GDI](./gdi.md).              |
+| WS_CLIPSIBLINGS     | Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with, but only paint its own visible area.<br>Mainly used with [GDI](./gdi.md). |
+| WS_GROUP            | Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard controls.                            |
+| WS_TABSTOP          | Makes a child window focusable via pressing Tab. Used with [standard controls](./controls.md).                                                                                     |
 
 | ![Window with WS_OVERLAPPEDWINDOW style](./images/ws_overlappedwindow.png) | ![Window with WS_POPUP style](./images/ws_popup.png) |
 | :------------------------------------------------------------------------: | :--------------------------------------------------: |
 |               WS_OVERLAPPEDWINDOW with the system menu open                |                 WS_POPUP only window                 |
 
-### Behavior styles
-
-`WS_VISIBLE` The window is visible initially. Can be modified with [`ShowWindow`](#showwindow) or [`SetWindowPos`](#setwindowpos).
-
-`WS_DISABLED` The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.
-Can be modified with `EnableWindow`.
-
-`WS_MINIMIZE` The window is minimized initially. Alias is `WS_ICONIC`.
-
-`WS_MAXIMIZE` The window is maximized initially.
-
-`WS_CLIPCHILDREN` Child windows are excluded from the window's painting operations. Prevents parent from
-overwriting child windows and flicker. Mainly used with [GDI](./gdi.md).
-
-`WS_CLIPSIBLINGS` Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with,
-but only paint its own visible area. Mainly used with [GDI](./gdi.md).
-
-`WS_GROUP` Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard controls.
-
-`WS_TABSTOP` Makes a child window focusable via pressing Tab. Used with [standard controls](./controls.md).
-
 ## Extended window styles
 
-These styles are used when [creating a window](#createwindow).
+These styles are used with [CreateWindow](#createwindow).
 
-### Taskbar / titlebar / visual styles
+| Name                      | Category                           | Description                                                                                                                                                                                                                                                                                                                         |
+| ------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WS_EX_APPWINDOW           | taskbar                            | Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under their parent window.                                                                                                                                                                                                           |
+| WS_EX_TOOLWINDOW          | taskbar, titlebar                  | A tool window doesn't have a taskbar icon, has a smaller titlebar with only a close button and no app icon.                                                                                                                                                                                                                         |
+| WS_EX_PALETTEWINDOW       | taskbar, titlebar, z order, border | Defined as `WS_EX_WINDOWEDGE \| WS_EX_TOOLWINDOW \| WS_EX_TOPMOST`.                                                                                                                                                                                                                                                                 |
+| WS_EX_NOREDIRECTIONBITMAP | graphics                           | Tells [DWM](./dwm.md) to not create a [GDI](./gdi.md) backing surface for the window meaning the client area will not be rendered by default.<br>To present the client area, you need to use the DirectComposition API or similar.                                                                                                  |
+| WS_EX_LAYERED             | graphics, transparency             | Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.<br>Can be used to create non-rectangular shaped windows (e.g. Winamp skins).<br>Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).<br>More on [layered windows](#layered-window). |
+| WS_EX_COMPOSITED          | graphics                           | The window uses double buffering for painting to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).                                                                                                                                                                                                                          |
+| WS_EX_TRANSPARENT         | graphics, transparency             | The child window is not painted until siblings underneath it have been painted.<br>This allows for the top window to be blended with windows underneath.<br>This only affects the paint order (which is top-down by default), not the actual transparent rendering.                                                                 |
+| WS_EX_TOPMOST             | z order, activation                | The window is placed above all non-topmost windows, even when it's deactivated.<br>Can be modified with [`SetWindowPos`](#setwindowpos).                                                                                                                                                                                            |
+| WS_EX_NOACTIVATE          | activation                         | The window is not activated (brought to the foreground) when clicked on.<br>It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it.<br>Can be modified with [`SetActiveWindow`](#setactivewindow) and [`SetForegroundWindow`](#setforegroundwindow).                                                   |
+| WS_EX_WINDOWEDGE          | border                             | The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                      |
+| WS_EX_CLIENTEDGE          | border                             | The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.                                                                                                                                                                                                |
+| WS_EX_STATICEDGE          | border                             | The window has a 3D border style. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                                |
+| WS_EX_OVERLAPPEDWINDOW    | border                             | Defined as `WS_EX_WINDOWEDGE \| WS_EX_CLIENTEDGE`.                                                                                                                                                                                                                                                                                  |
+| WS_EX_DLGMODALFRAME       | border                             | The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                          |
+| WS_EX_LEFTSCROLLBAR       | layout                             | The vertical scrollbar (if present) is to the left of the client area.                                                                                                                                                                                                                                                              |
+| WS_EX_RIGHTSCROLLBAR      | layout                             | The vertical scrollbar (if present) is to the right of the client area. This is the default for `WS_VSCROLL`.                                                                                                                                                                                                                       |
+| WS_EX_LAYOUTRTL           | layout                             | Flips the horizontal origin of the window client area. Increasing horizontal values advance to the left.                                                                                                                                                                                                                            |
+| WS_EX_NOINHERITLAYOUT     | layout                             | The layout is not inherited from parent to child windows.                                                                                                                                                                                                                                                                           |
+| WS_EX_LEFT                | layout                             | The window has generic left-aligned properties (?). This is the default.                                                                                                                                                                                                                                                            |
+| WS_EX_RIGHT               | layout                             | The window has generic right-aligned properties (?).                                                                                                                                                                                                                                                                                |
+| WS_EX_LTRREADING          | reading order                      | Text is drawn left-to-right. This is the default.                                                                                                                                                                                                                                                                                   |
+| WS_EX_RTLREADING          | reading order                      | Text is drawn right-to-left.                                                                                                                                                                                                                                                                                                        |
+| WS_EX_ACCEPTFILES         | shell                              | Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.<br>Can be modified with [`DragAcceptFiles`](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.                                                                                                        |
+| WS_EX_CONTROLPARENT       | accessibility, child windows       | The children of this window become included in focus navigation via Tab and Arrow keys instead of treating the whole window as one focusable item.                                                                                                                                                                                  |
+| WS_EX_NOPARENTNOTIFY      | child windows                      | The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.                                                                                                                                                                                                                  |
+| WS_EX_MDICHILD            | mdi                                | The window is an MDI child.                                                                                                                                                                                                                                                                                                         |
+| WS_EX_CONTEXTHELP         | help                               | The window titlebar shows a help icon which when clicked, changes the cursor to a help cursor that can be used to click around the window to open help popups via `WM_HELP` and `WinHelp`.<br>Doesn't seem to have an effect post Windows 95.                                                                                       |
 
-`WS_EX_APPWINDOW` Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under
-their parent window.
-
-`WS_EX_TOOLWINDOW` A tool window doesn't have a taskbar icon, has a smaller titlebar with only a close button and no app icon.
-
-`WS_EX_OVERLAPPEDWINDOW` Defined as `WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE`.
-
-`WS_EX_PALETTEWINDOW` Defined as `WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST`.
-
-| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./images/ws_ex_toolwindow.png) |
-| :------------------------------------------------------------------------------------: |
-|                        WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW                        |
-
-### Graphics / transparency
-
-`WS_EX_NOREDIRECTIONBITMAP` Tells [DWM](./dwm.md) to not create a [GDI](./gdi.md) backing surface for the window meaning the client area will not be rendered by default. To present the client area, you need to use the DirectComposition API or similar.
-
-`WS_EX_LAYERED` Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.
-Can be used to create non-rectangular shaped windows (e.g. Winamp skins). Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).
-More on [layered windows](#layered-window).
-
-`WS_EX_COMPOSITED` The window uses double buffering to paint to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).
-
-`WS_EX_TRANSPARENT` The child window is not painted until siblings underneath it have been painted. This allows for the top window to be blended with
-windows underneath. This only affects the paint order (which is top-down by default), not the actual transparent rendering.
-
-| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./images/ws_overlappedwindow_exnoredirectionbitmap.png) |
-| :----------------------------------------------------------------------------------------------------------------------: |
-|                                    WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP                                     |
-
-### Z-order / activation
-
-`WS_EX_TOPMOST` The window is placed above all non-topmost windows, even when it's deactivated. Can be modified with [`SetWindowPos`](#setwindowpos).
-
-`WS_EX_NOACTIVATE` The window is not activated (brought to the foreground) when clicked on. It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it. Can be modified with [`SetActiveWindow`](#setactivewindow) and [`SetForegroundWindow`](#setforegroundwindow).
-
-### Frame / border
-
-`WS_EX_WINDOWEDGE` The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.
-
-`WS_EX_CLIENTEDGE` The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.
-
-`WS_EX_STATICEDGE` The window has a three-dimensional border style. Doesn't seem to have an effect on post-XP Windows.
-
-`WS_EX_DLGMODALFRAME` The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.
+| ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./images/ws_ex_toolwindow.png) | ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./images/ws_overlappedwindow_exnoredirectionbitmap.png) |
+| :------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
+|                        WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW                        |                                    WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP                                     |
 
 | ![Window with WS_POPUP, WS_DLGFRAME, and WS_EX_CLIENTEDGE](./images/ws_popup_dlgframe_exclientedge.png) |
-| :----------------------------------------------------------------------------------------------: |
-|                           WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                           |
-
-### Reading order (LTR/RTL) / layout
-
-`WS_EX_LEFTSCROLLBAR` The vertical scrollbar (if present) is to the left of the client area.
-
-`WS_EX_RIGHTSCROLLBAR` The vertical scrollbar (if present) is to the right of the client area. This is the default for `WS_VSCROLL`.
-
-`WS_EX_LAYOUTRTL` Flips the horizontal origin of the window client area. Increasing horizontal values advance to the left.
-
-`WS_EX_LTRREADING` Text is drawn left-to-right. This is the default.
-
-`WS_EX_RTLREADING` Text is drawn right-to-left.
-
-`WS_EX_NOINHERITLAYOUT` The layout is not inherited from parent to child windows.
-
-`WS_EX_LEFT` The window has generic left-aligned properties (?). This is the default.
-
-`WS_EX_RIGHT` The window has generic right-aligned properties (?).
-
-### Other
-
-`WS_EX_ACCEPTFILES` Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.
-Can be modified with [`DragAcceptFiles`](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.
-
-`WS_EX_CONTROLPARENT` The children of this window become included in focus navigation via Tab and Arrow keys instead
-of treating the whole window as one focusable item.
-
-`WS_EX_NOPARENTNOTIFY` The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.
-
-`WS_EX_MDICHILD` The window is an MDI child.
-
-`WS_EX_CONTEXTHELP` The window titlebar shows a help icon which when clicked, changes the cursor to a help cursor that can be used
-to click around the window to open help popups via `WM_HELP` and `WinHelp`. Doesn't seem to have an effect post Windows 95.
+| :-----------------------------------------------------------------------------------------------------: |
+|                              WS_POPUP \| WS_DLGFRAME and WS_EX_CLIENTEDGE                               |
 
 ## Message loop
 
@@ -371,28 +310,27 @@ to click around the window to open help popups via `WM_HELP` and `WinHelp`. Does
 
 ## Window procedure
 
-Window procedure is a callback function of type `WNDPROC` that processes messages sent to a window.
+Window procedure is a callback function of type [WNDPROC](./types.md#wndproc) that processes messages sent to a window.
 
-It is defined for a window class on [WNDCLASS](#wndclass) when [registering a class](#registerclass).
+It is set for a window class on [WNDCLASS](#wndclass) which is passed to [RegisterClass](#registerclass).
 
-**Parameters**
-
-- hwnd [window handle](./types.md#hwnd)
-- uMsg the message code
-- wParam additional message information. The contents depend on the message code.
-- lParam additional message information. The contents depend on the message code.
-
-**wParam vs lParam**
-
-`wParam` is typed as [WPARAM](./types.md#wparam) which is a [UINT_PTR](./types.md#uint_ptr) (unsigned) and `lParam` is typed as [LPARAM](./types.md#lparam) which is a [LONG_PTR](./types.md#long_ptr) (signed).
-
-`wParam` is typically used for small values, flags, or identifiers (like control IDs, key codes, or notification codes), while `lParam` is typically used for larger values or pointers (like passing a struct pointer, coordinates, or handles).
-
-`wParam` means "Word parameter" because on 16‑bit Windows it was typed as a 16-bit [WORD](./types.md#word). `lParam` means "Long parameter" because on 16-bit Windows it was typed as a 32-bit [LONG](./types.md#long).
-
-**Return value**
+| Name   | Type                        | Description                                                              |
+| ------ | --------------------------- | ------------------------------------------------------------------------ |
+| hwnd   | [HWND](./types.md#hwnd)     | The window handle.                                                       |
+| uMsg   | [UINT](./types.md#uint)     | The message code.                                                        |
+| wParam | [WPARAM](./types.md#wparam) | Additional message information. The contents depend on the message code. |
+| lParam | [LPARAM](./types.md#lparam) | Additional message information. The contents depend on the message code. |
 
 It should return an [LRESULT](./types.md#lresult) code that depends on the message that was handled.
+
+If a message (or condition) is not handled by the window procedure, [default window procedure](#defwindowproc) should be called and
+it's result returned from the window procedure.
+
+| wParam                                                                                                | lParam                                                                                                  |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [UINT_PTR](./types.md#uint_ptr) (unsigned)                                                            | [LONG_PTR](./types.md#long_ptr) (signed)                                                                |
+| Typically small values, flags, or identifiers <br>like control IDs, key codes, or notification codes  | Typically used for larger values or pointers <br>like passing a struct pointer, coordinates, or handles |
+| Means "Word parameter" because on 16‑bit Windows <br>it was typed as a 16-bit [WORD](./types.md#word) | Means "Long parameter" because on 16-bit Windows <br>it was typed as a 32-bit [LONG](./types.md#long).  |
 
 Minimal example:
 
@@ -404,7 +342,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
       BOOL initSuccess = initialize(); // initialize is some example function
 
       if(!initSuccess) {
-        return -1; // destroy window
+        return -1; // signal to destroy window
       }
       else {
         return 0; // proceed with creation
@@ -420,6 +358,32 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
   return DefWindowProc(hwnd, uMsg, wParam, lParam); // default handler for messages we don't handle
 }
 ```
+
+## Window messages
+
+### WM_CREATE
+
+| When                                                                                                       | wParam | lParam                                   | Return value                                                                                                                             |
+| ---------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| During [CreateWindow](#createwindow) call,<br>after the window is created,<br>but before window is visible | /      | Pointer to [CREATESTRUCT](#createstruct) | [LRESULT](./types.md#lresult) <br>0 to continue creation <br>-1 the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
+
+### WM_DESTROY
+
+| When                                        | wParam | lParam | Return value                                                                  |
+| ------------------------------------------- | ------ | ------ | ----------------------------------------------------------------------------- |
+| After the window is removed from the screen | /      | /      | [LRESULT](./types.md#lresult) <br>0 if the application processes this message |
+
+### WM_SYNCPAINT
+
+| When                                        | wParam | lParam | Return value                                                                  |
+| ------------------------------------------- | ------ | ------ | ----------------------------------------------------------------------------- |
+| After the window is removed from the screen | /      | /      | [LRESULT](./types.md#lresult) <br>0 if the application processes this message |
+
+### WM_NCCREATE
+
+| When                                                           | wParam | lParam                                   | Return value                                                                                                                                     |
+| -------------------------------------------------------------- | ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Before [WM_CREATE](#wm_create),<br>after the window is created | /      | Pointer to [CREATESTRUCT](#createstruct) | [LRESULT](./types.md#lresult)<br>`TRUE` to continue creation<br>`FALSE` the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
 
 ## Icons
 
@@ -441,74 +405,69 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 Changes the position, size, and Z order of a window.
 
-**Parameters**
+| Name            | Type                    | Description                                                                                                   |
+| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                            |
+| hWndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#setwindowpos-z-order-codes). |
+| X               | `int`                   | The new position of the left side of the window.                                                              |
+| Y               | `int`                   | The new position of the top of the window.                                                                    |
+| cx              | `int`                   | The new width of the window, in pixels.                                                                       |
+| cy              | `int`                   | The new position of the top of the window.                                                                    |
+| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                       |
 
-- hwnd [window handle](./types.md#hwnd)
-- hWndInsertAfter [window handle](./types.md#hwnd) of the window that should be beneath or one of the [codes](#z-order-codes).
-- X The new position of the left side of the window, in client coordinates.
-- Y The new position of the top of the window, in client coordinates.
-- cx The new width of the window, in pixels.
-- cy The new height of the window, in pixels.
-- uFlags The window sizing and positioning [flags](#flags).
-
-**Return value**
-
-[BOOL](./types.md#bool) that's `TRUE` if the function succeeds. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
+| Success | Error                                                       |
+| ------- | ----------------------------------------------------------- |
+| `TRUE`  | `FALSE`, [GetLastError](./errors.md#getlasterror) available |
 
 ```c
 BOOL didSucceed = SetWindowPos(hwnd, HWND_TOP, 10, 10, 500, 500, SWP_SHOWWINDOW | SWP_NOREDRAW);
 ```
 
-### Z order codes
+## SetWindowPos Z order codes
 
-`HWND_BOTTOM` Bottom of the z order.
+| Name           | Description                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HWND_BOTTOM    | Bottom of the z order.                                                                                                                            |
+| HWND_NOTOPMOST | Above all non-topmost windows.                                                                                                                    |
+| HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
+| HWND_TOPMOST   | Top of the z order.                                                                                                                               |
 
-`HWND_NOTOPMOST` Above all non-topmost windows.
+### SetWindowPos Flags
 
-`HWND_TOP` Top of the window's z order "layer" - if window is topmost, goes to the top of the z order, otherwise goes to the top of non-topmost windows.
-
-`HWND_TOPMOST` Top of the z order.
-
-### Flags
-
-`SWP_ASYNCWINDOWPOS` If the calling thread and the thread that owns the window are attached to different input queues, the system posts the request to the thread that owns the window. This prevents the calling thread from blocking its execution while other threads process the request.
-
-`SWP_DEFERERASE` Prevents generation of the `WM_SYNCPAINT` message.
-
-`SWP_DRAWFRAME` Draws a frame (defined in the window's class description) around the window.
-
-`SWP_FRAMECHANGED` Applies new frame styles set using the `SetWindowLong` function. Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed. If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.
-
-`SWP_HIDEWINDOW` Hides the window.
-
-`SWP_NOACTIVATE` Does not activate the window. If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the hWndInsertAfter parameter).
-
-`SWP_NOCOPYBITS` Discards the entire contents of the client area. If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.
-
-`SWP_NOMOVE` Retains the current position (ignores X and Y parameters).
-
-`SWP_NOOWNERZORDER` Does not change the owner window's position in the Z order. Alias is `SWP_NOREPOSITION`.
-
-`SWP_NOREDRAW` Does not redraw changes. If this flag is set, no repainting of any kind occurs. This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved. When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing.
-
-`SWP_NOSENDCHANGING` Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.
-
-`SWP_NOSIZE` Retains the current size (ignores the cx and cy parameters).
-
-`SWP_NOZORDER` Retains the current Z order (ignores the hWndInsertAfter parameter).
-
-`SWP_SHOWWINDOW` Displays the window.
+| Name               | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SWP_ASYNCWINDOWPOS | If the calling thread and the thread that owns the window are attached to different input queues,<br>the system posts the request to the thread that owns the window.<br>This prevents the calling thread from blocking its execution while other threads process the request.                                                                                                                                        |
+| SWP_DEFERERASE     | Prevents generation of the [WM_SYNCPAINT](#wm_syncpaint) message.                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_DRAWFRAME      | Draws a frame (defined in the window's class description) around the window.                                                                                                                                                                                                                                                                                                                                          |
+| SWP_FRAMECHANGED   | Applies new frame styles set using the `SetWindowLong` function.<br>Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed.<br>If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.                                                                                                                                            |
+| SWP_HIDEWINDOW     | Hides the window.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_NOACTIVATE     | Does not activate the window.<br>If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the `hWndInsertAfter` parameter).                                                                                                                                                                                                      |
+| SWP_NOCOPYBITS     | Discards the entire contents of the client area.<br>If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.                                                                                                                                                                                                    |
+| SWP_NOMOVE         | Retains the current position (ignores X and Y parameters).                                                                                                                                                                                                                                                                                                                                                            |
+| SWP_NOOWNERZORDER  | Does not change the owner window's position in the Z order. Alias is `SWP_NOREPOSITION`.                                                                                                                                                                                                                                                                                                                              |
+| SWP_NOREDRAW       | Does not redraw changes.<br>If this flag is set, no repainting of any kind occurs.<br>This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.<br>When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing. |
+| SWP_NOSENDCHANGING | Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.                                                                                                                                                                                                                                                                                                                                                |
+| SWP_NOSIZE         | Retains the current size (ignores the cx and cy parameters).                                                                                                                                                                                                                                                                                                                                                          |
+| SWP_NOZORDER       | Retains the current Z order (ignores the hWndInsertAfter parameter).                                                                                                                                                                                                                                                                                                                                                  |
+| SWP_SHOWWINDOW     | Displays the window.                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ## ShowWindow
 
 Sets the specified window's show state.
 
-Accepts a [window handle](./types.md#hwnd) and a [code](#showwindow-codes) and returns [BOOL](./types.md#bool) that's `TRUE` if the window was visible before.
-
 The first time the application calls this, second argument is ignored if `STARTUPINFO` was provided,
 otherwise the first time this is called the second argument should be the `nCmdShow` parameter of `WinMain`.
 
 In subsequent calls, any [code](#showwindow-codes) can be provided.
+
+| Name     | Type                    | Description                           |
+| -------- | ----------------------- | ------------------------------------- |
+| hWnd     | [HWND](./types.md#hwnd) | The window handle.                    |
+| nCmdShow | `int`                   | Show state [code](#showwindow-codes). |
+
+| Success                                                   | Error |
+| --------------------------------------------------------- | ----- |
+| `TRUE` if window was visible before,<br>`FALSE` otherwise | /     |
 
 ```c
 BOOL wasVisible = ShowWindow(hwnd, SW_HIDE); // hides the window
@@ -518,37 +477,34 @@ BOOL wasVisible = ShowWindow(hwnd, SW_HIDE); // hides the window
 
 These codes are used with [ShowWindow](#showwindow).
 
-`SW_HIDE` Hides the window and activates another window.
-
-`SW_SHOWNORMAL` and `SW_NORMAL` Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
-
-`SW_SHOWMINIMIZED` Activates the window and displays it as a minimized window.
-
-`SW_SHOWMAXIMIZED` and `SW_MAXIMIZE` Activates the window and displays it as a maximized window.
-
-`SW_SHOWNOACTIVATE` Displays a window in its most recent size and position. This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.
-
-`SW_SHOW` Activates the window and displays it in its current size and position.
-
-`SW_MINIMIZE` Minimizes the specified window and activates the next top-level window in the Z order.
-
-`SW_SHOWMINNOACTIVE` Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.
-
-`SW_SHOWNA` Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.
-
-`SW_RESTORE` Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
-
-`SW_SHOWDEFAULT` Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.
-
-`SW_FORCEMINIMIZE` Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.
+| Name                             | Description                                                                                                                                                                                                                              |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SW_HIDE                          | Hides the window and activates another window.                                                                                                                                                                                           |
+| SW_SHOWNORMAL and SW_NORMAL      | Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when displaying the window for the first time. |
+| SW_SHOWMINIMIZED                 | Activates the window and displays it as a minimized window.                                                                                                                                                                              |
+| SW_SHOWMAXIMIZED and SW_MAXIMIZE | Activates the window and displays it as a maximized window.                                                                                                                                                                              |
+| SW_SHOWNOACTIVATE                | Displays a window in its most recent size and position.<br>This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.                                                                                            |
+| SW_SHOW                          | Activates the window and displays it in its current size and position.                                                                                                                                                                   |
+| SW_MINIMIZE                      | Minimizes the specified window and activates the next top-level window in the Z order.                                                                                                                                                   |
+| SW_SHOWMINNOACTIVE               | Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.                                                                                                              |
+| SW_SHOWNA                        | Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.                                                                                                       |
+| SW_RESTORE                       | Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when restoring a minimized window.           |
+| SW_SHOWDEFAULT                   | Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.                                                                 |
+| SW_FORCEMINIMIZE                 | Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.                                                                            |
 
 ## SetActiveWindow
 
 Activates a window. The window must be attached to the calling thread's message queue.
 
-Accepts a [window handle](./types.md#hwnd) and returns the previously active [window handle](./types.md#hwnd) or `NULL` in case of failure. [GetLastError](./errors.md#getlasterror) can be called in case of failure.
-
 Only works if application is already in the foreground.
+
+| Name | Type                    | Description       |
+| ---- | ----------------------- | ----------------- |
+| hWnd | [HWND](./types.md#hwnd) | The window handle |
+
+| Success                                                   | Error                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------- |
+| [HWND](./types.md#hwnd) Previously active window's handle | `NULL`, [GetLastError](./errors.md#getlasterror) available |
 
 ```c
 HWND prevActiveWindowOrNull = SetActiveWindow(hwnd);
@@ -556,8 +512,47 @@ HWND prevActiveWindowOrNull = SetActiveWindow(hwnd);
 
 ## SetForegroundWindow
 
-Accepts a [window handle](./types.md#hwnd) and brings the window to foreground and activates it.
+Brings the window to the foreground and activates it.
+
+| Name | Type                    | Description       |
+| ---- | ----------------------- | ----------------- |
+| hWnd | [HWND](./types.md#hwnd) | The window handle |
+
+| Success                                                              | Error |
+| -------------------------------------------------------------------- | ----- |
+| `TRUE` if window was brought to the foreground,<br>`FALSE` otherwise | /     |
 
 ```c
 BOOL windowWasBroughtToForeground = SetForegroundWindow(hwnd);
+```
+
+## CREATESTRUCT
+
+Window initialization parameters passed to [WM_CREATE](#wm_create) and [WM_NCCREATE](#wm_nccreate).
+
+This struct has [unicode](./unicode_ansi.md) variants.
+
+| Name           | Type                              | Description                                                                                                                                                                                                                |
+| -------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| lpCreateParams | [LPVOID](./types.md#lpvoid)       | Contains [lpParam](#createwindow) passed to [CreateWindow](#createwindow),<br>or if window is an MDI client window a pointer to `CLIENTRECTSTRUCT`,<br>or if window is an MDI child window a pointer to `MDICREATESTRUCT`. |
+| hInstance      | [HINSTANCE](./types.md#hinstance) | Handle to the module that owns the new window.                                                                                                                                                                             |
+| hMenu          | [HMENU](./types.md#hmenu)         | Handle to the menu used by the new window.                                                                                                                                                                                 |
+| hwndParent     | [HWND](./types.md#hwnd)           | Handle to the parent window (if any).                                                                                                                                                                                      |
+| cy             | `int`                             | Height of the new window in pixels.                                                                                                                                                                                        |
+| cx             | `int`                             | Width of the new window in px.                                                                                                                                                                                             |
+| y              | `int`                             | Y-coordinate of the [upper-left corner](#ownership) of the new window.                                                                                                                                                     |
+| x              | `int`                             | Y-coordinate of the [upper-left corner](#ownership) of the new window                                                                                                                                                      |
+| style          | [LONG](./types.md#long)           | [Window styles](#window-styles).                                                                                                                                                                                           |
+| lpszName       | [LPCWSTR](./types.md#lpcwstr)     | Window name string defined as [lpWindowName](#createwindow).                                                                                                                                                               |
+| lpszClass      | [LPCWSTR](./types.md#lpcwstr)     | Class name string or [ATOM](./types.md#atom) defined in [WNDCLASS](#wndclass).                                                                                                                                             |
+| dwExStyle      | [DWORD](./types.md#dword)         | [Extended window styles](#extended-window-styles).                                                                                                                                                                         |
+
+## DefWindowProc
+
+Default window procedure that should be called in [window procedure](#window-procedure) for messages (or conditions) the application doesn't handle.
+
+```c
+// in our windowProc
+
+return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 ```
