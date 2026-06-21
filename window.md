@@ -233,13 +233,13 @@ These styles are used with [CreateWindow](#createwindow).
 There are three base window styles that you can use as a starting point:
 
 - `WS_OVERLAPPED` - top-level windows
-- `WS_POPUP` - special top-level windows like dialogs, menus, splash screens...etc.
+- `WS_POPUP` - special top-level windows like [dialogs](./dialogs.md), [menus](./menus.md), splash screens...etc.
 - `WS_CHILD` - child windows.
 
 | Name                | Description                                                                                                                                                                        |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | WS_OVERLAPPED       | Produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.                                                                                |
-| WS_POPUP            | Produces a frameless window with just the client area and no borders at all (no rounding).<br>Client area needs to be painted by the application for the window to be visible.     |
+| WS_POPUP            | Produces a frameless window with just the client area and no rounded corners.<br>Client area needs to be painted by the application for the window to be visible.                  |
 | WS_THICKFRAME       | Adds a resizable border and makes the titlebar taller (if present).<br>Also adds a rounded border when used with `WS_POPUP`. Alias is `WS_SIZEBOX`.                                |
 | WS_SYSMENU          | Adds the window icon, system menu and window buttons.<br>`WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used alongside it to add the minimize and maximize buttons.                     |
 | WS_MINIMIZEBOX      | Adds the minimize window button, requires the `WS_SYSMENU` style                                                                                                                   |
@@ -249,14 +249,14 @@ There are three base window styles that you can use as a starting point:
 | WS_VSCROLL          | Adds the vertical scrollbar to the client area.                                                                                                                                    |
 | WS_BORDER           | The window has a thin line border.                                                                                                                                                 |
 | WS_DLGFRAME         | The window has a dialog-box like border. A window with this style cannot have a title bar.                                                                                         |
-| WS_VISIBLE          | The window is visible initially. Can be modified with [`ShowWindow`](#showwindow) or [`SetWindowPos`](#setwindowpos).                                                              |
+| WS_VISIBLE          | The window is visible initially. Can be modified with [ShowWindow](#showwindow) and [SetWindowPos](#setwindowpos).                                                                 |
 | WS_DISABLED         | The window is disabled initially. Visually, the frame looks the same, but all input to the window is blocked.<br>Can be modified with [EnableWindow](#enablewindow).               |
 | WS_MINIMIZE         | The window is minimized initially. Alias is `WS_ICONIC`.                                                                                                                           |
 | WS_MAXIMIZE         | The window is maximized initially.                                                                                                                                                 |
 | WS_CLIPCHILDREN     | Child windows are excluded from the window's painting operations.<br>Prevents parent from overwriting child windows and flicker.<br>Mainly used with [GDI](./gdi.md).              |
 | WS_CLIPSIBLINGS     | Applied to a child window so that it doesn't overwrite the area of the sibling windows it overlaps with, but only paint its own visible area.<br>Mainly used with [GDI](./gdi.md). |
-| WS_GROUP            | Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard controls.                            |
-| WS_TABSTOP          | Makes a child window focusable via pressing Tab. Used with [standard controls](./controls.md).                                                                                     |
+| WS_GROUP            | Makes the child window the beginning of a group of controls. Used for keyboard navigation, focus, and radio button groups. Used with standard [controls](./controls.md).           |
+| WS_TABSTOP          | Makes a child window focusable via pressing Tab. Used with standard [controls](./controls.md).                                                                                     |
 
 | ![Window with WS_OVERLAPPEDWINDOW style](./images/ws_overlappedwindow.png) | ![Window with WS_POPUP style](./images/ws_popup.png) |
 | :------------------------------------------------------------------------: | :--------------------------------------------------: |
@@ -275,8 +275,8 @@ These styles are used with [CreateWindow](#createwindow).
 | WS_EX_LAYERED             | graphics, transparency             | Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.<br>Can be used to create non-rectangular shaped windows (e.g. Winamp skins).<br>Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).<br>More on [layered windows](#layered-window). |
 | WS_EX_COMPOSITED          | graphics                           | The window uses double buffering for painting to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).                                                                                                                                                                                                                          |
 | WS_EX_TRANSPARENT         | graphics, transparency             | The child window is not painted until siblings underneath it have been painted.<br>This allows for the top window to be blended with windows underneath.<br>This only affects the paint order (which is top-down by default), not the actual transparent rendering.                                                                 |
-| WS_EX_TOPMOST             | z order, activation                | The window is placed above all non-topmost windows, even when it's deactivated.<br>Can be modified with [`SetWindowPos`](#setwindowpos).                                                                                                                                                                                            |
-| WS_EX_NOACTIVATE          | activation                         | The window is not activated (brought to the foreground) when clicked on.<br>It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it.<br>Can be modified with [`SetActiveWindow`](#setactivewindow) and [`SetForegroundWindow`](#setforegroundwindow).                                                   |
+| WS_EX_TOPMOST             | z order, activation                | The window is placed above all non-topmost windows, even when it's deactivated.<br>Can be modified with [SetWindowPos](#setwindowpos).                                                                                                                                                                                              |
+| WS_EX_NOACTIVATE          | activation                         | The window is not activated (brought to the foreground) when clicked on.<br>It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it.<br>Can be modified with [SetActiveWindow](#setactivewindow) and [SetForegroundWindow](#setforegroundwindow).                                                       |
 | WS_EX_WINDOWEDGE          | border                             | The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                      |
 | WS_EX_CLIENTEDGE          | border                             | The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.                                                                                                                                                                                                |
 | WS_EX_STATICEDGE          | border                             | The window has a 3D border style. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                                |
@@ -290,7 +290,7 @@ These styles are used with [CreateWindow](#createwindow).
 | WS_EX_RIGHT               | layout                             | The window has generic right-aligned properties (?).                                                                                                                                                                                                                                                                                |
 | WS_EX_LTRREADING          | reading order                      | Text is drawn left-to-right. This is the default.                                                                                                                                                                                                                                                                                   |
 | WS_EX_RTLREADING          | reading order                      | Text is drawn right-to-left.                                                                                                                                                                                                                                                                                                        |
-| WS_EX_ACCEPTFILES         | shell                              | Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.<br>Can be modified with [`DragAcceptFiles`](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.                                                                                                        |
+| WS_EX_ACCEPTFILES         | shell                              | Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.<br>Can be modified with [DragAcceptFiles](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.                                                                                                          |
 | WS_EX_CONTROLPARENT       | accessibility, child windows       | The children of this window become included in focus navigation via Tab and Arrow keys instead of treating the whole window as one focusable item.                                                                                                                                                                                  |
 | WS_EX_NOPARENTNOTIFY      | child windows                      | The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.                                                                                                                                                                                                                  |
 | WS_EX_MDICHILD            | mdi                                | The window is an MDI child.                                                                                                                                                                                                                                                                                                         |
@@ -314,17 +314,17 @@ Window procedure is a callback function of type [WNDPROC](./types.md#wndproc) th
 
 It is set for a window class on [WNDCLASS](#wndclass) which is passed to [RegisterClass](#registerclass).
 
-| Name   | Type                        | Description                                                              |
-| ------ | --------------------------- | ------------------------------------------------------------------------ |
-| hwnd   | [HWND](./types.md#hwnd)     | The window handle.                                                       |
-| uMsg   | [UINT](./types.md#uint)     | The message code.                                                        |
-| wParam | [WPARAM](./types.md#wparam) | Additional message information. The contents depend on the message code. |
-| lParam | [LPARAM](./types.md#lparam) | Additional message information. The contents depend on the message code. |
+| Name   | Type                        | Description                                                                                                      |
+| ------ | --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| hwnd   | [HWND](./types.md#hwnd)     | The window handle.                                                                                               |
+| uMsg   | [UINT](./types.md#uint)     | The [message](#window-messages) code.                                                                            |
+| wParam | [WPARAM](./types.md#wparam) | Additional [message](#window-messages) information. The contents depend on the [message](#window-messages) code. |
+| lParam | [LPARAM](./types.md#lparam) | Additional [message](#window-messages) information. The contents depend on the [message](#window-messages) code. |
 
 It should return an [LRESULT](./types.md#lresult) code that depends on the message that was handled.
 
 If a message (or condition) is not handled by the window procedure, [default window procedure](#defwindowproc) should be called and
-it's result returned from the window procedure.
+its result returned from the window procedure.
 
 | wParam                                                                                                | lParam                                                                                                  |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -361,29 +361,89 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ## Window messages
 
+| Name                    | Range                         | Notes                                                                                                                                            |
+| ----------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| System reserved         | `0x0000` - `0x03FF`           | Names start with `WM_` (WM_CREATE, WM_PAINT...etc.).                                                                                             |
+| Custom per window class | `0x0400` (WM_USER) - `0x7FFF` | Use in your window classes,<br>not for standard [controls](./controls.md) since they use the range as well<br>(BM_GETCHECK, EM_GETLINE...etc. ). |
+| Custom per app          | `0x8000` (WM_APP) - `0xBFFF`  | Use across your app.<br>Standard [controls](./controls.md) do not use this range.<br>Min. Windows NT 4.0                                         |
+| Custom system-wide      | `0xC000` - `0xFFFF`           | Use for messages between applications.<br>Registered via [RegisterWindowMessage](#RegisterWindowMesesage).                                       |
+
+### WM_ACTIVATEAPP
+
+| When                                                                                                | wParam                                                                                                   | lParam                                                                                                                                                                    | Return value                                |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Window of non-active application is about to be activated<br>and active window is being deactivated | [BOOL](./types.md#bool)<br>`TRUE` if window is being activated<br>`FALSE` if window is being deactivated | [DWORD](./types.md#dword) thread id<br>if window is activated, this is the deactivated window's thread<br>if window is deactivated, this is the activated window's thread | 0 if the application processes this message |
+
 ### WM_CREATE
 
-| When                                                                                                       | wParam | lParam                                   | Return value                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| During [CreateWindow](#createwindow) call,<br>after the window is created,<br>but before window is visible | /      | Pointer to [CREATESTRUCT](#createstruct) | [LRESULT](./types.md#lresult) <br>0 to continue creation <br>-1 the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
+| When                                                                                                       | wParam | lParam                                   | Return value                                                                                           |
+| ---------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| During [CreateWindow](#createwindow) call,<br>after the window is created,<br>but before window is visible | /      | Pointer to [CREATESTRUCT](#createstruct) | 0 to continue creation <br>-1 the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
 
 ### WM_DESTROY
 
-| When                                        | wParam | lParam | Return value                                                                  |
-| ------------------------------------------- | ------ | ------ | ----------------------------------------------------------------------------- |
-| After the window is removed from the screen | /      | /      | [LRESULT](./types.md#lresult) <br>0 if the application processes this message |
+| When                                        | wParam | lParam | Return value                                |
+| ------------------------------------------- | ------ | ------ | ------------------------------------------- |
+| After the window is removed from the screen | /      | /      | 0 if the application processes this message |
+
+### WM_DISPLAYCHANGE
+
+| When                       | wParam                          | lParam                                                                            | Return value                                |
+| -------------------------- | ------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------- |
+| Display resolution changed | Image depth of display in `bpp` | Horizontal resolution in low-order word<br>Vertical resolution in high-order word | 0 if the application processes this message |
+
+### WM_NCPAINT
+
+| When                      | wParam                                                                              | lParam | Return value                                |
+| ------------------------- | ----------------------------------------------------------------------------------- | ------ | ------------------------------------------- |
+| The frame must be painted | [HRGN](./types.md#hrgn) update region of the window <br>clipped to the window frame | /      | 0 if the application processes this message |
+
+### WM_PAINT
+
+| When                                                                                                                                                         | wParam | lParam | Return value                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------ | ------------------------------------------- |
+| Request is made to paint a portion of the window<br>via [UpdateWindow](#updatewindow), [RedrawWindow](#redrawwindow), or [DispatchMessage](#dispatchmessage) | /      | /      | 0 if the application processes this message |
+
+### WM_PRINT
+
+| When                                                                      | wParam                               | lParam                                          | Return value |
+| ------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------- | ------------ |
+| Request sent to window to draw itself<br>in the specified device context. | [HDC](./types.md#hdc) device context | Bitmask of drawing option [flags](#print-flags) | /            |
+
+### WM_PRINTCLIENT
+
+| When                                                                               | wParam                               | lParam                                          | Return value |
+| ---------------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------- | ------------ |
+| Request sent to window to draw its client area<br>in the specified device context. | [HDC](./types.md#hdc) device context | Bitmask of drawing option [flags](#print-flags) | /            |
+
+### Print flags
+
+| Name             | Description                                      |
+| ---------------- | ------------------------------------------------ |
+| PRF_CHECKVISIBLE | Draws the window only if it is visible.          |
+| PRF_CHILDREN     | Draws all visible children windows.              |
+| PRF_CLIENT       | Draws the client area of the window.             |
+| PRF_ERASEBKGND   | Erases the background before drawing the window. |
+| PRF_NONCLIENT    | Draws the nonclient area of the window.          |
+| PRF_OWNED        | Draws all owned windows.                         |
+
+### WM_SETREDRAW
+
+| When                                                                                                                                                                       | wParam | lParam | Return value                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ | ------------------------------------------- |
+| Sent by application via [SendMessage](#sendmessage)<br>to a window (usually [control](./controls.md)) to enable/disable redrawing.<br>Meant for batching multiple updates. | /      | /      | 0 if the application processes this message |
 
 ### WM_SYNCPAINT
 
-| When                                        | wParam | lParam | Return value                                                                  |
-| ------------------------------------------- | ------ | ------ | ----------------------------------------------------------------------------- |
-| After the window is removed from the screen | /      | /      | [LRESULT](./types.md#lresult) <br>0 if the application processes this message |
+| When                                                                                                   | wParam | lParam | Return value                                |
+| ------------------------------------------------------------------------------------------------------ | ------ | ------ | ------------------------------------------- |
+| A window changed (hidden, moved, resized...),<br>so top-level windows from other threads are notified. | /      | /      | 0 if the application processes this message |
 
 ### WM_NCCREATE
 
-| When                                                           | wParam | lParam                                   | Return value                                                                                                                                     |
-| -------------------------------------------------------------- | ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Before [WM_CREATE](#wm_create),<br>after the window is created | /      | Pointer to [CREATESTRUCT](#createstruct) | [LRESULT](./types.md#lresult)<br>`TRUE` to continue creation<br>`FALSE` the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
+| When                                                           | wParam | lParam                                   | Return value                                                                                                    |
+| -------------------------------------------------------------- | ------ | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Before [WM_CREATE](#wm_create),<br>after the window is created | /      | Pointer to [CREATESTRUCT](#createstruct) | `TRUE` to continue creation<br>`FALSE` the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
 
 ## Icons
 
