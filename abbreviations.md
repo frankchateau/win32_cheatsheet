@@ -64,6 +64,12 @@ ComboboxEx notification
 
 `CBEN_BEGINEDIT`, `CBEN_DELETEITEM`, `CBEN_DRAGBEGIN`
 
+## cch
+
+Count of characters
+
+`cchName`
+
 ## CCM
 
 Control message
