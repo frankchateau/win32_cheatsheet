@@ -34,7 +34,7 @@ Constant type
 
 Count of bytes
 
-`cbSize` (size of struct), `cbClsExtra`, `cbWndExtra`
+`cbSize` (size of struct), [cbClsExtra](./window.md#wndclass), [cbWndExtra](./window.md#wndclass)
 
 ## CB
 
@@ -412,7 +412,7 @@ Pointer
 
 ## Q
 
-Quad
+Quad something
 
 [QWORD](./types.md#qword)
 
@@ -628,7 +628,7 @@ Window station
 
 Window message
 
-`WM_CREATE`, `WM_DESTROY`, `WM_PAINT`, `WM_PASTE`.
+[WM_CREATE](./window.md#wm_create), [WM_DESTROY](./window.md#wm_destroy), [WM_PAINT](./window.md#wm_paint)
 
 ## WND
 
@@ -641,3 +641,9 @@ Window
 Window style
 
 [WS_OVERLAPPEDWINDOW](./window.md#window-styles), [WS_CHILD](./window.md#window-styles), [WS_EX_ACCEPTFILES](./window.md#extended-window-styles)
+
+## WVR
+
+Window valid rectangle
+
+`WVR_ALIGNTOP`, `WVR_ALIGNRIGHT`.

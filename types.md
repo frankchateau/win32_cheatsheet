@@ -1184,6 +1184,39 @@ A pointer to a [LONG64](#long64).
 typedef LONG64 *PLONG64;
 ```
 
+## POINT
+
+The POINT structure defines the x- and y-coordinates of a point.
+
+The POINT structure is identical to the [POINTL](#pointl) structure.
+
+| Name | Type          | Description                              |
+| ---- | ------------- | ---------------------------------------- |
+| x    | [LONG](#long) | Specifies the x-coordinate of the point. |
+| y    | [LONG](#long) | Specifies the y-coordinate of the point. |
+
+```c
+// WinDef.h
+
+typedef struct tagPOINT {
+  LONG x;
+  LONG y;
+} POINT, *PPOINT, *NPPOINT, *LPPOINT;
+```
+
+## POINTL
+
+The POINTL structure is identical to the [POINT](#point) structure.
+
+```c
+// WinDef.h
+
+typedef struct _POINTL {
+  LONG x;
+  LONG y;
+} POINTL, *PPOINTL;
+```
+
 ## POINTER_32
 
 A 32-bit pointer. On a 32-bit system, this is a native pointer. On a 64-bit system, this is a truncated 64-bit pointer.
@@ -1503,6 +1536,45 @@ A 64-bit unsigned integer (Quad word, 4x [WORD](#word)).
 typedef unsigned __int64 QWORD;
 ```
 
+## RECT
+
+The RECT structure defines a rectangle by the coordinates of its upper-left and lower-right corners.
+
+The RECT structure is identical to the [RECTL](#rectl) structure.
+
+| Name   | Type          | Description                                                            |
+| ------ | ------------- | ---------------------------------------------------------------------- |
+| left   | [LONG](#long) | Specifies the x-coordinate of the upper-left corner of the rectangle.  |
+| top    | [LONG](#long) | Specifies the y-coordinate of the upper-left corner of the rectangle.  |
+| right  | [LONG](#long) | Specifies the x-coordinate of the lower-right corner of the rectangle. |
+| bottom | [LONG](#long) | Specifies the y-coordinate of the lower-right corner of the rectangle. |
+
+```c
+// WinDef.h
+
+typedef struct tagRECT {
+  LONG left;
+  LONG top;
+  LONG right;
+  LONG bottom;
+} RECT, *PRECT, *NPRECT, *LPRECT;
+```
+
+## RECTL
+
+The RECTL structure is identical to the [RECT](#rect) structure.
+
+```c
+// WinDef.h
+
+typedef struct _RECTL {
+  LONG left;
+  LONG top;
+  LONG right;
+  LONG bottom;
+} RECTL, *PRECTL, *LPRECTL;
+```
+
 ## SC_HANDLE
 
 A handle to a service control manager database.
@@ -1541,6 +1613,24 @@ A 16-bit integer. The range is -32768 through 32767 decimal.
 // WinNT.h
 
 typedef short SHORT;
+```
+
+## SIZE
+
+The SIZE structure defines the width and height of a rectangle.
+
+| Name | Type          | Description                                                                               |
+| ---- | ------------- | ----------------------------------------------------------------------------------------- |
+| cx   | [LONG](#long) | Specifies the rectangle's width. The units depend on which function uses this structure.  |
+| cy   | [LONG](#long) | Specifies the rectangle's height. The units depend on which function uses this structure. |
+
+```c
+// WinDef.h
+
+typedef struct tagSIZE {
+  LONG cx;
+  LONG cy;
+} SIZE, *PSIZE, *LPSIZE;
 ```
 
 ## SIZE_T

@@ -2,7 +2,7 @@
 
 A window is a fundamental unit of the Windows GUI. It represents a rectangular region on the screen.
 
-Windows are not just top-level application windows with a titlebar and borders, but can be any type of UI
+Windows are not just top-level application windows with a title bar and borders, but can be any type of UI
 control (e.g. buttons, lists...etc).
 
 The type of a window is [`HWND`](./types.md#hwnd) which is an opaque handle to the window which is managed by win32.
@@ -26,11 +26,11 @@ Window event handling is done via a [message loop](#message-loop) and the [windo
 
 The main parts of a window are:
 
-- titlebar with icon, caption, window buttons and system menu
-- frame or border that can be used for resizing
+- title bar with icon, caption, window buttons and system menu
+- frame (border) that can be used for resizing
 - client area for rendering the window's content
 
-Titlebar and frame are called non-client area (NC).
+Title bar and frame are called non-client area (NC).
 
 | ![Window parts](./images/window_parts.png) |
 | :----------------------------------------: |
@@ -232,10 +232,10 @@ There are three base window styles that you can use as a starting point:
 
 | Name                | Description                                                                                                                                                                         |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| WS_OVERLAPPED       | Produces a basic window with a frame and a minimal titlebar. No resizable border or window buttons.                                                                                 |
+| WS_OVERLAPPED       | Produces a basic window with a frame and a minimal title bar. No resizable border or window buttons.                                                                                |
 | WS_POPUP            | Produces a frameless window with just the client area and no rounded corners.<br>Client area needs to be painted by the application for the window to be visible.                   |
 | WS_CHILD            | Produces a [child window](#child-window).<br>Window with this style must have a parent window passed to [CreateWindow](#createwindow).<br>Cannot be used with the `WS_POPUP` style. |
-| WS_THICKFRAME       | Adds a resizable border and makes the titlebar taller (if present).<br>Also adds a rounded border when used with `WS_POPUP`.<br>Alias is `WS_SIZEBOX`.                              |
+| WS_THICKFRAME       | Adds a resizable border and makes the title bar taller (if present).<br>Also adds a rounded border when used with `WS_POPUP`.<br>Alias is `WS_SIZEBOX`.                             |
 | WS_SYSMENU          | Adds the window icon, system menu and window buttons.<br>`WS_MINIMIZEBOX` and `WS_MAXIMIZEBOX` are used alongside it to add the minimize and maximize buttons.                      |
 | WS_MINIMIZEBOX      | Adds the minimize window button, requires the `WS_SYSMENU` style                                                                                                                    |
 | WS_MAXIMIZEBOX      | Adds the maximize window button, requires the `WS_SYSMENU` style                                                                                                                    |
@@ -261,35 +261,35 @@ There are three base window styles that you can use as a starting point:
 
 These styles are used with [CreateWindow](#createwindow).
 
-| Name                      | Category                           | Description                                                                                                                                                                                                                                                                                                                         |
-| ------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| WS_EX_APPWINDOW           | taskbar                            | Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under their parent window.                                                                                                                                                                                                           |
-| WS_EX_TOOLWINDOW          | taskbar, titlebar                  | A tool window doesn't have a taskbar icon, has a smaller titlebar with only a close button and no app icon.                                                                                                                                                                                                                         |
-| WS_EX_PALETTEWINDOW       | taskbar, titlebar, z order, border | Defined as `WS_EX_WINDOWEDGE \| WS_EX_TOOLWINDOW \| WS_EX_TOPMOST`.                                                                                                                                                                                                                                                                 |
-| WS_EX_NOREDIRECTIONBITMAP | graphics                           | Tells [DWM](./dwm.md) to not create a [GDI](./gdi.md) backing surface for the window meaning the client area will not be rendered by default.<br>To present the client area, you need to use the DirectComposition API or similar.                                                                                                  |
-| WS_EX_LAYERED             | graphics, transparency             | Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.<br>Can be used to create non-rectangular shaped windows (e.g. Winamp skins).<br>Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).<br>More on [layered windows](#layered-window). |
-| WS_EX_COMPOSITED          | graphics                           | The window uses double buffering for painting to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).                                                                                                                                                                                                                          |
-| WS_EX_TRANSPARENT         | graphics, transparency             | The child window is not painted until siblings underneath it have been painted.<br>This allows for the top window to be blended with windows underneath.<br>This only affects the paint order (which is top-down by default), not the actual transparent rendering.                                                                 |
-| WS_EX_TOPMOST             | z order, activation                | The window is placed above all non-topmost windows, even when it's deactivated.<br>Can be modified with [SetWindowPos](#setwindowpos).                                                                                                                                                                                              |
-| WS_EX_NOACTIVATE          | activation                         | The window is not activated (brought to the foreground) when clicked on.<br>It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it.<br>Can be modified with [SetActiveWindow](#setactivewindow) and [SetForegroundWindow](#setforegroundwindow).                                                       |
-| WS_EX_WINDOWEDGE          | border                             | The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                      |
-| WS_EX_CLIENTEDGE          | border                             | The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.                                                                                                                                                                                                |
-| WS_EX_STATICEDGE          | border                             | The window has a 3D border style. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                                |
-| WS_EX_OVERLAPPEDWINDOW    | border                             | Defined as `WS_EX_WINDOWEDGE \| WS_EX_CLIENTEDGE`.                                                                                                                                                                                                                                                                                  |
-| WS_EX_DLGMODALFRAME       | border                             | The window has a double border and can have a titlebar. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                          |
-| WS_EX_LEFTSCROLLBAR       | layout                             | The vertical scrollbar (if present) is to the left of the client area.                                                                                                                                                                                                                                                              |
-| WS_EX_RIGHTSCROLLBAR      | layout                             | The vertical scrollbar (if present) is to the right of the client area. This is the default for `WS_VSCROLL`.                                                                                                                                                                                                                       |
-| WS_EX_LAYOUTRTL           | layout                             | Flips the horizontal origin of the window client area. Increasing horizontal values advance to the left.                                                                                                                                                                                                                            |
-| WS_EX_NOINHERITLAYOUT     | layout                             | The layout is not inherited from parent to child windows.                                                                                                                                                                                                                                                                           |
-| WS_EX_LEFT                | layout                             | The window has generic left-aligned properties (?). This is the default.                                                                                                                                                                                                                                                            |
-| WS_EX_RIGHT               | layout                             | The window has generic right-aligned properties (?).                                                                                                                                                                                                                                                                                |
-| WS_EX_LTRREADING          | reading order                      | Text is drawn left-to-right. This is the default.                                                                                                                                                                                                                                                                                   |
-| WS_EX_RTLREADING          | reading order                      | Text is drawn right-to-left.                                                                                                                                                                                                                                                                                                        |
-| WS_EX_ACCEPTFILES         | shell                              | Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.<br>Can be modified with [DragAcceptFiles](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.                                                                                                          |
-| WS_EX_CONTROLPARENT       | accessibility, child windows       | The children of this window become included in focus navigation via Tab and Arrow keys instead of treating the whole window as one focusable item.                                                                                                                                                                                  |
-| WS_EX_NOPARENTNOTIFY      | child windows                      | The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.                                                                                                                                                                                                                  |
-| WS_EX_MDICHILD            | mdi                                | The window is an MDI child.                                                                                                                                                                                                                                                                                                         |
-| WS_EX_CONTEXTHELP         | help                               | The window titlebar shows a help icon which when clicked, changes the cursor to a help cursor that can be used to click around the window to open help popups via `WM_HELP` and `WinHelp`.<br>Doesn't seem to have an effect post Windows 95.                                                                                       |
+| Name                      | Category                            | Description                                                                                                                                                                                                                                                                                                                         |
+| ------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WS_EX_APPWINDOW           | taskbar                             | Adds a taskbar icon for owned top-level windows (e.g. dialogs) which would normally be grouped under their parent window.                                                                                                                                                                                                           |
+| WS_EX_TOOLWINDOW          | taskbar, title bar                  | A tool window doesn't have a taskbar icon, has a smaller title bar with only a close button and no app icon.                                                                                                                                                                                                                        |
+| WS_EX_PALETTEWINDOW       | taskbar, title bar, z order, border | Defined as `WS_EX_WINDOWEDGE \| WS_EX_TOOLWINDOW \| WS_EX_TOPMOST`.                                                                                                                                                                                                                                                                 |
+| WS_EX_NOREDIRECTIONBITMAP | graphics                            | Tells [DWM](./dwm.md) to not create a [GDI](./gdi.md) backing surface for the window meaning the client area will not be rendered by default.<br>To present the client area, you need to use the DirectComposition API or similar.                                                                                                  |
+| WS_EX_LAYERED             | graphics, transparency              | Improves performance, reduces flickering and enables per-pixel alpha blending and transparency effects for the window.<br>Can be used to create non-rectangular shaped windows (e.g. Winamp skins).<br>Cannot be used with `CS_CLASSDC` or `CS_OWNDC` [class styles](#class-styles).<br>More on [layered windows](#layered-window). |
+| WS_EX_COMPOSITED          | graphics                            | The window uses double buffering for painting to reduce flicker. Legacy, made obsolete by [DWM](./dwm.md).                                                                                                                                                                                                                          |
+| WS_EX_TRANSPARENT         | graphics, transparency              | The child window is not painted until siblings underneath it have been painted.<br>This allows for the top window to be blended with windows underneath.<br>This only affects the paint order (which is top-down by default), not the actual transparent rendering.                                                                 |
+| WS_EX_TOPMOST             | z order, activation                 | The window is placed above all non-topmost windows, even when it's deactivated.<br>Can be modified with [SetWindowPos](#setwindowpos).                                                                                                                                                                                              |
+| WS_EX_NOACTIVATE          | activation                          | The window is not activated (brought to the foreground) when clicked on.<br>It doesn't appear on the taskbar by default, but adding `WS_EX_APPWINDOW` forces it.<br>Can be modified with [SetActiveWindow](#setactivewindow) and [SetForegroundWindow](#setforegroundwindow).                                                       |
+| WS_EX_WINDOWEDGE          | border                              | The window has a border with a raised edge. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                      |
+| WS_EX_CLIENTEDGE          | border                              | The window has a border with a sunken edge. Has an effect when used with `WS_POPUP` and more pronounced when `WS_DLGFRAME` is added.                                                                                                                                                                                                |
+| WS_EX_STATICEDGE          | border                              | The window has a 3D border style. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                                                |
+| WS_EX_OVERLAPPEDWINDOW    | border                              | Defined as `WS_EX_WINDOWEDGE \| WS_EX_CLIENTEDGE`.                                                                                                                                                                                                                                                                                  |
+| WS_EX_DLGMODALFRAME       | border                              | The window has a double border and can have a title bar. Doesn't seem to have an effect on post-XP Windows.                                                                                                                                                                                                                         |
+| WS_EX_LEFTSCROLLBAR       | layout                              | The vertical scrollbar (if present) is to the left of the client area.                                                                                                                                                                                                                                                              |
+| WS_EX_RIGHTSCROLLBAR      | layout                              | The vertical scrollbar (if present) is to the right of the client area. This is the default for `WS_VSCROLL`.                                                                                                                                                                                                                       |
+| WS_EX_LAYOUTRTL           | layout                              | Flips the horizontal origin of the window client area. Increasing horizontal values advance to the left.                                                                                                                                                                                                                            |
+| WS_EX_NOINHERITLAYOUT     | layout                              | The layout is not inherited from parent to child windows.                                                                                                                                                                                                                                                                           |
+| WS_EX_LEFT                | layout                              | The window has generic left-aligned properties (?). This is the default.                                                                                                                                                                                                                                                            |
+| WS_EX_RIGHT               | layout                              | The window has generic right-aligned properties (?).                                                                                                                                                                                                                                                                                |
+| WS_EX_LTRREADING          | reading order                       | Text is drawn left-to-right. This is the default.                                                                                                                                                                                                                                                                                   |
+| WS_EX_RTLREADING          | reading order                       | Text is drawn right-to-left.                                                                                                                                                                                                                                                                                                        |
+| WS_EX_ACCEPTFILES         | shell                               | Allows the window to accept files by drag and drop using the [shell api](./shell.md#shell) and `WM_DROPFILES`.<br>Can be modified with [DragAcceptFiles](./shell.md#dragacceptfiles). Mostly legacy and replaced with OLE.                                                                                                          |
+| WS_EX_CONTROLPARENT       | accessibility, child windows        | The children of this window become included in focus navigation via Tab and Arrow keys instead of treating the whole window as one focusable item.                                                                                                                                                                                  |
+| WS_EX_NOPARENTNOTIFY      | child windows                       | The parent window is not notified with `WM_PARENTNOTIFY` notifications when child windows are created / destroyed.                                                                                                                                                                                                                  |
+| WS_EX_MDICHILD            | mdi                                 | The window is an MDI child.                                                                                                                                                                                                                                                                                                         |
+| WS_EX_CONTEXTHELP         | help                                | The window title bar shows a help icon which when clicked, changes the cursor to a help cursor that can be used to click around the window to open help popups via `WM_HELP` and `WinHelp`.<br>Doesn't seem to have an effect post Windows 95.                                                                                      |
 
 | ![Window with WS_OVERLAPPEDWINDOW and WS_EX_TOOLWINDOW](./images/ws_ex_toolwindow.png) | ![Window with WS_OVERLAPPEDWINDOW and WS_EX_NOREDIRECTIONBITMAP](./images/ws_overlappedwindow_exnoredirectionbitmap.png) |
 | :------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
@@ -365,148 +365,289 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ### WM_ACTIVATEAPP
 
-| When                                                                                                | wParam                                                                                                   | lParam                                                                                                                                                                    | Return value                        |
-| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| Window of non-active application is about to be activated<br>and active window is being deactivated | [BOOL](./types.md#bool)<br>`TRUE` if window is being activated<br>`FALSE` if window is being deactivated | [DWORD](./types.md#dword) thread id<br>if window is activated, this is the deactivated window's thread<br>if window is deactivated, this is the activated window's thread | 0 if the app processes this message |
+|                  |                                                                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Window of non-active application is about to be activated<br>and active window is being deactivated                                                                       |
+| **wParam**       | [BOOL](./types.md#bool)<br>`TRUE` if window is being activated<br>`FALSE` if window is being deactivated                                                                  |
+| **lParam**       | [DWORD](./types.md#dword) thread id<br>if window is activated, this is the deactivated window's thread<br>if window is deactivated, this is the activated window's thread |
+| **Return value** | 0 if the app processes this message                                                                                                                                       |
+| **Default**      | /                                                                                                                                                                         |
+| **Notes**        | /                                                                                                                                                                         |
 
 ### WM_CANCELMODE
 
-| When                                                                                                                                                                                               | wParam | lParam | Return value                        |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- |
-| Modal input loops or continuous input tracking<br>(e.g. mouse capture, drag-drop...etc.)<br> need to be cancelled because something interrupted<br> it (e.g. dialog shown, window disabled...etc.) | /      | /      | 0 if the app processes this message |
+|                  |                                                                                                                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Modal input loops or continuous input tracking (e.g. mouse capture, drag-drop...etc.)<br> need to be cancelled because something interrupted it (e.g. dialog shown, window disabled...etc.) |
+| **wParam**       | /                                                                                                                                                                                           |
+| **lParam**       | /                                                                                                                                                                                           |
+| **Return value** | 0 if the app processes this message                                                                                                                                                         |
+| **Default**      | /                                                                                                                                                                                           |
+| **Notes**        | /                                                                                                                                                                                           |
 
 ### WM_CHILDACTIVATE
 
-| When                                                        | wParam | lParam | Return value                        |
-| ----------------------------------------------------------- | ------ | ------ | ----------------------------------- |
-| [Child window](#child-window) is activated, moved, or sized | /      | /      | 0 if the app processes this message |
+|                  |                                                             |
+| ---------------- | ----------------------------------------------------------- |
+| **When**         | [Child window](#child-window) is activated, moved, or sized |
+| **wParam**       | /                                                           |
+| **lParam**       | /                                                           |
+| **Return value** | 0 if the app processes this message                         |
+| **Default**      | /                                                           |
+| **Notes**        | /                                                           |
 
 ### WM_CLOSE
 
-| When                                                                              | wParam | lParam | Return value                        | Default                                |
-| --------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- | -------------------------------------- |
-| Window should close<br>(close button, Alt+F4, [CloseWindow](#closewindow)...etc.) | /      | /      | 0 if the app processes this message | [DestroyWindow](#destroywindow) called |
+|                  |                                                                                |
+| ---------------- | ------------------------------------------------------------------------------ |
+| **When**         | Window should close (close button, Alt+F4, [CloseWindow](#closewindow)...etc.) |
+| **wParam**       | /                                                                              |
+| **lParam**       | /                                                                              |
+| **Return value** | 0 if the app processes this message                                            |
+| **Default**      | [DestroyWindow](#destroywindow) called                                         |
+| **Notes**        | /                                                                              |
 
 ### WM_COMPACTING
 
-| When                                                                                                           | wParam | lParam | Return value                        | Default | Notes                                    |
-| -------------------------------------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- | ------- | ---------------------------------------- |
-| More than 12.5% CPU time over a 30- to 60-second interval<br>is spent on compacting memory i.e. memory is low. | /      | /      | 0 if the app processes this message | /       | Legacy, for 16-bit Windows compatibility |
+|                  |                                                                                                                |
+| ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| **When**         | More than 12.5% CPU time over a 30- to 60-second interval<br>is spent on compacting memory i.e. memory is low. |
+| **wParam**       | /                                                                                                              |
+| **lParam**       | /                                                                                                              |
+| **Return value** | 0 if the app processes this message                                                                            |
+| **Default**      | /                                                                                                              |
+| **Notes**        | Legacy, for 16-bit Windows compatibility                                                                       |
 
 ### WM_CREATE
 
-| When                                                                                                       | wParam | lParam                                | Return value                                                                                           | Default                                                                             |
-| ---------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| During [CreateWindow](#createwindow) call,<br>after the window is created,<br>but before window is visible | /      | [CREATESTRUCT](#createstruct) pointer | 0 to continue creation <br>-1 the window is destroyed and [CreateWindow](#createwindow) returns `NULL` | Creation proceeds,<br>[CreateWindow](#createwindow) returns [HWND](./types.md#hwnd) |
+|                  |                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| **When**         | During [CreateWindow](#createwindow) call, after the window is created, but before window is visible   |
+| **wParam**       | /                                                                                                      |
+| **lParam**       | [CREATESTRUCT](#createstruct) pointer                                                                  |
+| **Return value** | 0 to continue creation <br>-1 the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
+| **Default**      | Creation proceeds, [CreateWindow](#createwindow) returns [HWND](./types.md#hwnd)                       |
+| **Notes**        | /                                                                                                      |
 
 ### WM_DESTROY
 
-| When                                        | wParam | lParam | Return value                        | Default | Notes                                                                                          |
-| ------------------------------------------- | ------ | ------ | ----------------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
-| After the window is removed from the screen | /      | /      | 0 if the app processes this message | /       | App must call [PostQuitMessage](#postquitmessage),<br>otherwise program keeps running forever. |
+|                  |                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| **When**         | After the window is removed from the screen                                                 |
+| **wParam**       | /                                                                                           |
+| **lParam**       | /                                                                                           |
+| **Return value** | 0 if the app processes this message                                                         |
+| **Default**      | /                                                                                           |
+| **Notes**        | App must call [PostQuitMessage](#postquitmessage), otherwise program keeps running forever. |
 
 ### WM_ENABLE
 
-| When                                                                                 | wParam                                                              | lParam | Return value                        | Default |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------ | ----------------------------------- | ------- |
-| Before [EnableWindow](#enablewindow) returns,<br>after the enabled state is changed. | [BOOL](./types.md#bool)<br>`TRUE` if enabled<br>`FALSE` if disabled | /      | 0 if the app processes this message | /       |
+|                  |                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------- |
+| **When**         | Before [EnableWindow](#enablewindow) returns, after the enabled state is changed |
+| **wParam**       | [BOOL](./types.md#bool)<br>`TRUE` if enabled<br>`FALSE` if disabled              |
+| **lParam**       | /                                                                                |
+| **Return value** | 0 if the app processes this message                                              |
+| **Default**      | /                                                                                |
+| **Notes**        | /                                                                                |
 
 ### WM_ENTERSIZEMOVE
 
-| When                                                                                                | wParam | lParam | Return value                        | Default |
-| --------------------------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- | ------- |
-| After window enters sizing or move loop<br>(e.g. titlebar drag, border resize, system menu...etc.). | /      | /      | 0 if the app processes this message | /       |
+|                  |                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| **When**         | After window enters sizing or move loop (e.g. title bar drag, border resize, system menu Size / Move...etc.) |
+| **wParam**       | /                                                                                                            |
+| **lParam**       | /                                                                                                            |
+| **Return value** | 0 if the app processes this message                                                                          |
+| **Default**      | /                                                                                                            |
+| **Notes**        | /                                                                                                            |
 
 ### WM_EXITSIZEMOVE
 
-| When                                                                                               | wParam | lParam | Return value                        | Default |
-| -------------------------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- | ------- |
-| After window exits sizing or move loop<br>(e.g. titlebar drag, border resize, system menu...etc.). | /      | /      | 0 if the app processes this message | /       |
+|                  |                                                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| **When**         | After window exits sizing or move loop (e.g. title bar drag, border resize, system menu Size / Move...etc.) |
+| **wParam**       | /                                                                                                           |
+| **lParam**       | /                                                                                                           |
+| **Return value** | 0 if the app processes this message                                                                         |
+| **Default**      | /                                                                                                           |
+| **Notes**        | /                                                                                                           |
 
 ### WM_GETICON
 
-| When                                                                                                | wParam                                              | lParam                                                                                     | Return value              | Default                                                                       |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------- |
-| After window enters sizing or move loop<br>(e.g. titlebar drag, border resize, system menu...etc.). | [Icon type](#wm_geticon-icon-type) being retrieved. | DPI of the icon being retrieved.<br>Used to provide different icons depending on the size. | [HICON](./types.md#hicon) | `hIcon`/`hIconSm` from [WNDCLASS](#wndclass) returned if set,<br>otherwise 0. |
-
-### WM_GETICON icon type
-
-| Name        | Description                                                                                                                                               |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ICON_BIG    | Retrieve the large icon for the window.                                                                                                                   |
-| ICON_SMALL  | Retrieve the small icon for the window.                                                                                                                   |
-| ICON_SMALL2 | Retrieves the small icon provided by the application. If the application does not provide one, the system uses the system-generated icon for that window. |
+|                  |                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| **When**         | System needs to retrieve the small or large icon for display (title bar, Alt+Tab view, taskbar...etc.) |
+| **wParam**       | [Icon type](#wm_geticon-icon-type) being retrieved                                                     |
+| **lParam**       | DPI of the icon being retrieved. Used to provide different icons depending on the size.                |
+| **Return value** | [HICON](./types.md#hicon)                                                                              |
+| **Default**      | `hIcon`/`hIconSm` from [WNDCLASS](#wndclass) returned if set, otherwise 0.                             |
+| **Notes**        | /                                                                                                      |
 
 ### WM_GETMINMAXINFO
 
-| When                                                                                                                                                                 | wParam | lParam                                                                                            | Return value                        | Default |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------- | ----------------------------------- | ------- |
-| Size or position of the window is about to change.<br>Used to override default maximized size/position and<br>default tracking (border resize) minimum/maximum size. | /      | [MINMAXINFO](#minmaxinfo) pointer.<br>App can override defaults by setting this struct's members. | 0 if the app processes this message | /       |
+|                  |                                                                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Size or position of the window is about to change.<br>Used to override default maximized size/position and default tracking (border resize) minimum/maximum size. |
+| **wParam**       | /                                                                                                                                                                 |
+| **lParam**       | [MINMAXINFO](#minmaxinfo) pointer. App can override defaults by setting this struct's members.                                                                    |
+| **Return value** | 0 if the app processes this message                                                                                                                               |
+| **Default**      | /                                                                                                                                                                 |
+| **Notes**        | /                                                                                                                                                                 |
 
 ### WM_INPUTLANGCHANGE
 
-| When                                                                 | wParam                                                                                                                                                          | lParam                                                                                                            | Return value                              | Default                                          |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------ |
-| Input language (keyboard layout) changed<br>for the window's thread. | [BYTE](./types.md#byte) font character set for input language.<br>Only needed if you used [ANSI](./unicode_ansi.md) version of [RegisterClass](#registerclass). | [HKL](./types.md#hkl) input locale id.<br>Low word contains a language id.<br>High word contains a device handle. | nonzero if the app processes this message | Message passed to all first-level child windows. |
+|                  |                                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Input locale (keyboard layout) changed for the window's thread                                                                                                      |
+| **wParam**       | [BYTE](./types.md#byte) font character set for input language.<br>Only needed if you used the [ANSI](./unicode_ansi.md) version of [RegisterClass](#registerclass). |
+| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>Language id in the [LOWORD](#loword-macro).<br>Device handle in the [HIWORD](#hiword-macro).                              |
+| **Return value** | Nonzero if the app processes this message                                                                                                                           |
+| **Default**      | Message passed to all first-level child windows.                                                                                                                    |
+| **Notes**        | /                                                                                                                                                                   |
+
+### WM_INPUTLANGCHANGEREQUEST
+
+|                  |                                                                                                                                                                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | User chooses a new input locale (keyboard layout) (e.g. Alt+Shift, taskbar language indicator...etc.).<br>App can accept the change by passing the message to [DefWindowProc](#defwindowproc) or reject by returning early. |
+| **wParam**       | Bitmask of [flags](#wm_inputlangchangerequest-flags) describing the change                                                                                                                                                  |
+| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>[LOWORD](#loword-macro) contains a language id.<br>[HIWORD](#hiword-macro) contains a device handle.                                                                              |
+| **Return value** | Ignored, return 0 if not calling [DefWindowProc](#defwindowproc).                                                                                                                                                           |
+| **Default**      | New input locale accepted, [WM_INPUTLANGCHANGE](#wm_inputlangchange) sent.                                                                                                                                                  |
+| **Notes**        | /                                                                                                                                                                                                                           |
+
+### WM_MOVE
+
+|                  |                                                                                                                                                                                           |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | After the window has been moved                                                                                                                                                           |
+| **wParam**       | /                                                                                                                                                                                         |
+| **lParam**       | [DWORD](./types.md#dword)<br>X coordinate of upper-left corner of client area in [LOWORD](#loword-macro).<br>Y coordinate of upper-left corner of client area in [HIWORD](#hiword-macro). |
+| **Return value** | 0 if the app processes this message                                                                                                                                                       |
+| **Default**      | /                                                                                                                                                                                         |
+| **Notes**        | /                                                                                                                                                                                         |
+
+### WM_MOVING
+
+|                  |                                                                                                                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Continuosly while the user is moving the window                                                                                                                               |
+| **wParam**       | /                                                                                                                                                                             |
+| **lParam**       | [RECT](./types.md#rect) pointer that represents the current position of the window.<br>App can change the members of the struct to change the position of the drag rectangle. |
+| **Return value** | `TRUE` if the app processes this message                                                                                                                                      |
+| **Default**      | /                                                                                                                                                                             |
+| **Notes**        | /                                                                                                                                                                             |
+
+### WM_NCACTIVATE
+
+|                  |                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Nonclient area (title bar and icon) needs to be drawn to<br>indicate active or inactive state                                                                                                                                                                                                                                                                                                               |
+| **wParam**       | [BOOL](./types.md#bool)<br>`TRUE` if active state needs to be drawn.<br>`FALSE` if inactive state needs to be drawn.                                                                                                                                                                                                                                                                                        |
+| **lParam**       | If -1 [DefWindowProc](#defwindowproc) does not repaint the nonclient area to reflect the state change.<br>Otherwise,<br>if `wParam` is `TRUE`, this param is [HWND](./types.md#hwnd) to previously active window,<br>if `wParam` is `FALSE`, this param is [HWND](./types.md#hwnd) to window about to be activated.<br>`NULL` if previously active window or about-to-be-active window is from another app. |
+| **Return value** | When `wParam` is `FALSE`, app should return `TRUE` for the system to proceed with default processing, or `FALSE` to prevent the change.<br>When `wParam` is `TRUE`, return value is ignored.                                                                                                                                                                                                                |
+| **Default**      | /                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Notes**        | If the window is minimized when this message is received, the app should pass the message to [DefWindowProc](#defwindowproc).                                                                                                                                                                                                                                                                               |
+
+### WM_NCCALCSIZE
+
+|                  |                                                                                                                                                                                                                                                                                    |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | The size and position of window's client area must be calculated                                                                                                                                                                                                                   |
+| **wParam**       | /                                                                                                                                                                                                                                                                                  |
+| **lParam**       | If `wParam` is `TRUE`,<br>points to [NCCALCSIZE_PARAMS](#nccalcsize_params) struct that can be used to calculate the new size and position of the client rect.<br>If `wParam` is `FALSE`,<br>points to [RECT](./types.md#rect) struct that contains the proposed window rectangle. |
+| **Return value** | If `wParam` is `FALSE`, app should return 0.<br>If `wParam` is `TRUE` app should return bitmask of [flags](#wm_nccalcsize-flags) or 0.                                                                                                                                             |
+| **Default**      | /                                                                                                                                                                                                                                                                                  |
+| **Notes**        | /                                                                                                                                                                                                                                                                                  |
 
 ### WM_NCCREATE
 
-| When                                                           | wParam | lParam                                | Return value                                                                                                    | Default |
-| -------------------------------------------------------------- | ------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------- |
-| Before [WM_CREATE](#wm_create),<br>after the window is created | /      | [CREATESTRUCT](#createstruct) pointer | `TRUE` to continue creation<br>`FALSE` the window is destroyed and [CreateWindow](#createwindow) returns `NULL` | /       |
+|                  |                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **When**         | Before [WM_CREATE](#wm_create), after the window is created                                                      |
+| **wParam**       | /                                                                                                                |
+| **lParam**       | [CREATESTRUCT](#createstruct) pointer                                                                            |
+| **Return value** | `TRUE` to continue creation,<br>`FALSE` the window is destroyed and [CreateWindow](#createwindow) returns `NULL` |
+| **Default**      | /                                                                                                                |
+| **Notes**        | /                                                                                                                |
 
 ### WM_DISPLAYCHANGE
 
-| When                       | wParam                          | lParam                                                                                                         | Return value                        |
-| -------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| Display resolution changed | Image depth of display in `bpp` | [DWORD](./types.md#dword)<br>Horizontal resolution in low-order word<br>Vertical resolution in high-order word | 0 if the app processes this message |
+|                  |                                                                                                                                   |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Display resolution changed                                                                                                        |
+| **wParam**       | Image depth of display in `bpp` (bits per pixel)                                                                                  |
+| **lParam**       | [DWORD](./types.md#dword)<br>Horizontal resolution in [LOWORD](#loword-macro).<br>Vertical resolution in [HIWORD](#hiword-macro). |
+| **Return value** | 0 if the app processes this message                                                                                               |
+| **Default**      | /                                                                                                                                 |
+| **Notes**        | /                                                                                                                                 |
 
 ### WM_NCPAINT
 
-| When                      | wParam                                                                              | lParam | Return value                        |
-| ------------------------- | ----------------------------------------------------------------------------------- | ------ | ----------------------------------- |
-| The frame must be painted | [HRGN](./types.md#hrgn) update region of the window <br>clipped to the window frame | /      | 0 if the app processes this message |
+|                  |                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------- |
+| **When**         | The frame must be painted                                                       |
+| **wParam**       | [HRGN](./types.md#hrgn) update region of the window clipped to the window frame |
+| **lParam**       | /                                                                               |
+| **Return value** | 0 if the app processes this message                                             |
+| **Default**      | /                                                                               |
+| **Notes**        | /                                                                               |
 
 ### WM_PAINT
 
-| When                                                                                                                                                         | wParam | lParam | Return value                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------ | ----------------------------------- |
-| Request is made to paint a portion of the window<br>via [UpdateWindow](#updatewindow), [RedrawWindow](#redrawwindow), or [DispatchMessage](#dispatchmessage) | /      | /      | 0 if the app processes this message |
+|                  |                                                                                                                                                           |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Request is made to paint a portion of the window via [UpdateWindow](#updatewindow), [RedrawWindow](#redrawwindow), or [DispatchMessage](#dispatchmessage) |
+| **wParam**       | /                                                                                                                                                         |
+| **lParam**       | /                                                                                                                                                         |
+| **Return value** | 0 if the app processes this message                                                                                                                       |
+| **Default**      | /                                                                                                                                                         |
+| **Notes**        | /                                                                                                                                                         |
 
 ### WM_PRINT
 
-| When                                                                      | wParam                               | lParam                                          | Return value |
-| ------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------- | ------------ |
-| Request sent to window to draw itself<br>in the specified device context. | [HDC](./types.md#hdc) device context | Bitmask of drawing option [flags](#print-flags) | /            |
+|                  |                                                                        |
+| ---------------- | ---------------------------------------------------------------------- |
+| **When**         | Request sent to window to draw itself in the specified device context. |
+| **wParam**       | [HDC](./types.md#hdc) device context                                   |
+| **lParam**       | Bitmask of drawing option [flags](#print-flags)                        |
+| **Return value** | /                                                                      |
+| **Default**      | /                                                                      |
+| **Notes**        | /                                                                      |
 
 ### WM_PRINTCLIENT
 
-| When                                                                               | wParam                               | lParam                                          | Return value |
-| ---------------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------- | ------------ |
-| Request sent to window to draw its client area<br>in the specified device context. | [HDC](./types.md#hdc) device context | Bitmask of drawing option [flags](#print-flags) | /            |
-
-### Print flags
-
-| Name             | Description                                      |
-| ---------------- | ------------------------------------------------ |
-| PRF_CHECKVISIBLE | Draws the window only if it is visible.          |
-| PRF_CHILDREN     | Draws all visible children windows.              |
-| PRF_CLIENT       | Draws the client area of the window.             |
-| PRF_ERASEBKGND   | Erases the background before drawing the window. |
-| PRF_NONCLIENT    | Draws the nonclient area of the window.          |
-| PRF_OWNED        | Draws all owned windows.                         |
+|                  |                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------- |
+| **When**         | Request sent to window to draw its client area in the specified device context. |
+| **wParam**       | [HDC](./types.md#hdc) device context                                            |
+| **lParam**       | Bitmask of drawing option [flags](#print-flags)                                 |
+| **Return value** | /                                                                               |
+| **Default**      | /                                                                               |
+| **Notes**        | /                                                                               |
 
 ### WM_SETREDRAW
 
-| When                                                                                                                                                                             | wParam | lParam | Return value                        |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ | ----------------------------------- |
-| Sent by application via [SendMessage](#sendmessage)<br>to a window (usually [control](./controls.md)) to enable/disable redrawing.<br>Can be used for batching multiple updates. | /      | /      | 0 if the app processes this message |
+|                  |                                                                                                                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Sent by application via [SendMessage](#sendmessage) to a window (usually [control](./controls.md)) to enable/disable redrawing.<br>Can be used for batching multiple updates. |
+| **wParam**       | /                                                                                                                                                                             |
+| **lParam**       | /                                                                                                                                                                             |
+| **Return value** | 0 if the app processes this message                                                                                                                                           |
+| **Default**      | /                                                                                                                                                                             |
+| **Notes**        | /                                                                                                                                                                             |
 
 ### WM_SYNCPAINT
 
-| When                                                                                                   | wParam | lParam | Return value                        |
-| ------------------------------------------------------------------------------------------------------ | ------ | ------ | ----------------------------------- |
-| A window changed (hidden, moved, resized...),<br>so top-level windows from other threads are notified. | /      | /      | 0 if the app processes this message |
+|                  |                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| **When**         | A window changed (hidden, moved, resized...),<br>so top-level windows from other threads are notified. |
+| **wParam**       | /                                                                                                      |
+| **lParam**       | /                                                                                                      |
+| **Return value** | 0 if the app processes this message                                                                    |
+| **Default**      | /                                                                                                      |
+| **Notes**        | /                                                                                                      |
 
 ## Icons
 
@@ -528,15 +669,15 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 Changes the position, size, and Z order of a window.
 
-| Name            | Type                    | Description                                                                                                   |
-| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------- |
-| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                            |
-| hWndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#setwindowpos-z-order-codes). |
-| X               | `int`                   | The new position of the left side of the window.                                                              |
-| Y               | `int`                   | The new position of the top of the window.                                                                    |
-| cx              | `int`                   | The new width of the window, in pixels.                                                                       |
-| cy              | `int`                   | The new position of the top of the window.                                                                    |
-| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                       |
+| Name            | Type                    | Description                                                                                             |
+| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                      |
+| hWndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#window-z-order-codes). |
+| X               | `int`                   | The new position of the left side of the window.                                                        |
+| Y               | `int`                   | The new position of the top of the window.                                                              |
+| cx              | `int`                   | The new width of the window, in pixels.                                                                 |
+| cy              | `int`                   | The new position of the top of the window.                                                              |
+| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                 |
 
 | Success | Error                                                       |
 | ------- | ----------------------------------------------------------- |
@@ -546,33 +687,7 @@ Changes the position, size, and Z order of a window.
 BOOL didSucceed = SetWindowPos(hwnd, HWND_TOP, 10, 10, 500, 500, SWP_SHOWWINDOW | SWP_NOREDRAW);
 ```
 
-## SetWindowPos Z order codes
-
-| Name           | Description                                                                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HWND_BOTTOM    | Bottom of the z order.                                                                                                                            |
-| HWND_NOTOPMOST | Above all non-topmost windows.                                                                                                                    |
-| HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
-| HWND_TOPMOST   | Top of the z order.                                                                                                                               |
-
-### SetWindowPos Flags
-
-| Name               | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SWP_ASYNCWINDOWPOS | If the calling thread and the thread that owns the window are attached to different input queues,<br>the system posts the request to the thread that owns the window.<br>This prevents the calling thread from blocking its execution while other threads process the request.                                                                                                                                        |
-| SWP_DEFERERASE     | Prevents generation of the [WM_SYNCPAINT](#wm_syncpaint) message.                                                                                                                                                                                                                                                                                                                                                     |
-| SWP_DRAWFRAME      | Draws a frame (defined in the window's class description) around the window.                                                                                                                                                                                                                                                                                                                                          |
-| SWP_FRAMECHANGED   | Applies new frame styles set using the `SetWindowLong` function.<br>Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed.<br>If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.                                                                                                                                            |
-| SWP_HIDEWINDOW     | Hides the window.                                                                                                                                                                                                                                                                                                                                                                                                     |
-| SWP_NOACTIVATE     | Does not activate the window.<br>If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the `hWndInsertAfter` parameter).                                                                                                                                                                                                      |
-| SWP_NOCOPYBITS     | Discards the entire contents of the client area.<br>If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.                                                                                                                                                                                                    |
-| SWP_NOMOVE         | Retains the current position (ignores X and Y parameters).                                                                                                                                                                                                                                                                                                                                                            |
-| SWP_NOOWNERZORDER  | Does not change the owner window's position in the Z order. Alias is `SWP_NOREPOSITION`.                                                                                                                                                                                                                                                                                                                              |
-| SWP_NOREDRAW       | Does not redraw changes.<br>If this flag is set, no repainting of any kind occurs.<br>This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.<br>When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing. |
-| SWP_NOSENDCHANGING | Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.                                                                                                                                                                                                                                                                                                                                                |
-| SWP_NOSIZE         | Retains the current size (ignores the cx and cy parameters).                                                                                                                                                                                                                                                                                                                                                          |
-| SWP_NOZORDER       | Retains the current Z order (ignores the hWndInsertAfter parameter).                                                                                                                                                                                                                                                                                                                                                  |
-| SWP_SHOWWINDOW     | Displays the window.                                                                                                                                                                                                                                                                                                                                                                                                  |
+                                                                                                                           |
 
 ## ShowWindow
 
@@ -662,13 +777,114 @@ This struct has [string](./unicode_ansi.md) variants.
 | hMenu          | [HMENU](./types.md#hmenu)         | Handle to the menu used by the new window.                                                                                                                                                                                 |
 | hwndParent     | [HWND](./types.md#hwnd)           | Handle to the parent window (if any).                                                                                                                                                                                      |
 | cy             | `int`                             | Height of the new window in pixels.                                                                                                                                                                                        |
-| cx             | `int`                             | Width of the new window in px.                                                                                                                                                                                             |
+| cx             | `int`                             | Width of the new window in pixels.                                                                                                                                                                                         |
 | y              | `int`                             | Y-coordinate of the [upper-left corner](#ownership) of the new window.                                                                                                                                                     |
-| x              | `int`                             | Y-coordinate of the [upper-left corner](#ownership) of the new window                                                                                                                                                      |
+| x              | `int`                             | X-coordinate of the [upper-left corner](#ownership) of the new window                                                                                                                                                      |
 | style          | [LONG](./types.md#long)           | [Window styles](#window-styles).                                                                                                                                                                                           |
-| lpszName       | [LPCWSTR](./types.md#lpcwstr)     | Window name string defined as [lpWindowName](#createwindow).                                                                                                                                                               |
+| lpszName       | [LPCWSTR](./types.md#lpcwstr)     | Window name string that was defined as [lpWindowName](#createwindow).                                                                                                                                                      |
 | lpszClass      | [LPCWSTR](./types.md#lpcwstr)     | Class name string or [ATOM](./types.md#atom) defined in [WNDCLASS](#wndclass).                                                                                                                                             |
 | dwExStyle      | [DWORD](./types.md#dword)         | [Extended window styles](#extended-window-styles).                                                                                                                                                                         |
+
+## MINMAXINFO
+
+| Name           | Type                      | Description                                                                                                                                                                                                                                                                       |
+| -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ptReserved     | [POINT](./types.md#point) | Reserved; do not use.                                                                                                                                                                                                                                                             |
+| ptMaxSize      | [POINT](./types.md#point) | The maximized width (x member) and the maximized height (y member) of the window.<br>For top-level windows, this value is based on the width of the primary monitor.                                                                                                              |
+| ptMaxPosition  | [POINT](./types.md#point) | The position of the left side of the maximized window (x member) and the position of the top of the maximized window (y member).<br>For top-level windows, this value is based on the position of the primary monitor.                                                            |
+| ptMinTrackSize | [POINT](./types.md#point) | The minimum tracking width (x member) and the minimum tracking height (y member) of the window.<br>This value can be obtained programmatically from the system metrics `SM_CXMINTRACK` and `SM_CYMINTRACK` via `GetSystemMetrics`.                                                |
+| ptMaxTrackSize | [POINT](./types.md#point) | The maximum tracking width (x member) and the maximum tracking height (y member) of the window.<br>This value is based on the size of the virtual screen and can be obtained programmatically from the system metrics `SM_CXMAXTRACK` and `SM_CYMAXTRACK` via `GetSystemMetrics`. |
+
+## NCCALCSIZE_PARAMS
+
+Contains information that an application can use while processing the [WM_NCCALCSIZE](#wm_nccalcsize) message to calculate the size, position, and valid contents of the client area of a window.
+
+| Name  | Type         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ----- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rgrc  | RECT[3]      | When [WM_NCCALCSIZE](#wm_nccalcsize) is received,<br>first rect is new proposed coordinates of window,<br>second rect is coordinates of window before it was moved or resized,<br>third rect is coordinates of window's client area before it was moved or resized.<br>When [window procedure](#window-procedure) returns,<br>first rect is new coordinates of client area,<br>second rect is destination coordinates of client area,<br>third rect is source coordinates of client area. |
+| lppos | `PWINDOWPOS` | Pointer to [WINDOWPOS](#windowpos) struct.                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+## WINDOWPOS
+
+Contains information about the size and position of a window.
+
+| Name            | Type                    | Description                                                                                             |
+| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                      |
+| hwndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#window-z-order-codes). |
+| x               | `int`                   | The position of the left edge of the window.                                                            |
+| y               | `int`                   | The position of the top edge of the window.                                                             |
+| cx              | `int`                   | The window width, in pixels.                                                                            |
+| cy              | `int`                   | The window height, in pixels.                                                                           |
+| flags           | [UINT](./types.md#uint) | Bitmask of window sizing and positioning [flags](#setwindowpos-flags).                                  |
+
+## Window Z order codes
+
+| Name           | Description                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HWND_BOTTOM    | Bottom of the z order.                                                                                                                            |
+| HWND_NOTOPMOST | Above all non-topmost windows.                                                                                                                    |
+| HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
+| HWND_TOPMOST   | Top of the z order.                                                                                                                               |
+
+### SetWindowPos Flags
+
+| Name               | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SWP_ASYNCWINDOWPOS | If the calling thread and the thread that owns the window are attached to different input queues,<br>the system posts the request to the thread that owns the window.<br>This prevents the calling thread from blocking its execution while other threads process the request.                                                                                                                                        |
+| SWP_DEFERERASE     | Prevents generation of the [WM_SYNCPAINT](#wm_syncpaint) message.                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_DRAWFRAME      | Draws a frame (defined in the window's class description) around the window.                                                                                                                                                                                                                                                                                                                                          |
+| SWP_FRAMECHANGED   | Applies new frame styles set using the `SetWindowLong` function.<br>Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed.<br>If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.                                                                                                                                            |
+| SWP_HIDEWINDOW     | Hides the window.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_NOACTIVATE     | Does not activate the window.<br>If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the `hWndInsertAfter` parameter).                                                                                                                                                                                                      |
+| SWP_NOCOPYBITS     | Discards the entire contents of the client area.<br>If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.                                                                                                                                                                                                    |
+| SWP_NOMOVE         | Retains the current position (ignores X and Y parameters).                                                                                                                                                                                                                                                                                                                                                            |
+| SWP_NOOWNERZORDER  | Does not change the owner window's position in the Z order. Alias is `SWP_NOREPOSITION`.                                                                                                                                                                                                                                                                                                                              |
+| SWP_NOREDRAW       | Does not redraw changes.<br>If this flag is set, no repainting of any kind occurs.<br>This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.<br>When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing. |
+| SWP_NOSENDCHANGING | Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.                                                                                                                                                                                                                                                                                                                                                |
+| SWP_NOSIZE         | Retains the current size (ignores the cx and cy parameters).                                                                                                                                                                                                                                                                                                                                                          |
+| SWP_NOZORDER       | Retains the current Z order (ignores the hWndInsertAfter parameter).                                                                                                                                                                                                                                                                                                                                                  |
+| SWP_SHOWWINDOW     | Displays the window.                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+### WM_GETICON icon type
+
+| Name        | Description                                                                                                                                               |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ICON_BIG    | Retrieve the large icon for the window.                                                                                                                   |
+| ICON_SMALL  | Retrieve the small icon for the window.                                                                                                                   |
+| ICON_SMALL2 | Retrieves the small icon provided by the application. If the application does not provide one, the system uses the system-generated icon for that window. |
+
+### WM_INPUTLANGCHANGEREQUEST flags
+
+| Name                       | Description                                                                                                                                                      |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| INPUTLANGCHANGE_BACKWARD   | A hot key was used to choose the previous input locale in the installed list of input locales. This flag cannot be used with the `INPUTLANGCHANGE_FORWARD` flag. |
+| INPUTLANGCHANGE_FORWARD    | A hot key was used to choose the next input locale in the installed list of input locales. This flag cannot be used with the `INPUTLANGCHANGE_BACKWARD` flag.    |
+| INPUTLANGCHANGE_SYSCHARSET | The new input locale's keyboard layout can be used with the system character set.                                                                                |
+
+### WM_NCCALCSIZE flags
+
+| Name            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| WVR_ALIGNTOP    | Specifies that the client area of the window is to be preserved and aligned with the top of the new position of the window.<br>For example, to align the client area to the upper-left corner, return the `WVR_ALIGNTOP` and `WVR_ALIGNLEFT` values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| WVR_ALIGNRIGHT  | Specifies that the client area of the window is to be preserved and aligned with the right side of the new position of the window.<br>For example, to align the client area to the lower-right corner, return the `WVR_ALIGNRIGHT` and `WVR_ALIGNBOTTOM` values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| WVR_ALIGNLEFT   | Specifies that the client area of the window is to be preserved and aligned with the left side of the new position of the window.<br>For example, to align the client area to the lower-left corner, return the `WVR_ALIGNLEFT` and `WVR_ALIGNBOTTOM` values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| WVR_ALIGNBOTTOM | Specifies that the client area of the window is to be preserved and aligned with the bottom of the new position of the window.<br>For example, to align the client area to the top-left corner, return the `WVR_ALIGNTOP` and `WVR_ALIGNLEFT` values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| WVR_HREDRAW     | Used in combination with any other values, except `WVR_VALIDRECTS`, causes the window to be completely redrawn if the client rectangle changes size horizontally.<br>This value is similar to [CS_HREDRAW](#class-styles) class style                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| WVR_VREDRAW     | Used in combination with any other values, except `WVR_VALIDRECTS`, causes the window to be completely redrawn if the client rectangle changes size vertically.<br>This value is similar to [CS_VREDRAW](#class-styles) class style                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| WVR_REDRAW      | This value causes the entire window to be redrawn. It is a combination of `WVR_HREDRAW` and `WVR_VREDRAW` values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| WVR_VALIDRECTS  | This value indicates that, upon return from [WM_NCCALCSIZE](#wm_nccalcsize), the rectangles specified by the rgrc[1] and rgrc[2] members of the [NCCALCSIZE_PARAMS](#nccalcsize_params) structure contain valid destination and source area rectangles, respectively.<br>The system combines these rectangles to calculate the area of the window to be preserved.<br>The system copies any part of the window image that is within the source rectangle and clips the image to the destination rectangle.<br>Both rectangles are in parent-relative or screen-relative coordinates.<br>This flag cannot be combined with any other flags.<br>This return value allows an application to implement more elaborate client-area preservation strategies, such as centering or preserving a subset of the client area. |
+
+### Print flags
+
+| Name             | Description                                      |
+| ---------------- | ------------------------------------------------ |
+| PRF_CHECKVISIBLE | Draws the window only if it is visible.          |
+| PRF_CHILDREN     | Draws all visible children windows.              |
+| PRF_CLIENT       | Draws the client area of the window.             |
+| PRF_ERASEBKGND   | Erases the background before drawing the window. |
+| PRF_NONCLIENT    | Draws the nonclient area of the window.          |
+| PRF_OWNED        | Draws all owned windows.                         |
 
 ## DefWindowProc
 
@@ -678,4 +894,60 @@ Default window procedure that should be called in [window procedure](#window-pro
 // in our windowProc
 
 return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+```
+
+## LOWORD macro
+
+Retrieves the low-order word from the specified 32-bit [DWORD](./types.md#dword).
+
+```c
+WORD lowWord = LOWORD(dword);
+```
+
+## HIWORD macro
+
+Retrieves the high-order word from the specified 32-bit [DWORD](./types.md#dword).
+
+```c
+WORD highWord = HIWORD(dword);
+```
+
+## LOBYTE macro
+
+Retrieves the low-order byte from the specified 16-bit [WORD](./types.md#word).
+
+```c
+BYTE lowByte = LOBYTE(word);
+```
+
+## HIBYTE macro
+
+Retrieves the high-order byte from the given 16-bit [WORD](./types.md#word).
+
+```c
+BYTE highByte = HIBYTE(word);
+```
+
+## GET_X_LPARAM macro
+
+Retrieves the signed x-coordinate from the specified [LPARAM](./types.md#lparam) value.
+
+Used instead of [LOWORD](#loword-macro) when we expect signed values (e.g. mouse messages).
+
+`windowsx.h` must be included.
+
+```c
+int x = GET_X_LPARAM(lParam);
+```
+
+## GET_Y_LPARAM macro
+
+Retrieves the signed y-coordinate from the given [LPARAM](./types.md#lparam) value.
+
+Used instead of [HIWORD](#hiword-macro) when we expect signed values (e.g. mouse messages).
+
+`windowsx.h` must be included.
+
+```c
+int y = GET_Y_LPARAM(lParam);
 ```
