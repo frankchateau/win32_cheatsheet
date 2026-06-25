@@ -392,6 +392,12 @@ Pager control notification
 
 `PGN_CALCSIZE`, `PGN_HOTITEMCHANGE`, `PGN_SCROLL`.
 
+## PRF
+
+Print flag
+
+[PRF_CHECKVISIBLE](./window.md#wm_print-and-wm_printclient-flags), [PRF_CLIENT](./window.md#wm_print-and-wm_printclient-flags)
+
 ## PSM
 
 Property sheet message
@@ -505,6 +511,10 @@ Set window position ([SetWindowPos](./window.md#setwindowpos))
 String, zero terminated
 
 [HSZ](./types.md#hsz), [lpszClassName](./window.md#wndclass)
+
+Size / sizing
+
+[WMSZ_BOTTOM](./window.md#wm_sizing-edge), [WMSZ_LEFT](./window.md#wm_sizing-edge)
 
 ## T
 
@@ -646,4 +656,4 @@ Window style
 
 Window valid rectangle
 
-`WVR_ALIGNTOP`, `WVR_ALIGNRIGHT`.
+[WVR_ALIGNTOP](./window.md#wm_nccalcsize-flags), [WVR_ALIGNRIGHT](./window.md#wm_nccalcsize-flags).
