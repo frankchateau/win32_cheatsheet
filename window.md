@@ -501,7 +501,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **When**         | Input locale (keyboard layout) changed for the window's thread                                                                                                      |
 | **wParam**       | [BYTE](./types.md#byte) font character set for input language.<br>Only needed if you used the [ANSI](./unicode_ansi.md) version of [RegisterClass](#registerclass). |
-| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>Language id in the [LOWORD](#loword).<br>Device handle in the [HIWORD](#hiword).                              |
+| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>Language id in the [LOWORD](#loword).<br>Device handle in the [HIWORD](#hiword).                                          |
 | **Return value** | Nonzero if the app processes this message                                                                                                                           |
 | **Default**      | Message passed to all first-level child windows.                                                                                                                    |
 | **Notes**        | /                                                                                                                                                                   |
@@ -512,21 +512,21 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **When**         | User chooses a new input locale (keyboard layout) (e.g. Alt+Shift, taskbar language indicator...etc.).<br>App can accept the change by passing the message to [DefWindowProc](#defwindowproc) or reject by returning early. |
 | **wParam**       | Bitmask of [flags](#wm_inputlangchangerequest-flags) describing the change                                                                                                                                                  |
-| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>Language id in the [LOWORD](#loword).<br>Device handle in the [HIWORD](#hiword).                                                                                      |
+| **lParam**       | [HKL](./types.md#hkl) input locale id.<br>Language id in the [LOWORD](#loword).<br>Device handle in the [HIWORD](#hiword).                                                                                                  |
 | **Return value** | Ignored, return 0 if not calling [DefWindowProc](#defwindowproc).                                                                                                                                                           |
 | **Default**      | New input locale accepted, [WM_INPUTLANGCHANGE](#wm_inputlangchange) sent.                                                                                                                                                  |
 | **Notes**        | /                                                                                                                                                                                                                           |
 
 ### WM_MOVE
 
-|                  |                                                                                                                                                                                           |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **When**         | After the window has been moved                                                                                                                                                           |
-| **wParam**       | /                                                                                                                                                                                         |
+|                  |                                                                                                                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | After the window has been moved                                                                                                                                               |
+| **wParam**       | /                                                                                                                                                                             |
 | **lParam**       | [DWORD](./types.md#dword)<br>X coordinate of upper-left corner of client area in [LOWORD](#loword).<br>Y coordinate of upper-left corner of client area in [HIWORD](#hiword). |
-| **Return value** | 0 if the app processes this message                                                                                                                                                       |
-| **Default**      | /                                                                                                                                                                                         |
-| **Notes**        | /                                                                                                                                                                                         |
+| **Return value** | 0 if the app processes this message                                                                                                                                           |
+| **Default**      | /                                                                                                                                                                             |
+| **Notes**        | /                                                                                                                                                                             |
 
 ### WM_MOVING
 
@@ -640,14 +640,14 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ### WM_SIZE
 
-|                  |                                                                                                                                                            |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **When**         | After the window's size has changed.                                                                                                                       |
-| **wParam**       | The [type](#wm_size-type) code of resizing requested.                                                                                                      |
-| **lParam**       | [DWORD](./types.md#dword)<br>New width of the client area in the [LOWORD](#loword).<br>New height of the client area in the [HIWORD](#hiword). |
-| **Return value** | 0 if the app processes this message                                                                                                                        |
-| **Default**      | /                                                                                                                                                          |
-| **Notes**        | [DefWindowProc](#defwindowproc) sends `WM_SIZE` and [WM_MOVE](#wm_move) when it processes the [WM_WINDOWPOSCHANGED](#wm_windowposchanged) message.         |
+|                  |                                                                                                                                                    |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | After the window's size has changed.                                                                                                               |
+| **wParam**       | The [type](#wm_size-type) code of resizing requested.                                                                                              |
+| **lParam**       | [DWORD](./types.md#dword)<br>New width of the client area in the [LOWORD](#loword).<br>New height of the client area in the [HIWORD](#hiword).     |
+| **Return value** | 0 if the app processes this message                                                                                                                |
+| **Default**      | /                                                                                                                                                  |
+| **Notes**        | [DefWindowProc](#defwindowproc) sends `WM_SIZE` and [WM_MOVE](#wm_move) when it processes the [WM_WINDOWPOSCHANGED](#wm_windowposchanged) message. |
 
 ### WM_SIZING
 
@@ -658,18 +658,29 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **lParam**       | [RECT](./types.md#rect) pointer that represents the current position of the window.<br>App can change the members of the struct to change the position of the drag rectangle. |
 | **Return value** | `TRUE` if the app processes this message                                                                                                                                      |
 | **Default**      | /                                                                                                                                                                             |
-| **Notes**        | [DefWindowProc](#defwindowproc) sends `WM_SIZE` and [WM_MOVE](#wm_move) when it processes the [WM_WINDOWPOSCHANGED](#wm_windowposchanged) message.                            |
+| **Notes**        | /                                                                                                                                                                             |
+
+### WM_STYLECHANGED
+
+|                  |                                                                        |
+| ---------------- | ---------------------------------------------------------------------- |
+| **When**         | Window style(s) changed via [SetWindowLong](#setwindowlong).           |
+| **wParam**       | Window style type [code](#wm_stylechanged-code) (extended or regular). |
+| **lParam**       | [STYLESTRUCT](#stylestruct) pointer. Read-only.                        |
+| **Return value** | 0 if the app processes this message                                    |
+| **Default**      | /                                                                      |
+| **Notes**        | /                                                                      |
 
 ### WM_DISPLAYCHANGE
 
-|                  |                                                                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **When**         | Display resolution changed                                                                                                        |
-| **wParam**       | Image depth of display in `bpp` (bits per pixel)                                                                                  |
+|                  |                                                                                                                       |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Display resolution changed                                                                                            |
+| **wParam**       | Image depth of display in `bpp` (bits per pixel)                                                                      |
 | **lParam**       | [DWORD](./types.md#dword)<br>Horizontal resolution in [LOWORD](#loword).<br>Vertical resolution in [HIWORD](#hiword). |
-| **Return value** | 0 if the app processes this message                                                                                               |
-| **Default**      | /                                                                                                                                 |
-| **Notes**        | /                                                                                                                                 |
+| **Return value** | 0 if the app processes this message                                                                                   |
+| **Default**      | /                                                                                                                     |
+| **Notes**        | /                                                                                                                     |
 
 ### WM_NCPAINT
 
@@ -737,7 +748,160 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Default**      | /                                                                                                      |
 | **Notes**        | /                                                                                                      |
 
-## Window message codes and flags
+## Icons
+
+// TODO
+
+## Cursor
+
+// TODO
+
+## Layered window
+
+// TODO
+
+## Custom data
+
+// TODO
+
+## Functions
+
+### DefWindowProc
+
+Default window procedure that should be called in [window procedure](#window-procedure) for messages (or conditions) the application doesn't handle.
+
+```c
+// in our windowProc
+
+return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+```
+
+### SetWindowPos
+
+Changes the position, size, and Z order of a window.
+
+| Name            | Type                    | Description                                                                                             |
+| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                      |
+| hWndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#window-z-order-codes). |
+| X               | `int`                   | The new position of the left side of the window.                                                        |
+| Y               | `int`                   | The new position of the top of the window.                                                              |
+| cx              | `int`                   | The new width of the window, in pixels.                                                                 |
+| cy              | `int`                   | The new position of the top of the window.                                                              |
+| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                 |
+
+| Success | Error                                                       |
+| ------- | ----------------------------------------------------------- |
+| `TRUE`  | `FALSE`, [GetLastError](./errors.md#getlasterror) available |
+
+```c
+BOOL didSucceed = SetWindowPos(hwnd, HWND_TOP, 10, 10, 500, 500, SWP_SHOWWINDOW | SWP_NOREDRAW);
+```
+
+### ShowWindow
+
+Sets the specified window's show state.
+
+The first time the application calls this, second argument is ignored if `STARTUPINFO` was provided,
+otherwise the first time this is called the second argument should be the `nCmdShow` parameter of `WinMain`.
+
+In subsequent calls, any [code](#showwindow-codes) can be provided.
+
+| Name     | Type                    | Description                           |
+| -------- | ----------------------- | ------------------------------------- |
+| hWnd     | [HWND](./types.md#hwnd) | The window handle.                    |
+| nCmdShow | `int`                   | Show state [code](#showwindow-codes). |
+
+| Success                                                   | Error |
+| --------------------------------------------------------- | ----- |
+| `TRUE` if window was visible before,<br>`FALSE` otherwise | /     |
+
+```c
+BOOL wasVisible = ShowWindow(hwnd, SW_HIDE); // hides the window
+```
+
+### SetActiveWindow
+
+Activates a window. The window must be attached to the calling thread's message queue.
+
+Only works if application is already in the foreground.
+
+| Name | Type                    | Description       |
+| ---- | ----------------------- | ----------------- |
+| hWnd | [HWND](./types.md#hwnd) | The window handle |
+
+| Success                                                   | Error                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------- |
+| [HWND](./types.md#hwnd) Previously active window's handle | `NULL`, [GetLastError](./errors.md#getlasterror) available |
+
+```c
+HWND prevActiveWindowOrNull = SetActiveWindow(hwnd);
+```
+
+### SetForegroundWindow
+
+Brings the window to the foreground and activates it.
+
+| Name | Type                    | Description       |
+| ---- | ----------------------- | ----------------- |
+| hWnd | [HWND](./types.md#hwnd) | The window handle |
+
+| Success                                                              | Error |
+| -------------------------------------------------------------------- | ----- |
+| `TRUE` if window was brought to the foreground,<br>`FALSE` otherwise | /     |
+
+```c
+BOOL windowWasBroughtToForeground = SetForegroundWindow(hwnd);
+```
+
+## Codes and flags
+
+### Window Z order codes
+
+| Name           | Description                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HWND_BOTTOM    | Bottom of the z order.                                                                                                                            |
+| HWND_NOTOPMOST | Above all non-topmost windows.                                                                                                                    |
+| HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
+| HWND_TOPMOST   | Top of the z order.                                                                                                                               |
+
+### SetWindowPos Flags
+
+| Name                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SWP_ASYNCWINDOWPOS                   | If the calling thread and the thread that owns the window are attached to different input queues,<br>the system posts the request to the thread that owns the window.<br>This prevents the calling thread from blocking its execution while other threads process the request.                                                                                                                                        |
+| SWP_DEFERERASE                       | Prevents generation of the [WM_SYNCPAINT](#wm_syncpaint) message.                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_DRAWFRAME                        | Draws a frame (defined in the window's class description) around the window.                                                                                                                                                                                                                                                                                                                                          |
+| SWP_FRAMECHANGED                     | Applies new frame styles set using the `SetWindowLong` function.<br>Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed.<br>If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.                                                                                                                                            |
+| SWP_HIDEWINDOW                       | Hides the window.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| SWP_NOACTIVATE                       | Does not activate the window.<br>If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the `hWndInsertAfter` parameter).                                                                                                                                                                                                      |
+| SWP_NOCOPYBITS                       | Discards the entire contents of the client area.<br>If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.                                                                                                                                                                                                    |
+| SWP_NOMOVE                           | Retains the current position (ignores X and Y parameters).                                                                                                                                                                                                                                                                                                                                                            |
+| SWP_NOOWNERZORDER (SWP_NOREPOSITION) | Does not change the owner window's position in the Z order.                                                                                                                                                                                                                                                                                                                                                           |
+| SWP_NOREDRAW                         | Does not redraw changes.<br>If this flag is set, no repainting of any kind occurs.<br>This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.<br>When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing. |
+| SWP_NOSENDCHANGING                   | Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.                                                                                                                                                                                                                                                                                                                                                |
+| SWP_NOSIZE                           | Retains the current size (ignores the cx and cy parameters).                                                                                                                                                                                                                                                                                                                                                          |
+| SWP_NOZORDER                         | Retains the current Z order (ignores the hWndInsertAfter parameter).                                                                                                                                                                                                                                                                                                                                                  |
+| SWP_SHOWWINDOW                       | Displays the window.                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+### ShowWindow codes
+
+These codes are used with [ShowWindow](#showwindow).
+
+| Name                             | Description                                                                                                                                                                                                                              |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SW_HIDE                          | Hides the window and activates another window.                                                                                                                                                                                           |
+| SW_SHOWNORMAL and SW_NORMAL      | Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when displaying the window for the first time. |
+| SW_SHOWMINIMIZED                 | Activates the window and displays it as a minimized window.                                                                                                                                                                              |
+| SW_SHOWMAXIMIZED and SW_MAXIMIZE | Activates the window and displays it as a maximized window.                                                                                                                                                                              |
+| SW_SHOWNOACTIVATE                | Displays a window in its most recent size and position.<br>This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.                                                                                            |
+| SW_SHOW                          | Activates the window and displays it in its current size and position.                                                                                                                                                                   |
+| SW_MINIMIZE                      | Minimizes the specified window and activates the next top-level window in the Z order.                                                                                                                                                   |
+| SW_SHOWMINNOACTIVE               | Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.                                                                                                              |
+| SW_SHOWNA                        | Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.                                                                                                       |
+| SW_RESTORE                       | Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when restoring a minimized window.           |
+| SW_SHOWDEFAULT                   | Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.                                                                 |
+| SW_FORCEMINIMIZE                 | Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.                                                                            |
 
 ### WM_GETICON icon type
 
@@ -811,118 +975,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | WMSZ_TOPLEFT     |
 | WMSZ_TOPRIGHT    |
 
-## Icons
-
-// TODO
-
-## Cursor
-
-// TODO
-
-## Layered window
-
-// TODO
-
-## Custom data
-
-// TODO
-
-## SetWindowPos
-
-Changes the position, size, and Z order of a window.
-
-| Name            | Type                    | Description                                                                                             |
-| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
-| hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                      |
-| hWndInsertAfter | [HWND](./types.md#hwnd) | The window that this window should be in front of or one of the [z order codes](#window-z-order-codes). |
-| X               | `int`                   | The new position of the left side of the window.                                                        |
-| Y               | `int`                   | The new position of the top of the window.                                                              |
-| cx              | `int`                   | The new width of the window, in pixels.                                                                 |
-| cy              | `int`                   | The new position of the top of the window.                                                              |
-| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                 |
-
-| Success | Error                                                       |
-| ------- | ----------------------------------------------------------- |
-| `TRUE`  | `FALSE`, [GetLastError](./errors.md#getlasterror) available |
-
-```c
-BOOL didSucceed = SetWindowPos(hwnd, HWND_TOP, 10, 10, 500, 500, SWP_SHOWWINDOW | SWP_NOREDRAW);
-```
-
-## ShowWindow
-
-Sets the specified window's show state.
-
-The first time the application calls this, second argument is ignored if `STARTUPINFO` was provided,
-otherwise the first time this is called the second argument should be the `nCmdShow` parameter of `WinMain`.
-
-In subsequent calls, any [code](#showwindow-codes) can be provided.
-
-| Name     | Type                    | Description                           |
-| -------- | ----------------------- | ------------------------------------- |
-| hWnd     | [HWND](./types.md#hwnd) | The window handle.                    |
-| nCmdShow | `int`                   | Show state [code](#showwindow-codes). |
-
-| Success                                                   | Error |
-| --------------------------------------------------------- | ----- |
-| `TRUE` if window was visible before,<br>`FALSE` otherwise | /     |
-
-```c
-BOOL wasVisible = ShowWindow(hwnd, SW_HIDE); // hides the window
-```
-
-## ShowWindow codes
-
-These codes are used with [ShowWindow](#showwindow).
-
-| Name                             | Description                                                                                                                                                                                                                              |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SW_HIDE                          | Hides the window and activates another window.                                                                                                                                                                                           |
-| SW_SHOWNORMAL and SW_NORMAL      | Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when displaying the window for the first time. |
-| SW_SHOWMINIMIZED                 | Activates the window and displays it as a minimized window.                                                                                                                                                                              |
-| SW_SHOWMAXIMIZED and SW_MAXIMIZE | Activates the window and displays it as a maximized window.                                                                                                                                                                              |
-| SW_SHOWNOACTIVATE                | Displays a window in its most recent size and position.<br>This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.                                                                                            |
-| SW_SHOW                          | Activates the window and displays it in its current size and position.                                                                                                                                                                   |
-| SW_MINIMIZE                      | Minimizes the specified window and activates the next top-level window in the Z order.                                                                                                                                                   |
-| SW_SHOWMINNOACTIVE               | Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.                                                                                                              |
-| SW_SHOWNA                        | Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.                                                                                                       |
-| SW_RESTORE                       | Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position.<br>An application should specify this flag when restoring a minimized window.           |
-| SW_SHOWDEFAULT                   | Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.                                                                 |
-| SW_FORCEMINIMIZE                 | Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.                                                                            |
-
-## SetActiveWindow
-
-Activates a window. The window must be attached to the calling thread's message queue.
-
-Only works if application is already in the foreground.
-
-| Name | Type                    | Description       |
-| ---- | ----------------------- | ----------------- |
-| hWnd | [HWND](./types.md#hwnd) | The window handle |
-
-| Success                                                   | Error                                                      |
-| --------------------------------------------------------- | ---------------------------------------------------------- |
-| [HWND](./types.md#hwnd) Previously active window's handle | `NULL`, [GetLastError](./errors.md#getlasterror) available |
-
-```c
-HWND prevActiveWindowOrNull = SetActiveWindow(hwnd);
-```
-
-## SetForegroundWindow
-
-Brings the window to the foreground and activates it.
-
-| Name | Type                    | Description       |
-| ---- | ----------------------- | ----------------- |
-| hWnd | [HWND](./types.md#hwnd) | The window handle |
-
-| Success                                                              | Error |
-| -------------------------------------------------------------------- | ----- |
-| `TRUE` if window was brought to the foreground,<br>`FALSE` otherwise | /     |
-
-```c
-BOOL windowWasBroughtToForeground = SetForegroundWindow(hwnd);
-```
+## Structs
 
 ## CREATESTRUCT
 
@@ -959,10 +1012,10 @@ This struct has [string](./unicode_ansi.md) variants.
 
 Contains information that an application can use while processing the [WM_NCCALCSIZE](#wm_nccalcsize) message to calculate the size, position, and valid contents of the client area of a window.
 
-| Name  | Type         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ----- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| rgrc  | [RECT](./types.md#rect)[3]      | When [WM_NCCALCSIZE](#wm_nccalcsize) is received,<br>first rect is new proposed coordinates of window,<br>second rect is coordinates of window before it was moved or resized,<br>third rect is coordinates of window's client area before it was moved or resized.<br>When [window procedure](#window-procedure) returns,<br>first rect is new coordinates of client area,<br>second rect is destination coordinates of client area,<br>third rect is source coordinates of client area. |
-| lppos | `PWINDOWPOS` | Pointer to [WINDOWPOS](#windowpos) struct.                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Name  | Type                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ----- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rgrc  | [RECT](./types.md#rect)[3] | When [WM_NCCALCSIZE](#wm_nccalcsize) is received,<br>first rect is new proposed coordinates of window,<br>second rect is coordinates of window before it was moved or resized,<br>third rect is coordinates of window's client area before it was moved or resized.<br>When [window procedure](#window-procedure) returns,<br>first rect is new coordinates of client area,<br>second rect is destination coordinates of client area,<br>third rect is source coordinates of client area. |
+| lppos | `PWINDOWPOS`               | Pointer to [WINDOWPOS](#windowpos) struct.                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ## WINDOWPOS
 
@@ -978,43 +1031,16 @@ Contains information about the size and position of a window.
 | cy              | `int`                   | The window height, in pixels.                                                                           |
 | flags           | [UINT](./types.md#uint) | Bitmask of window sizing and positioning [flags](#setwindowpos-flags).                                  |
 
-## Window Z order codes
+### STYLESTRUCT
 
-| Name           | Description                                                                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HWND_BOTTOM    | Bottom of the z order.                                                                                                                            |
-| HWND_NOTOPMOST | Above all non-topmost windows.                                                                                                                    |
-| HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
-| HWND_TOPMOST   | Top of the z order.                                                                                                                               |
+Contains the styles for a window.
 
-### SetWindowPos Flags
+Passed as `lParam` to [WM_STYLECHANGED](#wm_stylechanged) and [WM_STYLECHANGING](#wm_stylechanging) messages.
 
-| Name                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SWP_ASYNCWINDOWPOS                   | If the calling thread and the thread that owns the window are attached to different input queues,<br>the system posts the request to the thread that owns the window.<br>This prevents the calling thread from blocking its execution while other threads process the request.                                                                                                                                        |
-| SWP_DEFERERASE                       | Prevents generation of the [WM_SYNCPAINT](#wm_syncpaint) message.                                                                                                                                                                                                                                                                                                                                                     |
-| SWP_DRAWFRAME                        | Draws a frame (defined in the window's class description) around the window.                                                                                                                                                                                                                                                                                                                                          |
-| SWP_FRAMECHANGED                     | Applies new frame styles set using the `SetWindowLong` function.<br>Sends a `WM_NCCALCSIZE` message to the window, even if the window's size is not being changed.<br>If this flag is not specified, `WM_NCCALCSIZE` is sent only when the window's size is being changed.                                                                                                                                            |
-| SWP_HIDEWINDOW                       | Hides the window.                                                                                                                                                                                                                                                                                                                                                                                                     |
-| SWP_NOACTIVATE                       | Does not activate the window.<br>If this flag is not set, the window is activated and moved to the top of either the topmost or non-topmost group (depending on the setting of the `hWndInsertAfter` parameter).                                                                                                                                                                                                      |
-| SWP_NOCOPYBITS                       | Discards the entire contents of the client area.<br>If this flag is not specified, the valid contents of the client area are saved and copied back into the client area after the window is sized or repositioned.                                                                                                                                                                                                    |
-| SWP_NOMOVE                           | Retains the current position (ignores X and Y parameters).                                                                                                                                                                                                                                                                                                                                                            |
-| SWP_NOOWNERZORDER (SWP_NOREPOSITION) | Does not change the owner window's position in the Z order.                                                                                                                                                                                                                                                                                                                                                           |
-| SWP_NOREDRAW                         | Does not redraw changes.<br>If this flag is set, no repainting of any kind occurs.<br>This applies to the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent window uncovered as a result of the window being moved.<br>When this flag is set, the application must explicitly invalidate or redraw any parts of the window and parent window that need redrawing. |
-| SWP_NOSENDCHANGING                   | Prevents the window from receiving the `WM_WINDOWPOSCHANGING` message.                                                                                                                                                                                                                                                                                                                                                |
-| SWP_NOSIZE                           | Retains the current size (ignores the cx and cy parameters).                                                                                                                                                                                                                                                                                                                                                          |
-| SWP_NOZORDER                         | Retains the current Z order (ignores the hWndInsertAfter parameter).                                                                                                                                                                                                                                                                                                                                                  |
-| SWP_SHOWWINDOW                       | Displays the window.                                                                                                                                                                                                                                                                                                                                                                                                  |
-
-## DefWindowProc
-
-Default window procedure that should be called in [window procedure](#window-procedure) for messages (or conditions) the application doesn't handle.
-
-```c
-// in our windowProc
-
-return DefWindowProcW(hwnd, uMsg, wParam, lParam);
-```
+| Name     | Type                      | Description                       |
+| -------- | ------------------------- | --------------------------------- |
+| styleOld | [DWORD](./types.md#dword) | The previous styles for a window. |
+| styleNew | [DWORD](./types.md#dword) | The new styles for a window.      |
 
 ## Macros
 

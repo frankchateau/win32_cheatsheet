@@ -102,7 +102,7 @@ Class style
 
 ## CW
 
-Create window
+Create window [CreateWindow](./window.md#createwindow)
 
 [CW_USEDEFAULT](./window.md#createwindow)
 
@@ -206,7 +206,7 @@ Extended
 
 Graphics device interface
 
-`HGDIOBJ`.
+[HGDIOBJ](./types.md#hgdiobj).
 
 ## H
 
