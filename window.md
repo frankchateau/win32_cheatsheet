@@ -18,9 +18,9 @@ The window classes in question are not C++ classes, but rather configuration tem
 There are predefined built-in classes in the [control library](./controls.md),
 but you can create custom ones using [RegisterClass](#registerclass).
 
-Windows are created using a [CreateWindow](#createwindow) function.
-
 For the main application window, you'd typically register your own custom class.
+
+Windows are created using a [CreateWindow](#createwindow) function.
 
 There are 3 general categories of windows in terms of [ownership](#ownership): top-level, owned top-level, and child window.
 
@@ -32,7 +32,7 @@ The main parts of a window are:
 - frame (border) that can be used for resizing
 - client area for rendering the window's content
 
-Title bar and frame are called non-client area (NC).
+Title bar and frame are called nonclient area (NC).
 
 | ![Window parts](./images/window_parts.png) |
 | :----------------------------------------: |
@@ -371,7 +371,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **wParam**       | /                                                                                                                                                                              |
 | **lParam**       | /                                                                                                                                                                              |
 | **Return value** | [HCURSOR](./types.md#hcursor) or [HICON](./types.md#hicon) to display as the cursor while the user drags the window icon.<br>Returning `NULL` will display the default cursor. |
-| **Default**      | `hIcon` or `hCursor` from [WNDCLASS](#wndclass) used (?).                                                                                                                      |
+| **Default**      | /                                                                                                                                                                              |
 | **Notes**        | Legacy, for Windows before the taskbar was introduced (before Windows 95?).                                                                                                    |
 
 ### WM_QUERYOPEN
@@ -423,7 +423,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 |                  |                                                                                                                                                                               |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **When**         | Continuosly while the user is resizing the window                                                                                                                             |
-| **wParam**       | /                                                                                                                                                                             |
+| **wParam**       | The [edge](#wm_sizing-edge) of the window that is being sized.                                                                                                                |
 | **lParam**       | [RECT](./types.md#rect) pointer that represents the current position of the window.<br>App can change the members of the struct to change the position of the drag rectangle. |
 | **Return value** | `TRUE` if the app processes this message                                                                                                                                      |
 | **Default**      | /                                                                                                                                                                             |
@@ -431,14 +431,25 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ### WM_STYLECHANGED
 
-|                  |                                                                        |
-| ---------------- | ---------------------------------------------------------------------- |
-| **When**         | Window style(s) changed via [SetWindowLong](#setwindowlong).           |
-| **wParam**       | Window style type [code](#wm_stylechanged-code) (extended or regular). |
-| **lParam**       | [STYLESTRUCT](#stylestruct) pointer. Read-only.                        |
-| **Return value** | 0 if the app processes this message                                    |
-| **Default**      | /                                                                      |
-| **Notes**        | /                                                                      |
+|                  |                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| **When**         | Window style(s) changed via [SetWindowLong](#setwindowlong).                                |
+| **wParam**       | Window style type [code](#wm_stylechanged-and-wm_stylechanging-code) (extended or regular). |
+| **lParam**       | [STYLESTRUCT](#stylestruct) pointer. Read-only.                                             |
+| **Return value** | 0 if the app processes this message                                                         |
+| **Default**      | /                                                                                           |
+| **Notes**        | /                                                                                           |
+
+### WM_STYLECHANGING
+
+|                  |                                                                                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------- |
+| **When**         | Window style(s) about to be changed via [SetWindowLong](#setwindowlong).                            |
+| **wParam**       | Window style type [code](#wm_stylechanged-and-wm_stylechanging-code) (extended or regular).         |
+| **lParam**       | [STYLESTRUCT](#stylestruct) pointer. App can change the styles by modifying members of this struct. |
+| **Return value** | 0 if the app processes this message                                                                 |
+| **Default**      | /                                                                                                   |
+| **Notes**        | /                                                                                                   |
 
 ### WM_DISPLAYCHANGE
 
@@ -945,6 +956,8 @@ These codes are used with [ShowWindow](#showwindow).
 
 ### WM_SIZING edge
 
+Passed with [WM_SIZING](#wm_sizing).
+
 | Name             |
 | ---------------- |
 | WMSZ_BOTTOM      |
@@ -955,6 +968,15 @@ These codes are used with [ShowWindow](#showwindow).
 | WMSZ_TOP         |
 | WMSZ_TOPLEFT     |
 | WMSZ_TOPRIGHT    |
+
+### WM_STYLECHANGED and WM_STYLECHANGING code
+
+Passed with [WM_STYLECHANGED](#wm_stylechanged) and [WM_STYLECHANGING](#wm_stylechanging).
+
+| Name        | Description                              |
+| ----------- | ---------------------------------------- |
+| GWL_EXSTYLE | The extended window styles have changed. |
+| GWL_STYLE   | The window styles have changed.          |
 
 ## Structs
 
@@ -1002,6 +1024,8 @@ This struct has [string](./unicode_ansi.md) variants.
 
 ### MINMAXINFO
 
+Passed with [WM_GETMINMAXINFO](#wm_getminmaxinfo).
+
 | Name           | Type                      | Description                                                                                                                                                                                                                                                                       |
 | -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ptReserved     | [POINT](./types.md#point) | Reserved; do not use.                                                                                                                                                                                                                                                             |
@@ -1023,6 +1047,8 @@ Contains information that an application can use while processing the [WM_NCCALC
 
 Contains information about the size and position of a window.
 
+Used through the [NCCALCSIZE_PARAMS](#nccalcsize_params) struct.
+
 | Name            | Type                    | Description                                                                                             |
 | --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
 | hwnd            | [HWND](./types.md#hwnd) | The window handle.                                                                                      |
@@ -1037,7 +1063,7 @@ Contains information about the size and position of a window.
 
 Contains the styles for a window.
 
-Passed as `lParam` to [WM_STYLECHANGED](#wm_stylechanged) and [WM_STYLECHANGING](#wm_stylechanging) messages.
+Passed with [WM_STYLECHANGED](#wm_stylechanged) and [WM_STYLECHANGING](#wm_stylechanging) messages.
 
 | Name     | Type                      | Description                       |
 | -------- | ------------------------- | --------------------------------- |
