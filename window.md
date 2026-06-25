@@ -231,6 +231,17 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Default**      | /                                                                                                            |
 | **Notes**        | /                                                                                                            |
 
+### WM_ERASEBKGND
+
+|                  |                                                                                                                                                                                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Window background must be erased (e.g. on window resize). Sent to prepare an invalidated portion of a window for painting.                                                                                                                    |
+| **wParam**       | [HDC](./types.md#hdc) Device context handle                                                                                                                                                                                                   |
+| **lParam**       | /                                                                                                                                                                                                                                             |
+| **Return value** | Nonzero if app erases the background,<br>otherwise 0.                                                                                                                                                                                         |
+| **Default**      | Background is erased using the background brush specified by `hbrBackground` on [WNDCLASS](#wndclass). If `hbrBackground` is `NULL`, the app should erase the background.                                                                     |
+| **Notes**        | Used with [GDI](./gdi.md), there's generally no need to handle this message if using another graphics api (e.g. `Direct2D`).<br>If the app returns 0, the window will remain marked for erasing, so `fErase` on `PAINTSTRUCT` will be `TRUE`. |
+
 ### WM_EXITSIZEMOVE
 
 |                  |                                                                                                             |
@@ -242,6 +253,17 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Default**      | /                                                                                                           |
 | **Notes**        | /                                                                                                           |
 
+### WM_GETFONT
+
+|                  |                                                                                                       |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| **When**         | System needs to retrieve the font with which the control is currently drawing text.                   |
+| **wParam**       | /                                                                                                     |
+| **lParam**       | /                                                                                                     |
+| **Return value** | [HFONT](./types.md#hfont) Handle to the font used by the control<br>or `NULL` to use the system font. |
+| **Default**      | /                                                                                                     |
+| **Notes**        | Only for windows (controls) that draw text using [GDI](./gdi.md).                                     |
+
 ### WM_GETICON
 
 |                  |                                                                                                        |
@@ -249,7 +271,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **When**         | System needs to retrieve the small or large icon for display (title bar, Alt+Tab view, taskbar...etc.) |
 | **wParam**       | [Icon type](#wm_geticon-icon-type) being retrieved                                                     |
 | **lParam**       | DPI of the icon being retrieved. Used to provide different icons depending on the size.                |
-| **Return value** | [HICON](./types.md#hicon)                                                                              |
+| **Return value** | [HICON](./types.md#hicon) Handle to large or small icon depending on `wParam`.                         |
 | **Default**      | `hIcon`/`hIconSm` from [WNDCLASS](#wndclass) returned if set, otherwise 0.                             |
 | **Notes**        | /                                                                                                      |
 
@@ -263,6 +285,17 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Return value** | 0 if the app processes this message                                                                                                                               |
 | **Default**      | /                                                                                                                                                                 |
 | **Notes**        | /                                                                                                                                                                 |
+
+### WM_GETTEXT
+
+|                  |     |
+| ---------------- | --- |
+| **When**         | /   |
+| **wParam**       | /   |
+| **lParam**       | /   |
+| **Return value** | /   |
+| **Default**      | /   |
+| **Notes**        | /   |
 
 ### WM_INPUTLANGCHANGE
 
@@ -450,6 +483,50 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Return value** | 0 if the app processes this message                                                                 |
 | **Default**      | /                                                                                                   |
 | **Notes**        | /                                                                                                   |
+
+### WM_THEMECHANGED
+
+|                  |                                                                                                                                                                                                                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | After theme change                                                                                                                                                                                                                                                                           |
+| **wParam**       | /                                                                                                                                                                                                                                                                                            |
+| **lParam**       | /                                                                                                                                                                                                                                                                                            |
+| **Return value** | 0 if the app processes this message                                                                                                                                                                                                                                                          |
+| **Default**      | /                                                                                                                                                                                                                                                                                            |
+| **Notes**        | This message is posted by the operating system. Apps typically do not send this message.<br>After this message, all theme handles become invalid. Apps must call `CloseThemeData` and then `OpenThemeData` to get fresh handles.<br>Themes are used with standard [controls](./controls.md). |
+
+### WM_USERCHANGED
+
+|                  |                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| **When**         | After the user has logged on or off, after the user-specific settings have been updated. |
+| **wParam**       | /                                                                                        |
+| **lParam**       | /                                                                                        |
+| **Return value** | 0 if the app processes this message                                                      |
+| **Default**      | /                                                                                        |
+| **Notes**        | Not supported as of [Windows Vista](./winver.md).                                        |
+
+### WM_WINDOWPOSCHANGED
+
+|                  |                                                                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **When**         | Window's size, position or z order has changed via [SetWindowPos](#setwindowpos) or another window-management function.                                      |
+| **wParam**       | /                                                                                                                                                            |
+| **lParam**       | [WINDOWPOS](#windowpos) pointer that contains info about the window's new size and position.                                                                 |
+| **Return value** | 0 if the app processes this message                                                                                                                          |
+| **Default**      | [WM_SIZE](#wm_size) and [WM_MOVE](#wm_move) messages sent.                                                                                                   |
+| **Notes**        | It is more efficient to perform any move or size change processing during the `WM_WINDOWPOSCHANGED` message without calling [DefWindowProc](#defwindowproc). |
+
+### WM_WINDOWPOSCHANGING
+
+|                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Window's size, position or z order is about to change via [SetWindowPos](#setwindowpos) or another window-management function.                                                                                                                                                                                                                                                                                                                                    |
+| **wParam**       | /                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **lParam**       | [WINDOWPOS](#windowpos) pointer that contains info about the window's new size and position.                                                                                                                                                                                                                                                                                                                                                                      |
+| **Return value** | 0 if the app processes this message                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Default**      | For a window with [WS_OVERLAPPED](#window-styles) or [WS_THICKFRAME](#window-styles) style, [WM_GETMINMAXINFO](#wm_getminmaxinfo) is sent. This is done to validate the new size and position of the window and to enforce the [CS_BYTEALIGNCLIENT](#class-styles) and [CS_BYTEALIGNWINDOW](#class-styles) styles.<br>Changes to some [SWP flags](#swp-flags), including `SWP_NOACTIVATE` and `SWP_NOOWNERZORDER`, are ignored when modified during this message. |
+| **Notes**        | /                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ### WM_DISPLAYCHANGE
 
@@ -682,7 +759,7 @@ Changes the position, size, and Z order of a window.
 | Y               | `int`                   | The new position of the top of the window.                                                              |
 | cx              | `int`                   | The new width of the window, in pixels.                                                                 |
 | cy              | `int`                   | The new position of the top of the window.                                                              |
-| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#setwindowpos-flags).                                 |
+| uFlags          | [UINT](./types.md#uint) | Bitmask for window sizing and positioning [flags](#swp-flags).                                          |
 
 | Success | Error                                                       |
 | ------- | ----------------------------------------------------------- |
@@ -857,7 +934,9 @@ These styles are used with [CreateWindow](#createwindow).
 | HWND_TOP       | Top of the window's z order "layer"<br>if window is topmost, goes to the top of the z order,<br>otherwise goes to the top of non-topmost windows. |
 | HWND_TOPMOST   | Top of the z order.                                                                                                                               |
 
-### SetWindowPos Flags
+### SWP flags
+
+Used with [SetWindowPos](#setwindowpos) and part of [WINDOWPOS](#windowpos) struct.
 
 | Name                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -897,6 +976,8 @@ These codes are used with [ShowWindow](#showwindow).
 
 ### WM_GETICON icon type
 
+Passed with [WM_GETICON](#wm_geticon).
+
 | Name        | Description                                                                                                                                               |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ICON_BIG    | Retrieve the large icon for the window.                                                                                                                   |
@@ -905,6 +986,8 @@ These codes are used with [ShowWindow](#showwindow).
 
 ### WM_INPUTLANGCHANGEREQUEST flags
 
+Passed with [WM_INPUTLANGCHANGEREQUEST](#wm_inputlangchangerequest).
+
 | Name                       | Description                                                                                                                                                      |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | INPUTLANGCHANGE_BACKWARD   | A hot key was used to choose the previous input locale in the installed list of input locales. This flag cannot be used with the `INPUTLANGCHANGE_FORWARD` flag. |
@@ -912,6 +995,8 @@ These codes are used with [ShowWindow](#showwindow).
 | INPUTLANGCHANGE_SYSCHARSET | The new input locale's keyboard layout can be used with the system character set.                                                                                |
 
 ### WM_NCCALCSIZE flags
+
+Passed with [WM_NCCALCSIZE](#wm_nccalcsize).
 
 | Name            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -926,6 +1011,8 @@ These codes are used with [ShowWindow](#showwindow).
 
 ### WM_PRINT and WM_PRINTCLIENT flags
 
+Passed with [WM_PRINT](#wm_print) and [WM_PRINTCLIENT](#wm_printclient).
+
 | Name             | Description                                      |
 | ---------------- | ------------------------------------------------ |
 | PRF_CHECKVISIBLE | Draws the window only if it is visible.          |
@@ -937,6 +1024,8 @@ These codes are used with [ShowWindow](#showwindow).
 
 ### WM_SHOWWINDOW status
 
+Passed with [WM_SHOWWINDOW](#wm_showwindow).
+
 | Name             | Description                                                                        |
 | ---------------- | ---------------------------------------------------------------------------------- |
 | SW_OTHERUNZOOM   | The window is being uncovered because a maximize window was restored or minimized. |
@@ -945,6 +1034,8 @@ These codes are used with [ShowWindow](#showwindow).
 | SW_PARENTOPENING | The window's owner window is being restored.                                       |
 
 ### WM_SIZE type
+
+Passed with [WM_SIZE](#wm_size).
 
 | Name           | Description                                                                                                                                                                           |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1047,7 +1138,9 @@ Contains information that an application can use while processing the [WM_NCCALC
 
 Contains information about the size and position of a window.
 
-Used through the [NCCALCSIZE_PARAMS](#nccalcsize_params) struct.
+Passed through the [NCCALCSIZE_PARAMS](#nccalcsize_params) struct with [WM_NCCALCSIZE](#wm_nccalcsize).
+
+Passed with [WM_WINDOWPOSCHANGED](#wm_windowposchanged) and [WM_WINDOWPOSCHANGING](#wm_windowposchanging).
 
 | Name            | Type                    | Description                                                                                             |
 | --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -1057,7 +1150,7 @@ Used through the [NCCALCSIZE_PARAMS](#nccalcsize_params) struct.
 | y               | `int`                   | The position of the top edge of the window.                                                             |
 | cx              | `int`                   | The window width, in pixels.                                                                            |
 | cy              | `int`                   | The window height, in pixels.                                                                           |
-| flags           | [UINT](./types.md#uint) | Bitmask of window sizing and positioning [flags](#setwindowpos-flags).                                  |
+| flags           | [UINT](./types.md#uint) | Bitmask of window sizing and positioning [flags](#swp-flags).                                           |
 
 ### STYLESTRUCT
 
