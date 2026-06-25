@@ -535,7 +535,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ## Functions
 
-## RegisterClass
+### RegisterClass
 
 Registers a custom window class and defines default behavior for use in subsequent [CreateWindow](#createwindow) calls.
 
@@ -574,7 +574,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 ```
 
-## CreateWindow
+### CreateWindow
 
 This function has [extended](./extended.md) and [string](./unicode_ansi.md) variants.
 
