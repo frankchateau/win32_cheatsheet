@@ -54,3 +54,24 @@ WinRT
 Store
 
 MSIX package, AppxManifest.xml required
+
+```c
+MSG msg;
+BOOL running = TRUE;
+
+while (running) {
+    // Non-blocking check for messages
+    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        if (msg.message == WM_QUIT) {
+            running = FALSE;
+            break;
+        }
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    // Do other work when idle
+    UpdateSimulation();
+    RenderFrame();
+}
+```

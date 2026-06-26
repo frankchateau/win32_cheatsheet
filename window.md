@@ -257,7 +257,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 |                  |                                                                                                       |
 | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| **When**         | System needs to retrieve the font with which the control is currently drawing text.                   |
+| **When**         | Retrieves the font with which the control is currently drawing text.                                  |
 | **wParam**       | /                                                                                                     |
 | **lParam**       | /                                                                                                     |
 | **Return value** | [HFONT](./types.md#hfont) Handle to the font used by the control<br>or `NULL` to use the system font. |
@@ -266,14 +266,14 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ### WM_GETICON
 
-|                  |                                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------ |
-| **When**         | System needs to retrieve the small or large icon for display (title bar, Alt+Tab view, taskbar...etc.) |
-| **wParam**       | [Icon type](#wm_geticon-icon-type) being retrieved                                                     |
-| **lParam**       | DPI of the icon being retrieved. Used to provide different icons depending on the size.                |
-| **Return value** | [HICON](./types.md#hicon) Handle to large or small icon depending on `wParam`.                         |
-| **Default**      | `hIcon`/`hIconSm` from [WNDCLASS](#wndclass) returned if set, otherwise 0.                             |
-| **Notes**        | /                                                                                                      |
+|                  |                                                                                         |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| **When**         | Retrieves the small or large icon for display (title bar, Alt+Tab view, taskbar...etc.) |
+| **wParam**       | [Icon type](#icon-type-code) being retrieved                                            |
+| **lParam**       | DPI of the icon being retrieved. Used to provide different icons depending on the size. |
+| **Return value** | [HICON](./types.md#hicon) Handle to large or small icon depending on `wParam`.          |
+| **Default**      | `hIcon`/`hIconSm` from [WNDCLASS](#wndclass) returned if set, otherwise 0.              |
+| **Notes**        | /                                                                                       |
 
 ### WM_GETMINMAXINFO
 
@@ -288,14 +288,25 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 ### WM_GETTEXT
 
-|                  |     |
-| ---------------- | --- |
-| **When**         | /   |
-| **wParam**       | /   |
-| **lParam**       | /   |
-| **Return value** | /   |
-| **Default**      | /   |
-| **Notes**        | /   |
+|                  |                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **When**         | Retrieves the window text and copies it into a buffer provided by the caller.                                     |
+| **wParam**       | The maximum number of characters to be copied, including the terminating null character.                          |
+| **lParam**       | A pointer to the buffer that is to receive the text.                                                              |
+| **Return value** | Number of characters copied, not including the terminating null character.                                        |
+| **Default**      | Copies the text associated with the window into the specified buffer and returns the number of characters copied. |
+| **Notes**        | /                                                                                                                 |
+
+### WM_GETTEXTLENGTH
+
+|                  |                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------- |
+| **When**         | Retrieves the window text length in characters.                                 |
+| **wParam**       | /                                                                               |
+| **lParam**       | /                                                                               |
+| **Return value** | Length of the text in characters, not including the terminating null character. |
+| **Default**      | Returns window text length in characters.                                       |
+| **Notes**        | /                                                                               |
 
 ### WM_INPUTLANGCHANGE
 
@@ -428,6 +439,39 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **Return value** | No return value because it stops the [message loop](#message-loop) before the message is sent to [window procedure](#window-procedure).                                                                                                                                                                                                                                                                 |
 | **Default**      | /                                                                                                                                                                                                                                                                                                                                                                                                       |
 | **Notes**        | This message causes [GetMessage](#getmessage) to return zero.<br>This message is not associated with a window and will never be received through a window's [window procedure](#window-procedure). It can be retrieved only via [GetMessage](#getmessage) and [PeekMessage](#peekmessage).<br>This message should be posted using [PostQuitMessage](#postquitmessage), not [PostMessage](#postmessage). |
+
+### WM_SETFONT
+
+|                  |                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **When**         | Sets the font that a control is to use when drawing text.                                                                                        |
+| **wParam**       | [HFONT](./types.md#hfont) Handle to the font. If `NULL` passed, the control uses the default system font to draw text.                           |
+| **lParam**       | [LOWORD](#loword) specifies whether the control should be redrawn immediately upon setting the font. If it's `TRUE`, the control redraws itself. |
+| **Return value** | /                                                                                                                                                |
+| **Default**      | /                                                                                                                                                |
+| **Notes**        | Used with standard [controls](./controls.md).                                                                                                    |
+
+### WM_SETICON
+
+|                  |                                                                                                                                                                                                           |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Sets a new large or small icon for a window.                                                                                                                                                              |
+| **wParam**       | The [type](#icon-type-code) of icon to set. (`ICON_SMALL2`) is not allowed here.                                                                                                                          |
+| **lParam**       | [HICON](./types.md#hicon) Handle to the new large or small icon, depending on the value of `wParam`.<br>If this is `NULL`, the icon indicated by `wParam` is removed.                                     |
+| **Return value** | [HICON](./types.md#hicon) Handle to the previous large or small icon, depending on the value of `wParam`.<br>It can be `NULL` if window previously didn't have an icon of the type indicated by `wParam`. |
+| **Default**      | [HICON](./types.md#hicon) handle to previous large or small icon returned.                                                                                                                                |
+| **Notes**        | /                                                                                                                                                                                                         |
+
+### WM_SETTEXT
+
+|                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**         | Sets the text of a window.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **wParam**       | /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **lParam**       | A pointer to a null-terminated string that is the window text.                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Return value** | `TRUE` if the text is set.<br>`FALSE` (for an `edit control`), `LB_ERRSPACE` (for a list box), or `CB_ERRSPACE` (for a `combo box`) if insufficient space is available to set the text in the edit control.<br>`CB_ERR` if sent to a combo box without an edit control.                                                                                                                                                                                                                                    |
+| **Default**      | Text is set and displayed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Notes**        | For an `edit control`, the text is the contents of the edit control.<br>For a `combo box`, the text is the contents of the edit-control portion of the combo box.<br>For a [button](./controls.md#button), the text is the button name.<br>For other windows, the text is the window title.<br>This message does not change the current selection in the list box of a combo box. App should use the `CB_SELECTSTRING` message to select the item in a list box that matches the text in the edit control. |
 
 ### WM_SHOWWINDOW
 
@@ -739,12 +783,37 @@ HWND myButton = CreateWindowEx(
 
 ### DefWindowProc
 
-Default window procedure that should be called in [window procedure](#window-procedure) for messages (or conditions) the application doesn't handle.
+Default window procedure of type [WNDPROC](./types.md#wndproc) that should be called in [window procedure](#window-procedure) for messages (or conditions) the application doesn't handle.
 
 ```c
 // in our windowProc
 
 return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+```
+
+### DispatchMessage
+
+Dispatches a message to a [window procedure](#window-procedure). It is typically used to dispatch a message retrieved by the [GetMessage](#getmessage) function.
+
+This message has [unicode](./unicode_ansi.md) variants.
+
+| Name  | Type   | Description                        |
+| ----- | ------ | ---------------------------------- |
+| lpMsg | `MSG*` | A pointer to a [MSG](#msg) struct. |
+
+| Success                                                                                                                                                                                                         | Error |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| [LRESULT](./types.md#lresult)<br>The return value specifies the value returned by the window procedure.<br>Although its meaning depends on the message being dispatched, the return value generally is ignored. | /     |
+
+```c
+// message loop
+
+MSG msg = {0};
+while (GetMessage(&msg, NULL, 0, 0) > 0)
+{
+  TranslateMessage(&msg);
+  DispatchMessage(&msg);
+}
 ```
 
 ### SetWindowPos
@@ -823,6 +892,134 @@ Brings the window to the foreground and activates it.
 
 ```c
 BOOL windowWasBroughtToForeground = SetForegroundWindow(hwnd);
+```
+
+### EnableWindow
+
+Enables or disables mouse and keyboard input to the specified window or control. When input is disabled, the window does not receive input such as mouse clicks and key presses. When input is enabled, the window receives all input.
+
+| Name    | Type                    | Description                                        |
+| ------- | ----------------------- | -------------------------------------------------- |
+| hWnd    | [HWND](./types.md#hwnd) | The window handle                                  |
+| bEnable | [BOOL](./types.md#bool) | Indicates whether to enable or disable the window. |
+
+| Success                                                        | Error |
+| -------------------------------------------------------------- | ----- |
+| `TRUE` if window was previously disabled,<br>`FALSE` otherwise | /     |
+
+```c
+BOOL wasDisabled = EnableWindow(hwnd, FALSE);
+```
+
+### PostMessage
+
+Places (posts) a message in the message queue associated with the thread that created the specified window and returns without waiting for the thread to process the message.
+
+This function has [unicode](./unicode_ansi.md) variants.
+
+To post a message in the message queue associated with a thread, use the [PostThreadMessage](#postthreadmessage) function.
+
+Starting with [Windows Vista](./winver.md), message posting is subject to `UIPI`.
+
+| Name   | Type                        | Description                                                                                                                                                                                                                                                                                                                                                            |
+| ------ | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| hWnd   | [HWND](./types.md#hwnd)     | A handle to the window whose message queue is to receive the message,<br>or `HWND_BROADCAST` to post to all top-level windows in the system including disabled or invisible windows and excluding [child windows](#child-window),<br>or `NULL` to behave like [PostThreadMessage](#postthreadmessage) with `dwThreadId` parameter set to the id of the current thread. |
+| Msg    | [UINT](./types.md#uint)     | The message to be posted.                                                                                                                                                                                                                                                                                                                                              |
+| wParam | [WPARAM](./types.md#wparam) | Additional [message-specific](#window-messages) information.                                                                                                                                                                                                                                                                                                           |
+| lParam | [LPARAM](./types.md#lparam) | Additional [message-specific](#window-messages) information.                                                                                                                                                                                                                                                                                                           |
+
+| Success | Error                                                        |
+| ------- | ------------------------------------------------------------ |
+| `TRUE`  | `FALSE`, [GetLastError](./errors.md#getlasterror) available. |
+
+```c
+BOOL didSucceed = PostMessage(hwnd, WM_CLOSE, 0, 0); // request to close the window asynchronously
+```
+
+### PostQuitMessage
+
+Indicates to the system that a thread has made a request to terminate (quit). It is typically used in response to a [WM_DESTROY](#wm_quit) message.
+
+Posts a [WM_QUIT](#wm_quit) message to the thread's message queue and returns immediately.
+The function simply indicates to the system that the thread is requesting to quit at some time in the future.
+
+| Name      | Type  | Description                                                                                                 |
+| --------- | ----- | ----------------------------------------------------------------------------------------------------------- |
+| nExitCode | `int` | The application exit code. This value is used as the `wParam` parameter of the [WM_QUIT](#wm_quit) message. |
+
+```c
+// usually in the WM_DESTROY handler
+
+PostQuitMessage(EXIT_SUCCESS);
+```
+
+### PostThreadMessage
+
+Posts a message to the message queue of the specified thread. It returns without waiting for the thread to process the message.
+
+This function has [unicode](./unicode_ansi.md) variants.
+
+The function fails if the specified thread does not have a message queue.
+
+Starting with [Windows Vista](./winver.md), message posting is subject to `UIPI`.
+
+| Name   | Type                        | Description                                                  |
+| ------ | --------------------------- | ------------------------------------------------------------ |
+| hWnd   | [DWORD](./types.md#dword)   | The id of the thread to which the message is to be posted.   |
+| Msg    | [UINT](./types.md#uint)     | The message to be posted.                                    |
+| wParam | [WPARAM](./types.md#wparam) | Additional [message-specific](#window-messages) information. |
+| lParam | [LPARAM](./types.md#lparam) | Additional [message-specific](#window-messages) information. |
+
+```c
+#define WM_DO_WORK (WM_USER + 1) // some custom message
+
+BOOL didSucceed = PostThreadMessage(threadId, WM_DO_WORK, 0, (LPARAM)someData); // could be the same (current) thread, or a different thread
+```
+
+### SendMessage
+
+Sends the specified message to a window or windows.
+
+`SendMessage` calls the [window procedure](#window-procedure) for the specified window and does not return until the [window procedure](#window-procedure) has processed the [message](#window-messages).
+
+Message sending is subject to `UIPI`.
+
+| Name   | Type                        | Description                                                                                                                                                                                                                                               |
+| ------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| hWnd   | [HWND](./types.md#hwnd)     | A handle to the window whose [window procedure](#window-procedure) is to receive the message,<br>or `HWND_BROADCAST` to send to all top-level windows in the system including disabled or invisible windows and excluding [child windows](#child-window). |
+| Msg    | [UINT](./types.md#uint)     | The message to be posted.                                                                                                                                                                                                                                 |
+| wParam | [WPARAM](./types.md#wparam) | Additional [message-specific](#window-messages) information.                                                                                                                                                                                              |
+| lParam | [LPARAM](./types.md#lparam) | Additional [message-specific](#window-messages) information.                                                                                                                                                                                              |
+
+| Success                                                                                                                                           | Error |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| [LRESULT](./types.md#lresult)<br>The return value specifies the result of message processing and depents on the [message](#window-messages) sent. | /     |
+
+### TranslateMessage
+
+Translates virtual-key messages into character messages.
+
+The character messages are posted to the calling thread's message queue, to be read the next time the thread calls [GetMessage](#getmessage) or [PeekMessage](#peekmessage).
+
+This function does not modify the message pointed to by the `lpMsg` parameter.
+
+| Name  | Type   | Description                                                                                                                                                                       |
+| ----- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| lpMsg | `MSG*` | A pointer to a [MSG](#msg) struct that contains information retrieved from the calling thread's message queue by using [GetMessage](#getmessage) or [PeekMessage](#peekmesesage). |
+
+| Success                                                    | Error |
+| ---------------------------------------------------------- | ----- |
+| `TRUE` if the message is translated,<br>otherwise `FALSE`. | /     |
+
+```c
+// message loop
+
+MSG msg = {0};
+while (GetMessage(&msg, NULL, 0, 0) > 0)
+{
+  TranslateMessage(&msg);
+  DispatchMessage(&msg);
+}
 ```
 
 ## Codes and flags
@@ -974,7 +1171,7 @@ These codes are used with [ShowWindow](#showwindow).
 | SW_SHOWDEFAULT                   | Sets the show state based on the SW\_ value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.                                                                 |
 | SW_FORCEMINIMIZE                 | Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.                                                                            |
 
-### WM_GETICON icon type
+### Icon type code
 
 Passed with [WM_GETICON](#wm_geticon).
 
@@ -1162,6 +1359,20 @@ Passed with [WM_STYLECHANGED](#wm_stylechanged) and [WM_STYLECHANGING](#wm_style
 | -------- | ------------------------- | --------------------------------- |
 | styleOld | [DWORD](./types.md#dword) | The previous styles for a window. |
 | styleNew | [DWORD](./types.md#dword) | The new styles for a window.      |
+
+### MSG
+
+Contains message information from a thread's message queue.
+
+| Name     | Type                        | Description                                                                                                                        |
+| -------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| hwnd     | [HWND](./types.md#hwnd)     | A handle to the window whose window procedure receives the message.<br>This member is `NULL` when the message is a thread message. |
+| message  | [UINT](./types.md#uint)     | The message identifier. Applications can only use the low word; the high word is reserved by the system.                           |
+| wParam   | [WPARAM](./types.md#wparam) | Additional information about the [message](#window-messages). The exact meaning depends on the value of the `message` member.      |
+| lParam   | [LPARAM](./types.md#lparam) | Additional information about the [message](#window-messages). The exact meaning depends on the value of the `message` member.      |
+| time     | [DWORD](./types.md#dword)   | The time at which the message was posted in milliseconds.                                                                          |
+| pt       | [POINT](./types.md#point)   | The cursor position, in screen coordinates, when the message was posted.                                                           |
+| lPrivate | [DWORD](./types.md#dword)   | Private                                                                                                                            |
 
 ## Macros
 
