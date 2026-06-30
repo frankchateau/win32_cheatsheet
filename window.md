@@ -240,7 +240,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 | **lParam**       | /                                                                                                                                                                                                                                             |
 | **Return value** | Nonzero if app erases the background,<br>otherwise 0.                                                                                                                                                                                         |
 | **Default**      | Background is erased using the background brush specified by `hbrBackground` on [WNDCLASS](#wndclass). If `hbrBackground` is `NULL`, the app should erase the background.                                                                     |
-| **Notes**        | Used with [GDI](./gdi.md), there's generally no need to handle this message if using another graphics api (e.g. `Direct2D`).<br>If the app returns 0, the window will remain marked for erasing, so `fErase` on `PAINTSTRUCT` will be `TRUE`. |
+| **Notes**        | Used with [GDI](./gdi.md), there's generally no need to handle this message if using another graphics api (e.g. [Direct2D](./direct2d.md)).<br>If the app returns 0, the window will remain marked for erasing, so `fErase` on `PAINTSTRUCT` will be `TRUE`. |
 
 ### WM_EXITSIZEMOVE
 
