@@ -4,38 +4,38 @@
 
 | Name                   | Description |
 | ---------------------- | ----------- |
-| accctrl.h              |             |
-| callobj.h              |             |
-| combaseapi.h           |             |
-| comcat.h               |             |
-| ctxtcall.h             |             |
-| dmerror.h              |             |
-| docobj.h               |             |
-| eventsys.h             |             |
-| guiddef.h              |             |
-| iaccess.h              |             |
-| imessagedispatcher.h   |             |
-| messagedispatcherapi.h |             |
-| objbase.h              |             |
-| objidl.h               |             |
-| objidlbase.h           |             |
-| ocidl.h                |             |
-| ole.h                  |             |
-| ole2.h                 |             |
-| oledlg.h               |             |
-| oleidl.h               |             |
-| roapi.h                |             |
-| rpcdce.h               |             |
-| servprov.h             |             |
-| shobjidl.h             |             |
-| txlogpub.h             |             |
-| unknwn.h               |             |
-| unknwnbase.h           |             |
-| urlmon.h               |             |
-| vbinterf.h             |             |
-| winddi.h               |             |
-| winerror.h             |             |
-| wtypesbase.h           |             |
+| accctrl.h              | /           |
+| callobj.h              | /           |
+| combaseapi.h           | /           |
+| comcat.h               | /           |
+| ctxtcall.h             | /           |
+| dmerror.h              | /           |
+| docobj.h               | /           |
+| eventsys.h             | /           |
+| guiddef.h              | /           |
+| iaccess.h              | /           |
+| imessagedispatcher.h   | /           |
+| messagedispatcherapi.h | /           |
+| objbase.h              | /           |
+| objidl.h               | /           |
+| objidlbase.h           | /           |
+| ocidl.h                | /           |
+| ole.h                  | /           |
+| ole2.h                 | /           |
+| oledlg.h               | /           |
+| oleidl.h               | /           |
+| roapi.h                | /           |
+| rpcdce.h               | /           |
+| servprov.h             | /           |
+| shobjidl.h             | /           |
+| txlogpub.h             | /           |
+| unknwn.h               | /           |
+| unknwnbase.h           | /           |
+| urlmon.h               | /           |
+| vbinterf.h             | /           |
+| winddi.h               | /           |
+| winerror.h             | /           |
+| wtypesbase.h           | /           |
 
 ## CoCreateInstance
 
@@ -78,3 +78,25 @@ Decrements the reference count for an interface on a COM object.
 ```cpp
 ULONG newRefCount = pUnknown->Release();
 ```
+
+## IEnumUnknown
+
+Enumerates objects with the [IUnknown](#iunknown) interface. It can be used to enumerate through the objects in a component containing multiple objects.
+
+Inherits from the [IUnknown](#iunknown) interface.
+
+### IEnumUnknown::Clone
+
+// TODO
+
+### IEnumUnknown::Next
+
+// TODO
+
+### IEnumUnknown::Reset
+
+// TODO
+
+### IEnumUnknown::Skip
+
+// TODO
