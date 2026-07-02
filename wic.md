@@ -60,7 +60,7 @@ To create either class factory, use the [CoCreateInstance](./com.md#cocreateinst
 
 Exposes methods used to create components for the WIC such as decoders, encoders and pixel format converters.
 
-Inherits from the [IUnknown](./com.md#iunknown) interface.
+Inherits from [IUnknown](./com.md#iunknown).
 
 ### IWICImagingFactory::CreateBitmap
 
@@ -78,19 +78,6 @@ HRESULT hr = pFactory->CreateBitmap(
   WICBitmapCacheOnLoad, // cache option
   &pBitmap
 );
-```
-
-### WICBitmapCreateCacheOption
-
-Specifies the desired cache usage.
-
-```cpp
-typedef enum WICBitmapCreateCacheOption {
-  WICBitmapNoCache = 0, // no caching, pixels are read from the source every time
-  WICBitmapCacheOnDemand = 0x1, // lazy caching of pixels, but only of the pixel region(s) you actually use
-  WICBitmapCacheOnLoad = 0x2, // caches the entire source when created
-  WICBITMAPCREATECACHEOPTION_FORCE_DWORD = 0x7fffffff
-};
 ```
 
 ### IWICImagingFactory::CreateBitmapClipper
@@ -250,7 +237,7 @@ HRESULT hr = pFactory->CreateColorTransformer(&pColorTransform);
 
 ### IWICImagingFactory::CreateComponentEnumerator
 
-Creates an [IEnumUnknown](./com.md#ienumunknown) object of the specified component types.
+Creates an [IEnumUnknown](./com.md#ienumunknown) object of the specified [component types](#wiccomponenttype).
 
 ```cpp
 IEnumUnknown *pComponentEnumerator;
@@ -260,23 +247,6 @@ HRESULT hr = pFactory->CreateComponentEnumerator(
   WICComponentEnumerateRefresh | WICComponentEnumerateBuiltInOnly, // options
   &pComponentEnumerator
 );
-```
-
-### WICComponentType
-
-Specifies the type of WIC component.
-
-```cpp
-typedef enum WICComponentType {
-  WICDecoder = 0x1,
-  WICEncoder = 0x2,
-  WICPixelFormatConverter = 0x4,
-  WICMetadataReader = 0x8,
-  WICMetadataWriter = 0x10,
-  WICPixelFormat = 0x20,
-  WICAllComponents = 0x3f,
-  WICCOMPONENTTYPE_FORCE_DWORD = 0x7fffffff
-};
 ```
 
 ### WICComponentEnumerateOptions
@@ -296,7 +266,7 @@ typedef enum WICComponentEnumerateOptions {
 
 ### IWICImagingFactory::CreateComponentInfo
 
-Creates a new instance of the [IWICComponentInfo](#iwiccomponentinfo) class for the given component class identifier (`CLSID`).
+Creates a new instance of the [IWICComponentInfo](#iwiccomponentinfo) class for the given [CLSID](./com.md#clsid).
 
 ```cpp
 IWICComponentInfo *pComponentInfo;
@@ -487,6 +457,19 @@ IWICStream *pStream;
 HRESULT hr = pFactory->CreateStream(&pStream);
 ```
 
+### WICBitmapCreateCacheOption
+
+Specifies the desired cache usage.
+
+```cpp
+typedef enum WICBitmapCreateCacheOption {
+  WICBitmapNoCache = 0, // no caching, pixels are read from the source every time
+  WICBitmapCacheOnDemand = 0x1, // lazy caching of pixels, but only of the pixel region(s) you actually use
+  WICBitmapCacheOnLoad = 0x2, // caches the entire source when created
+  WICBITMAPCREATECACHEOPTION_FORCE_DWORD = 0x7fffffff
+};
+```
+
 ## IWICBitmap
 
 Defines methods that add the concept of writeability and static in-memory representations of bitmaps to [IWICBitmapSource](#iwicbitmapsource).
@@ -517,11 +500,9 @@ typedef enum WICBitmapLockFlags {
 
 ### IWICBitmap::SetPalette
 
-Provides access for palette modifications.
+Provides access for [palette](#iwicpalette) modifications.
 
 ```cpp
-IWICPalette *pPalette;
-
 HRESULT hr = pBitmap->SetPalette(pPalette);
 ```
 
@@ -591,11 +572,66 @@ UINT cbStride;
 HRESULT hr = pLock->GetStride(&cbStride);
 ```
 
+## IWICBitmapClipper
+
+Exposes methods that produce a clipped version of the input bitmap for a specified rectangular region of interest.
+
+Inherits from [IWICBitmapSource](#iwicbitmapsource).
+
+### IWICBitmapClipper::Initialize
+
+```cpp
+HRESULT hr = pClipper->Initialize(
+  pSource, // The input bitmap source.
+  &rect // The WICRect of the bitmap source to clip.
+);
+```
+
+## IWICBitmapDecoder
+
+Exposes methods that represent a decoder.
+
+The interface provides access to the decoder's properties such as global thumbnails (if supported), frames, and palette.
+
+Inherits from [IUnknown](./com.md#iunknown).
+
+### IWICBitmapDecoder::CopyPalette
+
+Copies the decoder's [IWICPalette](#iwicpalette).
+
+`CopyPalette` returns a global palette (a palette that applies to all the frames in the image) if there is one; otherwise, it returns `WINCODEC_ERR_PALETTEUNAVAILABLE`. If an image doesn't have a global palette, it may still have a frame-level palette, which can be retrieved using [IWICBitmapFrameDecode::CopyPalette](#iwicbitmapframedecodecopypalette).
+
+Use [CreatePalette](#iwicimagingfactorycreatepalette) to create the destination palette before calling `CopyPalette`.
+
+```cpp
+HRESULT hr = pDecoder->CopyPalette(
+  pPalette // IWICPalette to which the decoder's global palette is to be copied
+);
+```
+
+### IWICBitmapDecoder::GetColorContexts
+
+Retrieves the [IWICColorContext](#) objects of the image.
+
+```cpp
+UINT colorContextsCount = 2;
+IWICColorContext *colorContexts = new IWICColorContext[colorContextsCount];
+UINT actualCount;
+
+HRESULT hr = pDecoder->GetColorContexts(
+  colorContextsCount,
+  &colorContexts,
+  &actualCount
+)
+```
+
 ## IWICPalette
 
 Exposes methods for accessing and building a color table, primarily for indexed pixel formats.
 
 ### IWICPalette::GetColorCount
+
+Retrieves the number of colors in the color table.
 
 ```cpp
 UINT colorCount;
@@ -739,9 +775,454 @@ typedef enum WICBitmapPaletteType {
 };
 ```
 
+## IWICColorContext
+
+Exposes methods for color management.
+
+Inherits from [IUnknown](./com.md#iunknown).
+
+### IWICColorContext::GetExifColorSpace
+
+Retrieves the Exchangeable Image File (EXIF) color space color context.
+
+This method should only be used when [IWICColorContext::GetType](#iwiccolorcontextgettype) indicates `WICColorContextExifColorSpace`.
+
+| Value           | Description              |
+| --------------- | ------------------------ |
+| 1               | A sRGB color space       |
+| 2               | An Adobe RGB color space |
+| 3 through 65534 | Unused                   |
+
+```cpp
+UINT colorSpace;
+
+HRESULT hr = pColorCOntext->GetExifColorSpace(&colorSpace);
+```
+
+### IWICColorContext::GetProfileBytes
+
+Retrieves the color context profile.
+
+Only use this method if the context type is [WICColorContextProfile](#wiccolorcontexttype).
+
+```cpp
+// Calling GetProfileBytes with NULL as pBuffer can be used to just get the profile byte size
+
+UINT profileSize;
+
+HRESULT hr = pColorContext->GetProfileBytes(
+  0, // cbBuffer
+  NULL, // pbBuffer
+  &profileSize // pcbActual
+);
+
+// Then you can use it to get the actual profile bytes
+
+BYTE *profileBytes = new BYTE[profileSize];
+
+hr = pColorContext->GetProfileBytes(
+  profileSize,
+  profileBytes,
+  &profileSize
+)
+```
+
+### IWICColorContext::GetType
+
+Retrieves the color context [type](#wiccolorcontexttype).
+
+```cpp
+WICColorContextType type;
+
+HRESULT hr = pColorContext->GetType(&type);
+```
+
+### IWICColorContext::InitializeFromExifColorSpace
+
+Initializes the color context using an Exchangeable Image File (EXIF) color space.
+
+Once a color context has been initialized, it can't be re-initialized.
+
+| Value | Description              |
+| ----- | ------------------------ |
+| 1     | A sRGB color space       |
+| 2     | An Adobe RGB color space |
+
+```cpp
+HRESULT hr = pColorContext->InitializeFromExifColorSpace(
+  1 // sRGB
+);
+```
+
+### IWICColorContext::InitializeFromFilename
+
+Initializes the color context from the given file.
+
+Once a color context has been initialized, it can't be re-initialized.
+
+The file needs to be a color profile like `.icc`, `.icm`, or similar.
+
+For initializing from an ICC profile or EXIF color space embedded inside of an image, use [IWICBitmapDecoder::GetColorContexts](#iwicbitmapdecodergetcolorcontexts) or
+[IWICBitmapFrameDecode::GetColorContexts](#iwicbitmapframedecodegetcolorcontexts)
+
+```cpp
+HRESULT hr = pColorContext->InitializeFromFilename(L"some_profile.icc");
+```
+
+### IWICColorContext::InitializeFromMemory
+
+Initializes the color context from a memory block.
+
+Once a color context has been initialized, it can't be re-initialized.
+
+```cpp
+HRESULT hr = pColorContext->InitializeFromMemory(
+  profileBytes,
+  profileSize
+);
+```
+
+### WICColorContextType
+
+Specifies the color context types.
+
+```cpp
+typedef enum WICColorContextType {
+  WICColorContextUninitialized = 0, // An uninitialized color context.
+  WICColorContextProfile = 0x1, // A color context that is a full ICC color profile.
+  WICColorContextExifColorSpace = 0x2 // A color context that is one of a number of set color spaces (sRGB, AdobeRGB) that are defined in the EXIF specification.
+};
+```
+
+## IWICColorTransform
+
+Exposes methods that transforms an [IWICBitmapSource](#iwicbitmapsource) from one color context to another.
+
+Inherits from [IWICBitmapSource](#iwicbitmapsource).
+
+A `IWICColorTransform` is an imaging pipeline component that knows how to pull pixels obtained from a given [IWICBitmapSource](#iwicbitmapsource) through a color transform. The color transform is defined by mapping colors from the source color context to the destination color context in a given output [pixel format](#native-pixel-formats).
+
+Once initialized, a color transform cannot be reinitialized. Because of this, a color transform cannot be used with multiple sources or varying parameters.
+
+### IWICColorTransform::Initialize
+
+The currently supported formats for the `pIContextSource` and `pixelFmtDest` parameters are:
+
+- GUID_WICPixelFormat8bppGray
+- GUID_WICPixelFormat16bppGray
+- GUID_WICPixelFormat16bppBGR555
+- GUID_WICPixelFormat16bppBGR565
+- GUID_WICPixelFormat24bppBGR
+- GUID_WICPixelFormat24bppRGB
+- GUID_WICPixelFormat32bppBGR
+- GUID_WICPixelFormat32bppBGRA
+- GUID_WICPixelFormat32bppPBGRA
+- GUID_WICPixelFormat32bppPRGBA (Windows 8 and later)
+- GUID_WICPixelFormat32bppRGBA
+- GUID_WICPixelFormat32bppBGR101010
+- GUID_WICPixelFormat32bppCMYK
+- GUID_WICPixelFormat48bppBGR
+- GUID_WICPixelFormat64bppBGRA (Windows 8 and later)
+- GUID_WICPixelFormat64bppPBGRA (Windows 8 and later)
+- GUID_WICPixelFormat64bppPRGBA (Windows 8 and later)
+- GUID_WICPixelFormat64bppRGBA (Windows 8 and later)
+
+In order to get correct behavior from a color transform, the input and output pixel formats must be compatible with the source and destination color profiles. For example, an sRGB destination color profile will produce incorrect results when used with a CMYK destination pixel format.
+
+```cpp
+HRESULT hr = pColorTransform->Initialize(
+  pBitmapSource, // pIBitmapSource
+  pColorContextSrc, // pIContextSource
+  pColorContextDest, // pIContextDest
+  GUID_WICPixelFormat24bppRGB, // pixelFmtDest
+);
+```
+
+## IWICComponentInfo
+
+Exposes methods that provide component information.
+
+Inherits from [IUnknown](./com.md#iunknown).
+
+### IWICComponentInfo::GetAuthor
+
+Retrieves the name of component's author.
+
+The locale of the string depends on the value that the codec wrote to the registry at install time.
+
+For built-in components, these strings are always in English.
+
+```cpp
+// First call with 0 and NULL just to get the length of the author string
+
+UINT actualLength;
+
+HRESULT hr = pComponentInfo->GetAuthor(
+  0,
+  NULL,
+  &actualLength
+);
+
+// Then get the author string
+
+if (SUCCEEDED(hr) && actualLength > 0) {
+  WCHAR *author = new WCHAR[actualLength];
+
+  hr = pComponentInfo->GetAuthor(
+    actualLength,
+    author,
+    &actualLength
+  );
+}
+```
+
+### IWICComponentInfo::GetCLSID
+
+Retrieves the component's [CLSID](./com.md#clsid).
+
+```cpp
+CLSID classId;
+
+HRESULT hr = pComponentInfo->(&classId);
+```
+
+### IWICComponentInfo::GetComponentType
+
+Retrieves the component's [WICComponentType](#wiccomponenttype).
+
+```cpp
+WICComponentType componentType;
+
+HRESULT hr = pComponentInfo->GetComponentType(&componentType);
+```
+
+### IWICComponentInfo::GetFriendlyName
+
+Retrieves the component's friendly name, which is a human-readable display name for the component.
+
+The locale of the string depends on the value that the codec wrote to the registry at install time.
+
+For built-in components, these strings are always in English.
+
+```cpp
+// First call with 0 and NULL just to get the length of the friendly name string
+
+UINT actualLength;
+
+HRESULT hr = pComponentInfo->GetFriendlyName(
+  0,
+  NULL,
+  &actualLength
+);
+
+// Then get the friendly name string
+
+if (SUCCEEDED(hr) && actualLength > 0) {
+  WCHAR *friendlyName = new WCHAR[actualLength];
+
+  hr = pComponentInfo->GetFriendlyName(
+    actualLength,
+    friendlyName,
+    &actualLength
+  );
+}
+```
+
+### IWICComponentInfo::GetSigningStatus
+
+Specifies the component [signing status](#wiccomponentsigning).
+
+Signing is unused by WIC. Therefore, all components [WICComponentSigned](#wiccomponentsigning).
+
+This function can be used to determine whether a component has no binary component or has been added to the disabled components list in the registry.
+
+```cpp
+WICComponentSigning signingStatus;
+
+HRESULT hr = pComponentInfo->GetSigningStatus(&signingStatus);
+```
+
+### IWICComponentInfo::GetSpecVersion
+
+Retrieves the component's specification version string.
+
+The version form is `NN.NN.NN.NN`.
+
+All built-in components return `"1.0.0.0"`, except for [pixel formats](#native-pixel-formats), which do not have a spec version.
+
+```cpp
+// First call with 0 and NULL just to get the length of the spec version string
+
+UINT actualLength;
+
+HRESULT hr = pComponentInfo->GetSpecVersion(
+  0,
+  NULL,
+  &actualLength
+);
+
+// Then get the spec version string
+
+if (SUCCEEDED(hr) && actualLength > 0) {
+  WCHAR *specVersion = new WCHAR[actualLength];
+
+  hr = pComponentInfo->GetSpecVersion(
+    actualLength,
+    specVersion,
+    &actualLength
+  );
+}
+```
+
+### IWICComponentInfo::GetVendorGUID
+
+Retrieves the vendor [GUID](./com.md#guid).
+
+```cpp
+GUID vendorGuid;
+
+HRESULT hr = pComponentInfo->GetVendorGUID(&vendorGuid);
+```
+
+### IWICComponentInfo::GetVersion
+
+Retrieves the component's version string.
+
+```cpp
+// First call with 0 and NULL just to get the length of the version string
+
+UINT actualLength;
+
+HRESULT hr = pComponentInfo->GetVersion(
+  0,
+  NULL,
+  &actualLength
+);
+
+// Then get the version string
+
+if (SUCCEEDED(hr) && actualLength > 0) {
+  WCHAR *version = new WCHAR[actualLength];
+
+  hr = pComponentInfo->GetVersion(
+    actualLength,
+    version,
+    &actualLength
+  );
+}
+```
+
 ## IWICBitmapSource
 
+Exposes methods that refers to a source from which pixels are retrieved, but cannot be written back to.
+
+Inherits from [IUnknown](./com.md#iunknown).
+
 Inherited by [IWICBitmap](#iwicbitmap), [IWICBitmapFrameDecode](#iwicbitmapframedecode), [IWICFormatConverter](#iwicformatconverter), [IWICBitmapScaler](#iwicbitmapscaler), [IWICBitmapClipper](#iwicbitmapclipper), [IWICBitmapFlipRotator](#iwicbitmapfliprotator), [IWICColorTransform](#iwiccolortransform), [IWICPalette](#iwicpalette).
+
+### IWICBitmapSource::CopyPalette
+
+Retrieves the color table for indexed pixel formats.
+
+If the `IWICBitmapSource` is an [IWICBitmapFrameDecode](#iwicbitmapframedecode), the function may return the image's global palette if a frame-level palette is not available. The global palette may also be retrieved using the CopyPalette method.
+
+A [palette](#iwicpalette) can be created using the [CreatePalette](#iwicimagingfactorycreatepalette) method.
+
+```cpp
+HRESULT hr = pSource->CopyPalette(
+  pPalette // destination IWICPalette
+);
+```
+
+### IWICBitmapSource::CopyPixels
+
+Instructs the object to produce pixels.
+
+CopyPixels is one of the two main image processing routines (the other being [Lock](#iwicbitmaplock)) triggering the actual processing. It instructs the object to produce pixels according to its algorithm - this may involve decoding a portion of a JPEG stored on disk, copying a block of memory, or even analytically computing a complex gradient. The algorithm is completely dependent on the object implementing the interface.
+
+If the caller needs to perform numerous copies of an expensive `IWICBitmapSource` such as a JPEG, it is recommended to create an in-memory [IWICBitmap](#iwicbitmap) first.
+
+```cpp
+WICRECT rect = {100, 100, width, height};
+UINT stride = width * 2; // 2 bytes per px
+UINT bufferSize = stride * height;
+
+BYTE *pBuffer = new BYTE[bufferSize];
+
+HRESULT hr = pSource->CopyPixels(
+  &rect, // prc, the rectangle of interest to copy. A NULL value would specify the entire bitmap.
+  stride, // cbStride
+  bufferSize, // cbBufferSize
+  pBuffer
+);
+```
+
+### IWICBitmapSource::GetPixelFormat
+
+Retrieves the [pixel format](#native-pixel-formats) of the bitmap source.
+
+The [pixel format](#native-pixel-formats) returned by this method is not necessarily the [pixel format](#native-pixel-formats) the image is stored as. The codec may perform a format conversion from the storage [pixel format](#native-pixel-formats) to an output [pixel format](#native-pixel-formats).
+
+```cpp
+WICPixelFormatGUID pixelFormat;
+
+HRESULT hr = pSource->GetPixelFormat(
+  &pixelFormat
+);
+```
+
+### IWICBitmapSource::GetResolution
+
+Retrieves the sampling rate between pixels and physical world measurements.
+
+Some formats, such as GIF and ICO, do not have full DPI support. For GIF, this method calculates the DPI values from the aspect ratio, using a base DPI of (96.0, 96.0). The ICO format does not support DPI at all, and the method always returns (96.0,96.0) for ICO images.
+
+Additionally, WIC itself does not transform images based on the DPI values in an image. It is up to the caller to transform an image based on the resolution returned.
+
+```cpp
+double dpiX, dpiY;
+
+HRESULT hr = pSource->GetResolution(&dpiX, &dpiY);
+```
+
+### IWICBitmapSource::GetSize
+
+Retrieves the pixel width and height of the bitmap.
+
+```cpp
+UINT width, height;
+
+HRESULT hr = pSource->GetSize(&width, &height);
+```
+
+## WICComponentType
+
+Specifies the type of WIC component.
+
+```cpp
+typedef enum WICComponentType {
+  WICDecoder = 0x1,
+  WICEncoder = 0x2,
+  WICPixelFormatConverter = 0x4,
+  WICMetadataReader = 0x8,
+  WICMetadataWriter = 0x10,
+  WICPixelFormat = 0x20,
+  WICAllComponents = 0x3f,
+  WICCOMPONENTTYPE_FORCE_DWORD = 0x7fffffff
+};
+```
+
+## WICComponentSigning
+
+```cpp
+typedef enum WICComponentSigning {
+  WICComponentSigned = 0x1, // A signed component.
+  WICComponentUnsigned = 0x2, // An unsigned component
+  WICComponentSafe = 0x4, // A component is safe. Components that do not have a binary component to sign, such as a pixel format, should return this value.
+  WICComponentDisabled = 0x80000000, // A component has been disabled.
+  WICCOMPONENTSIGNING_FORCE_DWORD = 0x7fffffff
+};
+```
 
 ## Native pixel formats
 
@@ -983,4 +1464,20 @@ inline WICColor MakeWICColor(BYTE r, BYTE g, BYTE b, BYTE a)
 // wincodec.h
 
 typedef UINT32 WICColor;
+```
+
+### WICRect
+
+Represents a rectangle for the WIC API.
+
+```cpp
+// wincodec.h
+
+typedef struct WICRect
+{
+  INT X;
+  INT Y;
+  INT Width;
+  INT Height;
+} WICRect;
 ```

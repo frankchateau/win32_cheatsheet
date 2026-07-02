@@ -49,7 +49,7 @@ HRESULT hr = CoCreateInstance(...);
 
 ## IUnknown
 
-Enables clients to get pointers to other interfaces on a given object through the `QueryInterface` method, and manage the existence of the object through the `AddRef` and Release methods.
+Enables clients to get pointers to other interfaces on a given object through the `QueryInterface` method, and manage the existence of the object through the [AddRef](#iunknownaddref) and Release methods.
 
 All other COM interfaces are inherited, directly or indirectly, from `IUnknown`. Therefore, the three methods in `IUnknown` are the first entries in the vtable for every interface.
 
@@ -63,7 +63,7 @@ ULONG newRefCount = pUnknown->AddRef();
 
 ### IUnknown::QueryInterface
 
-Queries a COM object for a pointer to one of its interface; identifying the interface by a reference to its interface identifier (IID). If the COM object implements the interface, then it returns a pointer to that interface after calling [IUnknown::AddRef](#iunknownaddref) on it.
+Queries a COM object for a pointer to one of its interface; identifying the interface by a reference to its [IID](#iid). If the COM object implements the interface, then it returns a pointer to that interface after calling [IUnknown::AddRef](#iunknownaddref) on it.
 
 ```cpp
 HRESULT hr = pUnknown->QueryInterface(&pInterface); // template function
@@ -100,3 +100,76 @@ Inherits from the [IUnknown](#iunknown) interface.
 ### IEnumUnknown::Skip
 
 // TODO
+
+## Types
+
+### CLSID
+
+Class identifier.
+
+```c
+// guiddef.h
+
+typedef GUID CLSID;
+```
+
+### GUID
+
+A `GUID` identifies an object such as a COM interfaces, or a COM class object, or a manager entry-point vector (EPV).
+
+A `GUID` is a 128-bit value consisting of one group of 8 hexadecimal digits, followed by three groups of 4 hexadecimal digits each, followed by one group of 12 hexadecimal digits. The following example GUID shows the groupings of hexadecimal digits in a GUID: `6B29FC40-CA47-1067-B31D-00DD010662DA`.
+
+```c
+// guiddef.h
+
+typedef struct _GUID {
+    unsigned long  Data1;
+    unsigned short Data2;
+    unsigned short Data3;
+    unsigned char  Data4[8];
+} GUID;
+```
+
+### IID
+
+Interface identifier.
+
+```c
+// guiddef.h
+
+typedef GUID IID;
+```
+
+## Macros
+
+### IsEqualCLSID
+
+Evaluates to a [BOOL](./types.md#bool) value that indicates whether two [CLSID](#clsid)s are equal.
+
+```cpp
+#include <guiddef.h>
+
+BOOL areEqual = IsEqualCLSID(clsid1, clsid2)
+```
+
+### IsEqualGUID
+
+Evaluates to a [BOOL](./types.md#bool) value that indicates whether two [GUID](#guid)s are equal.
+
+Used by the [IsEqualCLSID](#isequalclsid) and [IsEqualIID](#isequaliid) macros.
+
+```cpp
+#include <guiddef.h>
+
+BOOL areEqual = isEqualGUID(guid1, guid2);
+```
+
+### IsEqualIID
+
+Evaluates to a [BOOL](./types.md#bool) value that indicates whether two [IID](#iid)s are equal.
+
+```cpp
+#include <guiddef.h>
+
+BOOL areEqual = IsEqualIID(iid1, iid2);
+```
